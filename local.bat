@@ -1,0 +1,1 @@
+cordova run electron --nobuild
