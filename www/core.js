@@ -2,7 +2,20 @@
 // See https://cordova.apache.org/docs/en/latest/cordova/events/events.html#deviceready
 document.addEventListener('deviceready', onDeviceReady, false);
 
-function loadModule(data) {
+var moduleData = {}
+var buildQueue = {}
+var buildCells = {}
+function buildModule(el, mod) {
+  if(!moduleData[mod].build) {chan.debug('Cell requested an unbuildable module "'+mod+'"', "error"); return}
+  chan.debug('Building a cell for the "'+mod+'" module...')
+  el.style.background = "transparent"
+  try {
+    moduleData[mod].build(el)
+    if(!buildCells[mod]) buildCells[mod] = []
+    buildCells[mod].push(el)
+  } catch(e) {chan.debug("Error while building a cell for the \""+mod+"\" module: "+e, "error")}
+}
+function loadModule(init) {
   let parseCSS = function(css) {
     let parsing = css.split(/([{;}])/).map(s => s.trim()).filter(s => s)
     let parsed = ""
@@ -15,7 +28,7 @@ function loadModule(data) {
       if(frag==="}") {
         if(scope.length < 1) chan.debug("Error while parsing css, scope is empty", "error", css)
         else if(content.length < 1) chan.debug("Error while parsing css, content is empty", "error", css)
-        else {
+        else if(content[content.length-1]) {
           parsed += scope.join(" ")+" {\n"+content[content.length-1]+"}\n\n"
         }
         if(scope.length > 0) scope.pop()
@@ -40,7 +53,7 @@ function loadModule(data) {
     return parsed
   }
   let insertCSS = function(css) {
-    chan.debug('Inserting css fragment...', 'info', css)
+    chan.debug('Inserting a css fragment...', 'info', css)
     var sheet = document.createElement("style")
     sheet.type = "text/css"
     sheet.innerText = css
@@ -50,9 +63,22 @@ function loadModule(data) {
   let mod = document.currentScript.src.match(/\/([^/]+?)\.js/i)
   if(!mod) {chan.debug("Tried loading invalid module: "+document.currentScript.src, "error"); return}
   mod = mod[1]
-  chan.debug('Loading module "'+mod+'"...')
+  chan.debug('Loading "'+mod+'" module...')
   
-  insertCSS(parseCSS(`.m-${mod} {${data.css}}`))
+  let data = {}
+  try {data = init(mod)}
+  catch(e) {
+    chan.debug("Couldn't initialize \""+mod+"\" module: "+e, "error")
+    return
+  }
+  chan.debug('Successfully initialized "'+mod+'" module')
+  
+  moduleData[mod] = data
+  if(buildQueue[mod]) {
+    buildQueue[mod].forEach(e => buildModule(e, mod))
+    buildQueue[mod] = null
+  }
+  if(data.css) insertCSS(parseCSS(`.m-${mod} {${data.css}}`))
 }
 
 
@@ -88,5 +114,19 @@ function onDeviceReady() {
     script.src = 'modules/'+name+'.js'
     document.head.appendChild(script)
   }
-  importModule('chanDebug')
+  
+  for(let el of document.body.children) {
+    for(let cl of el.classList) {
+      if(cl.indexOf("m-")!=0) continue
+      let mod = cl.substring(2)
+      if(!moduleData[mod]) {
+        if(buildQueue[mod]) {buildQueue[mod].push(el); break}
+        buildQueue[mod] = [el]
+        importModule(mod)
+        break
+      }
+      buildModule(el, mod)
+      break
+    }
+  }
 }

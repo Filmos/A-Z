@@ -23,7 +23,7 @@ body {
 
 .cell {
   background: rgb(253,205,45);
-  background: radial-gradient(circle, rgba(253,205,45,1) 0%, rgba(196,238,66,1) 35%, rgba(34,193,195,1) 100%);
+  background: radial-gradient(circle, rgba(253,205,45,0.6) 0%, rgba(196,238,66,0.6) 35%, rgba(34,193,195,0.6) 100%);
   z-index: 15;
 }
 
