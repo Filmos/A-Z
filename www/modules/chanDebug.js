@@ -1,9 +1,25 @@
 loadModule(function(name) {
-  chan.addListener("debug", (data, type, details) => {
-    if(!buildCells[name]) {console.warn("[debug\\"+(type||"info")+"] "+data); return}
+  let config = {
+    important: {func: (d)=>{console.log("%c"+d, 'margin-left: 10px; color: #0e53bb; font-weight: 700;')}, color: "#4dd5fe"},
+    info: {func: (d)=>{console.log("%c"+d, 'margin-left: 10px;')}, color: "#a2ed68"},
+    warn: {func: console.warn, color: "#efe26b"},
+    error: {func: console.error, color: "#ff3842"}
+  }
+  
+  chan.addListener("debug", (data, type="info", details) => {
+    let cfg = config[type]
+    if(!cfg) {
+      if(type!=="warn") {
+        chan.debug('Tried sending a debug info with an invalid type "'+type+'"', "warn")
+        chan.debug("  "+data, "warn", details)
+      } else {console.error("Error in the debug config: warn is a mandatory type")}
+      return
+    }
+    if(cfg.func) cfg.func(data)
+    if(!buildCells[name]) return
     
     var log = document.createElement("p")
-    log.className = type
+    log.className = "debug-type-"+type
     log.innerText = data
     for(let cell of buildCells[name]) 
       cell.appendChild(log)
@@ -18,12 +34,14 @@ loadModule(function(name) {
         margin: 0 0.5em;
         font-family: monospace;
         text-transform: none;
-        color: #00ff00;
+        color: #ffffff;
       }
       
       p:first-child {
         margin-top: 0.3em;
       }
+      
+      ${Object.keys(config).map(t => {return "p.debug-type-"+t+" {\ncolor: "+(config[t].color||"#e7d4ff")+";\n}\n"}).join("\n")}
     `,
     build: ()=>{}
   }
