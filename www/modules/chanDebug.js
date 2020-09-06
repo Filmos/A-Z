@@ -5,8 +5,15 @@ loadModule(function(name) {
     warn: {func: console.warn, color: "#efe26b"},
     error: {func: console.error, color: "#ff3842"}
   }
+  let newP = (data, type="info", details) => {
+    var log = document.createElement("p")
+    log.className = "debug-type-"+type
+    log.innerText = data
+    return log
+  }
   
-  chan.addListener("debug", (data, type="info", details) => {
+  cache = []
+  chan.addListener("debug", function (data, type="info", details) {
     let cfg = config[type]
     if(!cfg) {
       if(type!=="warn") {
@@ -16,11 +23,10 @@ loadModule(function(name) {
       return
     }
     if(cfg.func) cfg.func(data)
+    cache.push([...arguments])
     if(!buildCells[name]) return
     
-    var log = document.createElement("p")
-    log.className = "debug-type-"+type
-    log.innerText = data
+    let log = newP(...arguments)
     for(let cell of buildCells[name]) 
       cell.appendChild(log)
   })
@@ -38,11 +44,13 @@ loadModule(function(name) {
       }
       
       p:first-child {
-        margin-top: 0.3em;
+        margin-top: 0.5em;
       }
       
       ${Object.keys(config).map(t => {return "p.debug-type-"+t+" {\ncolor: "+(config[t].color||"#e7d4ff")+";\n}\n"}).join("\n")}
     `,
-    build: ()=>{}
+    build: (cell)=>{
+      for(let l of cache) cell.appendChild(newP(...l))
+    }
   }
 })

@@ -79,10 +79,6 @@ function loadModule(init) {
     buildQueue[mod] = null
   }
   if(data.css) insertCSS(parseCSS(`.m-${mod} {${data.css}}`))
-  chan.debug("Important", "important")
-  chan.debug("Info", "info")
-  chan.debug("Warn", "warn")
-  chan.debug("Error", "error")
 }
 
 
