@@ -1,4 +1,4 @@
-loadModule(function(name) {
+module.load(function(name) {
   let config = {
     important: {func: (d)=>{console.log("%c"+d, 'margin-left: 10px; color: #0e53bb; font-weight: 700;')}, color: "#4dd5fe"},
     info: {func: (d)=>{console.log("%c"+d, 'margin-left: 10px;')}, color: "#a2ed68"},
@@ -24,10 +24,10 @@ loadModule(function(name) {
     }
     if(cfg.func) cfg.func(data)
     cache.push([...arguments])
-    if(!buildCells[name]) return
+    if(!module.cells[name]) return
     
     let log = newP(...arguments)
-    for(let cell of buildCells[name]) 
+    for(let cell of module.cells[name]) 
       cell.appendChild(log)
   })
   
