@@ -30,7 +30,14 @@ loadModule(function(name) {
     for(let cell of buildCells[name]) 
       cell.appendChild(log)
   })
-  chan.debug("Launching A.Z. v0.@", "important")
+  
+  let version = "vantablack"
+  try {
+    let s = metaStorage
+    version = "vaque"
+    if(metaStorage.commits) version = "v0."+metaStorage.commits.toString(16)
+  } catch(e) {}
+  chan.debug("Launching A.Z. "+device.platform+" "+version, "important")
   
   return {
     css: `
