@@ -5,9 +5,9 @@ document.addEventListener('deviceready', onDeviceReady, false);
 var module = {
   data: {},
   buildQueue: {},
+  postponed: false,
   cells: {},
   load: function(init) {
-    console.log("-_-")
     let parseCSS = function(css) {
       let parsing = css.split(/([{;}])/).map(s => s.trim()).filter(s => s)
       let parsed = ""
@@ -66,23 +66,38 @@ var module = {
     chan.debug('Successfully initialized "'+mod+'" module')
     
     this.data[mod] = data
+    if(data.css) insertCSS(parseCSS(`*[class*=' m-${mod}'] {${data.css}}`))
     if(this.buildQueue[mod]) {
       this.buildQueue[mod].forEach(e => this.forceBuild(e, mod))
       this.buildQueue[mod] = null
     }
-    if(data.css) insertCSS(parseCSS(`*[class*=' m-${mod}'] {${data.css}}`))
-    console.log("_-_")
+    if(this.postponed !== false && this.postponed[0] == mod) {
+      chan.debug('Releasing module loading lock...')
+      let postCopy = this.postponed
+      this.postponed = false
+      for(let i=1;i<postCopy.length;i++) this.import(...postCopy[i])
+    }
   },
-  build: function(el, mod) {
-    let injectJS = function(path) {
+  import: function(mod, tag) {
+    var injectJS = function(path) {
       var script = document.createElement("script")
       script.src = path
       document.head.appendChild(script)
     }
+    
+    if(this.postponed===false) {
+      injectJS('modules/'+mod+'.js')
+      if(tag=="l1") {
+        chan.debug('Module "'+mod+'" requested a level 1 loading lock')
+        this.postponed = [mod]
+      }
+    } else this.postponed.push([mod, tag])
+  },
+  build: function(el, mod, tag) {
     if(!this.data[mod]) {
       if(this.buildQueue[mod]) {this.buildQueue[mod].push(el); return}
       this.buildQueue[mod] = [el]
-      injectJS('modules/'+mod+'.js')
+      this.import(mod, tag)
     } else this.forceBuild(el, mod)
   },
   forceBuild: function(el, mod) {
@@ -130,7 +145,7 @@ function onDeviceReady() {
     for(let cl of el.classList) {
       if(cl.indexOf("m-")!=0) continue
       let reqData = cl.split("-")
-      module.build(el, reqData[1])
+      module.build(el, reqData[1], reqData[2])
       break
     }
   }
