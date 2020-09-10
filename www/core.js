@@ -21,7 +21,29 @@ var module = {
           if(scope.length < 1) chan.debug("Error while parsing css, scope is empty", "error", css)
           else if(content.length < 1) chan.debug("Error while parsing css, content is empty", "error", css)
           else if(content[content.length-1]) {
-            parsed += scope.join(" ")+" {\n"+content[content.length-1]+"}\n\n"
+            let pref = "", suf = "", flag = -1
+            for(let si in scope) {
+              s = scope[si]
+              if(s.indexOf("@")==0 && si==content.length-1) {
+                pref = s
+                suf = ""
+                continue
+              }
+              if(s.indexOf("@")==0) {
+                pref = ""
+                suf = ""
+                flag = si
+                continue
+              }
+              if(flag!==-1) {
+                pref += s+" { "
+                suf += "}"
+                continue
+              }
+              pref += s+" "
+            }
+            if(flag==-1) parsed += pref+" {\n"+content[content.length-1]+suf+"}\n\n"
+            else content[flag] += pref+"\n"+content[content.length-1]+suf+"\n"
           }
           if(scope.length > 0) scope.pop()
           if(content.length > 0) content.pop()
@@ -36,7 +58,7 @@ var module = {
           continue
         }
         if(next===";") {
-          content[content.length-1] = "   "+content[content.length-1]+frag+";\n"
+          content[content.length-1] += "   "+frag+";\n"
           continue
         }
         
