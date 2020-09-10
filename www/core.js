@@ -55,7 +55,7 @@ var module = {
     let mod = document.currentScript.src.match(/\/([^/]+?)\.js/i)
     if(!mod) {chan.debug("Tried loading invalid module: "+document.currentScript.src, "error"); return}
     mod = mod[1]
-    chan.debug('Loading "'+mod+'" module...')
+    chan.debug('Loading "'+mod+'" module...', 'important')
     
     let data = {}
     try {data = init(mod)}

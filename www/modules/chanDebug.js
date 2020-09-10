@@ -52,6 +52,7 @@ module.load(function(name) {
       
       p:first-child {
         margin-top: 0.5em;
+        font-weight: 900;
       }
       
       ${Object.keys(config).map(t => {return "p.debug-type-"+t+" {\ncolor: "+(config[t].color||"#e7d4ff")+";\n}\n"}).join("\n")}
