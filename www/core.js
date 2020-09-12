@@ -2,78 +2,80 @@
 // See https://cordova.apache.org/docs/en/latest/cordova/events/events.html#deviceready
 document.addEventListener('deviceready', onDeviceReady, false);
 
+var css = {
+  parse: function(css) {
+    let parsing = css.split(/([{;}])/).map(s => s.trim()).filter(s => s)
+    let parsed = ""
+    let scope = []
+    let content = []
+    
+    for(let i in parsing) {
+      let frag = parsing[i]
+      if(frag==="{"||frag===";") continue
+      if(frag==="}") {
+        if(scope.length < 1) chan.debug("Error while parsing css, scope is empty", "error", css)
+        else if(content.length < 1) chan.debug("Error while parsing css, content is empty", "error", css)
+        else if(content[content.length-1]) {
+          let pref = "", suf = "", flag = -1
+          for(let si in scope) {
+            s = scope[si]
+            if(s.indexOf("@")==0 && si==content.length-1) {
+              pref = s
+              suf = ""
+              continue
+            }
+            if(s.indexOf("@")==0) {
+              pref = ""
+              suf = ""
+              flag = si
+              continue
+            }
+            if(flag!==-1) {
+              pref += s+" { "
+              suf += "}"
+              continue
+            }
+            pref += s+" "
+          }
+          if(flag==-1) parsed += pref+" {\n"+content[content.length-1]+suf+"}\n\n"
+          else content[flag] += pref+"\n"+content[content.length-1]+suf+"\n"
+        }
+        if(scope.length > 0) scope.pop()
+        if(content.length > 0) content.pop()
+        continue        
+      }
+    
+      if(i == parsing.length-1) break
+      let next = parsing[i*1+1]
+      if(next==="{") {
+        scope.push(frag)
+        content.push("")
+        continue
+      }
+      if(next===";") {
+        content[content.length-1] += "   "+frag+";\n"
+        continue
+      }
+      
+      chan.debug('Error while parsing css, unrecognized fragment: "'+frag+'"', "error", css)
+    }
+    return parsed
+  },
+  inject: function(css) {
+    chan.debug('Inserting a css fragment...', 'info', css)
+    var sheet = document.createElement("style")
+    sheet.type = "text/css"
+    sheet.innerText = css
+    document.head.appendChild(sheet)
+  }
+}
+
 var module = {
   data: {},
   buildQueue: {},
   postponed: false,
   cells: {},
   load: function(init) {
-    let parseCSS = function(css) {
-      let parsing = css.split(/([{;}])/).map(s => s.trim()).filter(s => s)
-      let parsed = ""
-      let scope = []
-      let content = []
-      
-      for(let i in parsing) {
-        let frag = parsing[i]
-        if(frag==="{"||frag===";") continue
-        if(frag==="}") {
-          if(scope.length < 1) chan.debug("Error while parsing css, scope is empty", "error", css)
-          else if(content.length < 1) chan.debug("Error while parsing css, content is empty", "error", css)
-          else if(content[content.length-1]) {
-            let pref = "", suf = "", flag = -1
-            for(let si in scope) {
-              s = scope[si]
-              if(s.indexOf("@")==0 && si==content.length-1) {
-                pref = s
-                suf = ""
-                continue
-              }
-              if(s.indexOf("@")==0) {
-                pref = ""
-                suf = ""
-                flag = si
-                continue
-              }
-              if(flag!==-1) {
-                pref += s+" { "
-                suf += "}"
-                continue
-              }
-              pref += s+" "
-            }
-            if(flag==-1) parsed += pref+" {\n"+content[content.length-1]+suf+"}\n\n"
-            else content[flag] += pref+"\n"+content[content.length-1]+suf+"\n"
-          }
-          if(scope.length > 0) scope.pop()
-          if(content.length > 0) content.pop()
-          continue        
-        }
-      
-        if(i == parsing.length-1) break
-        let next = parsing[i*1+1]
-        if(next==="{") {
-          scope.push(frag)
-          content.push("")
-          continue
-        }
-        if(next===";") {
-          content[content.length-1] += "   "+frag+";\n"
-          continue
-        }
-        
-        chan.debug('Error while parsing css, unrecognized fragment: "'+frag+'"', "error", css)
-      }
-      return parsed
-    }
-    let insertCSS = function(css) {
-      chan.debug('Inserting a css fragment...', 'info', css)
-      var sheet = document.createElement("style")
-      sheet.type = "text/css"
-      sheet.innerText = css
-      document.head.appendChild(sheet)
-    }
-    
     let mod = document.currentScript.src.match(/\/([^/]+?)\.js/i)
     if(!mod) {chan.debug("Tried loading invalid module: "+document.currentScript.src, "error"); return}
     mod = mod[1]
@@ -88,7 +90,7 @@ var module = {
     chan.debug('Successfully initialized "'+mod+'" module')
     
     this.data[mod] = data
-    if(data.css) insertCSS(parseCSS(`*[class*=' m-${mod}'] {${data.css}}`))
+    if(data.css) css.inject(css.parse(`*[class*=' m-${mod}'] {${data.css}}`))
     if(this.buildQueue[mod]) {
       this.buildQueue[mod].forEach(e => this.forceBuild(e, mod))
       this.buildQueue[mod] = null
