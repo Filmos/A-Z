@@ -19,13 +19,14 @@ module.load(function(name) {
         stroke-linecap: round;
         animation: clockRotation 1200s infinite cubic-bezier(.61,.02,.85,1);
         * {
-          animation-timing-function: cubic-bezier(1,0,.86,-0.13);
           animation-iteration-count: infinite;
+          animation-play-state: inherit;
+          transform-origin: center;
         }
       }
     `,
     build: (cell)=>{
-      let unit = 60000
+      let unit = 60000*15
       
       
       let partConfig = {
@@ -75,15 +76,30 @@ module.load(function(name) {
           v.setAttribute(partConfig[part[0]][i-1], part[i])
         }
         
+        
+        
         v.style.animationDuration = unit+"ms"
         v.style.animationName = "anim"+animCount
         let anim = "@keyframes anim"+animCount+" {\n"
         animCount++
-        for(let i=animConfig.length-1;i>=0;i--) {
-          let check = animConfig[i].includes(p)
-          anim += "   "+(100/animConfig.length*(animConfig.length-1-i))+"% {opacity: "+(check?1:0)+";}\n"
+        
+        let off="opacity: 0;", on="opacity: 1;"
+        switch(part[0]) {
+          case 'line':
+            let ang = Math.atan2(v.getAttribute("y2")-v.getAttribute("y1"), v.getAttribute("x2")-v.getAttribute("x1"))
+            ang = "transform-origin: "+(v.getAttribute("x2")*1+v.getAttribute("x1")*1)/2+"px "+(v.getAttribute("y2")*1+v.getAttribute("y1")*1)/2+"px; transform: rotate3d("+Math.sin(ang)+", "+(-Math.cos(ang))+", 0, "
+            off=ang+"90deg);"
+            on=ang+"0deg);"
         }
-        anim+="   100% {opacity: 0;}\n}"
+        
+        let flag = null
+        for(let i=animConfig.length-1;i>=-1;i--) {
+          let check = (i===-1?false:animConfig[i].includes(p))
+          anim += "   "+(100/animConfig.length*(animConfig.length-1-i))+"% {"+(check?on:off)+"}\n"
+          if(flag===check) continue
+          flag = check
+          if(i<animConfig.length-1) anim += "   "+(100/animConfig.length*(animConfig.length-1.2-i))+"% {"+(check?off:on)+"}\n"
+        }
         css.inject(anim)
         
         svg.appendChild(v)
