@@ -26,7 +26,7 @@ module.load(function(name) {
       }
     `,
     build: (cell)=>{
-      let unit = 60000*15
+      let unit = 60000/2
       
       
       let partConfig = {
@@ -43,12 +43,12 @@ module.load(function(name) {
         }
       }
       let animConfig = [
-        ["line3"],
-        ["line3","lineV"],
-        ["line3","lineV","line1"],
-        ["line3","lineV","line4"],
-        ["line3","line1","line4"],
-        ["line1","line4"],
+        ["line3",["lineV",false,"transform-origin: 50px 95px;"]],
+        ["line3","lineV",["line1",false,"transform-origin: 50px 5px;"]],
+        ["line3","lineV",["line1",true,"transform-origin: 50px 5px;"],["line4",false,"transform-origin: 5px 50px;"]],
+        ["line3","lineV","line4",["line1",false,"transform-origin: 50px 5px;"]],
+        [["line3",true,"transform-origin: 5px 50px;"],"line1","line4"],
+        ["line1","line4",["lineV",false,"transform-origin: 50px 5px;"]],
         ["line1","line4","lineV"],
         ["line1","line4","lineV","lineH"],
         ["line2","line4","lineV","lineH"],
@@ -90,15 +90,32 @@ module.load(function(name) {
             ang = "transform-origin: "+(v.getAttribute("x2")*1+v.getAttribute("x1")*1)/2+"px "+(v.getAttribute("y2")*1+v.getAttribute("y1")*1)/2+"px; transform: rotate3d("+Math.sin(ang)+", "+(-Math.cos(ang))+", 0, "
             off=ang+"90deg);"
             on=ang+"0deg);"
+            // off="stroke-dashoffset: 110; stroke-dasharray: 100 100;"
+            // on="stroke-dasharray: 100 0; stroke-dashoffset: 55;"
+            // on="stroke-dasharray: 100 0; stroke-dashoffset: 68;"
         }
         
         let flag = null
         for(let i=animConfig.length-1;i>=-1;i--) {
-          let check = (i===-1?false:animConfig[i].includes(p))
-          anim += "   "+(100/animConfig.length*(animConfig.length-1-i))+"% {"+(check?on:off)+"}\n"
+          let check = false
+          let add = ""
+          if(i!==-1) {for(let a of animConfig[i]) {
+            if(a===p) {
+              check = true
+              break
+            }
+            if(a[0]===p) {
+              if(a[2]) add=a[2]
+              check = a[1]
+              break
+            }
+          }}
+          anim += "   "+(100/animConfig.length*(animConfig.length-1-i))+"% {"+(check?on:off)+add+"}\n"
+          if(add) console.log(anim)
           if(flag===check) continue
           flag = check
-          if(i<animConfig.length-1) anim += "   "+(100/animConfig.length*(animConfig.length-1.2-i))+"% {"+(check?off:on)+"}\n"
+          if(i<animConfig.length-1) anim += "   "+(100/animConfig.length*(animConfig.length-1.2-i))+"% {"+(check?off:on)+add+"}\n"
+          if(add) console.log(anim)
         }
         css.inject(anim)
         
