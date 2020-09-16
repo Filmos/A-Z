@@ -4,6 +4,8 @@ module.load(function(name) {
   return {
     css: `
       overflow: hidden;
+      animation: clockColor;
+      animation-iteration-count: 1;
       
       @keyframes clockRotation {
         0% {transform: rotate(0deg);}
@@ -13,21 +15,32 @@ module.load(function(name) {
         100% {transform: rotate(360deg);}
       }
       
+      @keyframes clockColor {
+        0% {stroke: #de7834;}
+        40% {stroke: #f7da2f;}
+        60% {stroke: #c4ee42;}
+        70% {stroke: #73e264;}
+        80% {stroke: #27c8c6;}
+        90% {stroke: #2e68e0;}
+        100% {stroke: #a22edb;}
+      }
+      
       svg {
-        stroke: wheat;
         stroke-width: 5;
         stroke-linecap: round;
-        animation: clockRotation 1200s infinite cubic-bezier(.61,.02,.85,1);
+        animation: clockRotation;
+        animation-timing-function: cubic-bezier(.61,.02,.85,1);
         * {
           animation-timing-function: inherit;
-          animation-iteration-count: infinite;
           animation-play-state: inherit;
           transform-origin: center;
+          visibility: hidden;
         }
       }
     `,
     build: (cell)=>{
-      let unit = 60000*15
+      let unit = 60000/6
+      let time = 240000/6
       
       
       let partConfig = {
@@ -59,6 +72,8 @@ module.load(function(name) {
         {line3: "-lm"}
       ]
       
+      let delay = -(unit-(time%unit))%unit+"ms"
+      cell.style.animationDuration = time+"ms"
       
       let svgCount = Object.entries(clockDef.parts).length
       if(svgCount == 0) chan.debug('Building an empty svg...')
@@ -67,6 +82,8 @@ module.load(function(name) {
       var svg = document.createElementNS("http://www.w3.org/2000/svg", "svg")
       svg.setAttribute("viewBox", "0 0 100 100")
       svg.style.animationDuration = unit/3+"ms"
+      svg.style.animationDelay = delay
+      svg.style.animationIterationCount = Math.ceil(time/unit)*3
       
       let anim = ""
       for(let p in clockDef.parts) {
@@ -83,20 +100,10 @@ module.load(function(name) {
         
         v.style.animationDuration = unit+"ms"
         v.style.animationName = "anim"+animCount
+        v.style.animationDelay = delay
+        v.style.animationIterationCount = Math.ceil(time/unit)
         anim += "@keyframes anim"+animCount+" {\n"
         animCount++
-        
-        // let off="opacity: 0;", on="opacity: 1;"
-        // switch(part[0]) {
-        //   case 'line':
-        //     let ang = Math.atan2(v.getAttribute("y2")-v.getAttribute("y1"), v.getAttribute("x2")-v.getAttribute("x1"))
-        //     ang = "transform-origin: "+(v.getAttribute("x2")*1+v.getAttribute("x1")*1)/2+"px "+(v.getAttribute("y2")*1+v.getAttribute("y1")*1)/2+"px; transform: rotate3d("+Math.sin(ang)+", "+(-Math.cos(ang))+", 0, "
-        //     off=ang+"90deg);"
-        //     on=ang+"0deg);"
-        //     // off="stroke-dashoffset: 110; stroke-dasharray: 100 100;"
-        //     // on="stroke-dasharray: 100 0; stroke-dashoffset: 55;"
-        //     // on="stroke-dasharray: 100 0; stroke-dashoffset: 68;"
-        // }
         
         if(animConfig[0].includes(p)) anim += "   0% {visibility: visible;}\n"
         else anim += "   0% {visibility: hidden;}\n"
@@ -131,32 +138,11 @@ module.load(function(name) {
             default:
               addFrames("opacity:1;", "opacity:0;", "opacity: unset;")
           }
-          
-          
-          // let check = false
-          // let add = ""
-          // if(i!==-1) {for(let a of animConfig[i]) {
-          //   if(a===p) {
-          //     check = true
-          //     break
-          //   }
-          //   if(a[0]===p) {
-          //     if(a[2]) add=a[2]
-          //     check = a[1]
-          //     break
-          //   }
-          // }}
-          // if(add) console.log(anim)
-          // if(flag===check) continue
-          // flag = check
-          // if(i<animConfig.length-1) anim += "   "+(100/animConfig.length*(animConfig.length-1.2-i))+"% {"+(check?off:on)+add+"}\n"
-          // if(add) console.log(anim)
         }
         anim +="   100% {visibility: hidden;}\n}\n\n"
         
         svg.appendChild(v)
       }
-      console.log(anim)
       css.inject(anim)
       
       
