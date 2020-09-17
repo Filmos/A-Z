@@ -2,6 +2,25 @@
 // See https://cordova.apache.org/docs/en/latest/cordova/events/events.html#deviceready
 document.addEventListener('deviceready', onDeviceReady, false);
 
+var hash = function(inp) {
+  if(inp === null) return 0
+  
+  if(typeof inp === 'object') {
+    const ordered = {};
+    Object.keys(inp).sort().forEach(function(key) {
+      ordered[key] = inp[key];
+    });
+    inp = JSON.stringify(ordered);
+  }
+  
+  var hash = 0, i, chr;
+  for (i = 0; i < inp.length; i++) {
+    chr   = inp.charCodeAt(i);
+    hash  = ((hash << 5) - hash) + chr;
+    hash |= 0; // Convert to 32bit integer
+  }
+  return hash;
+}
 var css = {
   parse: function(css) {
     let parsing = css.split(/([{;}])/).map(s => s.trim()).filter(s => s)
