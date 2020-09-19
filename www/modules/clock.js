@@ -29,10 +29,12 @@ var svg = {
     return svgElem;
   },
   animate: function(svgElem, config, unit, time) {
+    chan.debug("Animating svg group...")
     if(time===undefined) time = unit
     let delay = -(unit-(time%unit))%unit+"ms"
     
     for(let v of svgElem.childNodes) {
+      if(v.tagName === "svg") continue
       let anim = " {\n"
       let p = v.classList[0]      
       
@@ -88,15 +90,11 @@ var svg = {
 }
 
 module.load(function(name) {
-  let animCount = 0
-  
   return {
     css: `
       overflow: hidden;
       animation: clockColor;
       animation-iteration-count: 1;
-      border-radius: 50%;
-      border: aliceblue 4px solid;
       
       
       @keyframes clockRotation {
@@ -117,30 +115,38 @@ module.load(function(name) {
         100% {stroke: #a22edb; fill: #a22edb;}
       }
       
-      svg {
-        stroke-width: 5;
-        stroke-linecap: round;
+      .rotator {
         animation: clockRotation;
         animation-timing-function: cubic-bezier(.61,.02,.85,1);
         animation-play-state: inherit;
-        * {
-          animation-timing-function: inherit;
+        border-radius: 50%;
+        width: 100%;
+        height: 100%;
+        
+        svg {
+          stroke-width: 5;
+          stroke-linecap: round;
           animation-play-state: inherit;
-          transform-origin: center;
-          stroke-linejoin: round;
-          visibility: hidden;
-          fill-opacity: 0.2;
-        }
-        polygon {
-          stroke-width: 1;
+          position: fixed;
+          * {
+            animation-timing-function: inherit;
+            animation-play-state: inherit;
+            transform-origin: center;
+            stroke-linejoin: round;
+            visibility: visible;
+            fill-opacity: 0.2;
+          }
+          polygon {
+            stroke-width: 1;
+          }
         }
       }
     `,
     build: (cell)=>{
-      let unit = 60000/6
-      let time = 240000/6
+      let unit = 60000*60
+      let time = 60000*10
       
-      let clockDef = {
+      let minuteDef = {
         parts: {
           lineH: "line;10;50;90;50",
           lineV: "line;50;10;50;90",
@@ -154,8 +160,12 @@ module.load(function(name) {
           hour4: "polygon;45.75,62.25 37.75,54.25 29.75,62.25 37.75,70.25"
         }
       }
-      let clock = svg.build(clockDef)
+      let clock = document.createElement('div')
+      clock.className = "rotator"
       cell.appendChild(clock)
+      
+      let minute = svg.build(minuteDef)
+      clock.appendChild(minute)
       
       let delay = -(unit-(time%unit))%unit+"ms"
       cell.style.animationDuration = time+"ms"
@@ -164,8 +174,19 @@ module.load(function(name) {
       clock.style.animationDelay = delay
       clock.style.animationIterationCount = Math.ceil(time/unit)*3
       
-      let animConfig = [
-        ["line1","line2","line3","line4","hour1","hour2","hour3","hour4"],
+      let hourDef = {
+        parts: {
+          dot: "line;63;63;63;63"
+        }
+      }
+      for(let i=0;i<4;i++) {
+        let h = svg.build(hourDef)
+        h.style.transform = "rotate("+90*i+"deg)"
+        clock.appendChild(h)
+      }
+      
+      let minuteAnim = [
+        ["line1","line2","line3","line4"],
         {lineH: "+lo"},
         {lineV: "+lo"},
         {line1: "-lo", line3: "-lo"},
@@ -179,7 +200,7 @@ module.load(function(name) {
         {lineV: "-le"},
         {line3: "-lm"}
       ]
-      svg.animate(clock, animConfig, unit, time)
+      svg.animate(minute, minuteAnim, unit, time)
     }
   }
 })
