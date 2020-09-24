@@ -38,21 +38,29 @@ var svg = {
       let anim = " {\n"
       let p = v.classList[0]      
       
-      if(config[0].includes(p)) anim += "   0% {visibility: visible;}\n"
-      else anim += "   0% {visibility: hidden;}\n"
+      let state = ""
+      if(config[0][p]) {
+        if(config[0][p]!==true) state = config[0][p]
+        anim += "   0% {visibility: visible;"+state+"}\n"
+      } else anim += "   0% {visibility: hidden;}\n"
       for(let i=1;i<config.length;i++) {
         let type = config[i][p]
         if(!type) continue
         
         let addFrames = function(active, inactive, unset) {
-          anim += "   "+(100/(config.length-1)*(i-trans*1.1))+"% {"+unset+";}\n"
-          anim += "   "+(100/(config.length-1)*(i-trans))+"% {"+(type[0]==='-'?active:inactive)+"visibility: "+(type[0]==='-'?"visible":"hidden")+";}\n"
+          anim += "   "+(100/(config.length-1)*(i-trans*1.1))+"% {"+unset+"}\n"
+          anim += "   "+(100/(config.length-1)*(i-trans))+"% {"+state+(type[0]==='-'?active:inactive)+"visibility: "+(type[0]==='-'?"visible":"hidden")+";}\n"
           anim += "   "+(100/(config.length-1)*i)+"% {"+(type[0]==='-'?inactive:active)+"}\n"
           anim += "   "+(100/(config.length-1)*(i+trans*0.1))+"% {"+(type[0]==='-'?inactive:active)+"visibility: "+(type[0]==='-'?"hidden":"visible")+";}\n"
-          anim += "   "+(100/(config.length-1)*(i+trans*0.2))+"% {"+unset+";}\n"
+          anim += "   "+(100/(config.length-1)*(i+trans*0.2))+"% {"+state+unset+"}\n"
         }
         
         switch(type) {
+          case "-t":
+            
+            addFrames(``, `stroke-dasharray: ${Math.sqrt((v.getAttribute("y2")-v.getAttribute("y1"))**2+(v.getAttribute("x2")-v.getAttribute("x1"))**2)} 0; stroke-dashoffset: 0; transform: none;`, ``)
+            break
+          
           case "-lo": case "+lo":
             
             let dist = Math.sqrt((v.getAttribute("y2")-v.getAttribute("y1"))**2+(v.getAttribute("x2")-v.getAttribute("x1"))**2)
@@ -96,7 +104,7 @@ module.load(function(name) {
       overflow: hidden;
       animation: clockColor;
       animation-iteration-count: 1;
-      animation-play-state: paused;
+      // animation-play-state: paused;
       
       @keyframes clockRotation {
         0% {transform: rotate(0deg);}
@@ -145,42 +153,12 @@ module.load(function(name) {
             stroke-width: 1;
           }
           
-          .hourLineH {
-            transform: translate(-7px, -7px);
-            stroke-dasharray: 18.35 100;
-            stroke-dashoffset: -19.1;
-            stroke: transparent;
-          }
-          .hourLine1 {
-            transform: rotate(-90deg) translate(6.5px, -13.5px);
-            transform-origin: 80px 60px;
-            stroke-dasharray: 9.9 100;
-            stroke: transparent;
-          }
-          .hourLine2 {
-            transform: rotate(90deg) translate(-13.5px, 6.5px);
-            transform-origin: 60px 80px;
-            stroke-dasharray: 9.9 100;
-            stroke: transparent;
-          }
-          .hourLineM {
-            transform: rotate(90deg);
-            transform-origin: 70px 70px;
-            stroke-dasharray: 18.6 100;
-            stroke-dashoffset: -38.1;
-            stroke: transparent;
-          }
-          .hourDot {
-            transform: translate(-7px, -7px);
-            stroke-dasharray: 0 100;
-            stroke-dashoffset: -28.3;
-          }
         }
       }
     `,
     build: (cell)=>{
-      let unit = 60000
-      let time = 60000*10
+      let unit = 60000/4
+      let time = 60000/4*5
       
       let minuteDef = {
         parts: {
@@ -206,28 +184,8 @@ module.load(function(name) {
       clock.style.animationDelay = delay
       clock.style.animationIterationCount = Math.ceil(time/unit)*3
       
-      let hourDef = {
-        parts: {
-          // dot: "line;63;63;63;63",
-          hourDot: "line;90;50;50;90",
-          // lineM: "line;50;50;63;63",
-          hourLineM: "line;90;50;50;90",
-          // line1: "line;76.5;63.5;69.5;56.5",
-          // line2: "line;63.5;76.5;56.5;69.5",
-          hourLine1: "line;70;70;90;50",
-          hourLine2: "line;70;70;50;90",
-          // lineH: "line;69.5;56.5;56.5;69.5"
-          hourLineH: "line;90;50;50;90"
-        }
-      }
-      for(let i=0;i<4;i++) {
-        let h = svg.build(hourDef)
-        h.style.transform = "rotate("+90*i+"deg)"
-        clock.appendChild(h)
-      }
-      
       let minuteAnim = [
-        ["line1","line2","line3","line4"],
+        {line1: true, line2: true, line3: true, line4: true},
         {lineH: "+lo"},
         {lineV: "+lo"},
         {line1: "-lo", line3: "-lo"},
@@ -242,6 +200,44 @@ module.load(function(name) {
         {line3: "-lm"}
       ]
       svg.animate(minute, minuteAnim, unit, time)
+      
+      
+      
+      let hourDef = {
+        parts: {
+          // dot: "line;63;63;63;63",
+          hourDot: "line;90;50;50;90",
+          // lineM: "line;50;50;63;63",
+          hourLineM: "line;90;50;50;90",
+          // line1: "line;76.5;63.5;69.5;56.5",
+          // line2: "line;63.5;76.5;56.5;69.5",
+          hourLine1: "line;70;70;90;50",
+          hourLine2: "line;70;70;50;90",
+          // lineH: "line;69.5;56.5;56.5;69.5"
+          hourLineH: "line;90;50;50;90"
+        }
+      }
+      let hourAnim = [
+        {
+          hourDot: "transform: translate(-7px, -7px); stroke-dasharray: 0 100; stroke-dashoffset: -28.3;", 
+          hourLineM: "transform: rotate(90deg); transform-origin: 70px 70px; stroke-dasharray: 18.6 100; stroke-dashoffset: -38.1;", 
+          hourLine1: "transform: rotate(-90deg) translate(6.5px, -13.5px); transform-origin: 80px 60px; stroke-dasharray: 9.9 100;", 
+          hourLine2: "transform: rotate(90deg) translate(-13.5px, 6.5px); transform-origin: 60px 80px; stroke-dasharray: 9.9 100;", 
+          hourLineH: "transform: translate(-7px, -7px); stroke-dasharray: 18.35 100; stroke-dashoffset: -19.1;"
+        },
+        {hourLineH: "-t"},
+        {hourLine2: "-t", hourLine1: "-t"},
+        {hourLineM: "-t"},
+        {hourDot: "-t"},
+        {}
+      ]
+      for(let i=0;i<4;i++) {
+        let h = svg.build(hourDef)
+        h.style.transform = "rotate("+90*i+"deg)"
+        svg.animate(h, hourAnim, unit*5, time, 1/12/5)
+        clock.appendChild(h)
+      }
+      
     }
   }
 })
