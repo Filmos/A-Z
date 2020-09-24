@@ -28,7 +28,7 @@ var svg = {
     }
     return svgElem;
   },
-  animate: function(svgElem, config, unit, time) {
+  animate: function(svgElem, config, unit, time, trans=0.2) {
     chan.debug("Animating svg group...")
     if(time===undefined) time = unit
     let delay = -(unit-(time%unit))%unit+"ms"
@@ -45,11 +45,11 @@ var svg = {
         if(!type) continue
         
         let addFrames = function(active, inactive, unset) {
-          anim += "   "+(100/(config.length-1)*(i-0.25))+"% {"+unset+";}\n"
-          anim += "   "+(100/(config.length-1)*(i-0.2))+"% {"+(type[0]==='-'?active:inactive)+"visibility: "+(type[0]==='-'?"visible":"hidden")+";}\n"
+          anim += "   "+(100/(config.length-1)*(i-trans*1.1))+"% {"+unset+";}\n"
+          anim += "   "+(100/(config.length-1)*(i-trans))+"% {"+(type[0]==='-'?active:inactive)+"visibility: "+(type[0]==='-'?"visible":"hidden")+";}\n"
           anim += "   "+(100/(config.length-1)*i)+"% {"+(type[0]==='-'?inactive:active)+"}\n"
-          anim += "   "+(100/(config.length-1)*(i+0.05))+"% {"+(type[0]==='-'?inactive:active)+"visibility: "+(type[0]==='-'?"hidden":"visible")+";}\n"
-          anim += "   "+(100/(config.length-1)*(i+0.1))+"% {"+unset+";}\n"
+          anim += "   "+(100/(config.length-1)*(i+trans*0.1))+"% {"+(type[0]==='-'?inactive:active)+"visibility: "+(type[0]==='-'?"hidden":"visible")+";}\n"
+          anim += "   "+(100/(config.length-1)*(i+trans*0.2))+"% {"+unset+";}\n"
         }
         
         switch(type) {
@@ -89,13 +89,14 @@ var svg = {
   }
 }
 
+// stroke-dasharray: <line length> 0;
 module.load(function(name) {
   return {
     css: `
       overflow: hidden;
       animation: clockColor;
       animation-iteration-count: 1;
-      
+      animation-play-state: paused;
       
       @keyframes clockRotation {
         0% {transform: rotate(0deg);}
@@ -115,6 +116,10 @@ module.load(function(name) {
         100% {stroke: #a22edb; fill: #a22edb;}
       }
       
+      @keyframes null7 {
+        100% {transform: none; stroke-dasharray: 56.5 0; stroke-dashoffset: 0;}
+      }
+      
       .rotator {
         animation: clockRotation;
         animation-timing-function: cubic-bezier(.61,.02,.85,1);
@@ -129,7 +134,7 @@ module.load(function(name) {
           animation-play-state: inherit;
           position: fixed;
           * {
-            animation-timing-function: inherit;
+            animation-timing-function: linear;
             animation-play-state: inherit;
             transform-origin: center;
             stroke-linejoin: round;
@@ -139,11 +144,42 @@ module.load(function(name) {
           polygon {
             stroke-width: 1;
           }
+          
+          .hourLineH {
+            transform: translate(-7px, -7px);
+            stroke-dasharray: 18.35 100;
+            stroke-dashoffset: -19.1;
+            stroke: transparent;
+          }
+          .hourLine1 {
+            transform: rotate(-90deg) translate(6.5px, -13.5px);
+            transform-origin: 80px 60px;
+            stroke-dasharray: 9.9 100;
+            stroke: transparent;
+          }
+          .hourLine2 {
+            transform: rotate(90deg) translate(-13.5px, 6.5px);
+            transform-origin: 60px 80px;
+            stroke-dasharray: 9.9 100;
+            stroke: transparent;
+          }
+          .hourLineM {
+            transform: rotate(90deg);
+            transform-origin: 70px 70px;
+            stroke-dasharray: 18.6 100;
+            stroke-dashoffset: -38.1;
+            stroke: transparent;
+          }
+          .hourDot {
+            transform: translate(-7px, -7px);
+            stroke-dasharray: 0 100;
+            stroke-dashoffset: -28.3;
+          }
         }
       }
     `,
     build: (cell)=>{
-      let unit = 60000*60
+      let unit = 60000
       let time = 60000*10
       
       let minuteDef = {
@@ -153,11 +189,7 @@ module.load(function(name) {
           line1: "line;50;10;90;50",
           line2: "line;90;50;50;90",
           line3: "line;50;90;10;50",
-          line4: "line;10;50;50;10",
-          hour1: "polygon;54.25,62.25 62.25,54.25 70.25,62.25 62.25,70.25",
-          hour2: "polygon;54.25,37.75 62.25,45.75 70.25,37.75 62.25,29.75",
-          hour3: "polygon;45.75,37.75 37.75,45.75 29.75,37.75 37.75,29.75",
-          hour4: "polygon;45.75,62.25 37.75,54.25 29.75,62.25 37.75,70.25"
+          line4: "line;10;50;50;10"
         }
       }
       let clock = document.createElement('div')
@@ -176,7 +208,16 @@ module.load(function(name) {
       
       let hourDef = {
         parts: {
-          dot: "line;63;63;63;63"
+          // dot: "line;63;63;63;63",
+          hourDot: "line;90;50;50;90",
+          // lineM: "line;50;50;63;63",
+          hourLineM: "line;90;50;50;90",
+          // line1: "line;76.5;63.5;69.5;56.5",
+          // line2: "line;63.5;76.5;56.5;69.5",
+          hourLine1: "line;70;70;90;50",
+          hourLine2: "line;70;70;50;90",
+          // lineH: "line;69.5;56.5;56.5;69.5"
+          hourLineH: "line;90;50;50;90"
         }
       }
       for(let i=0;i<4;i++) {
