@@ -55,6 +55,16 @@ var svg = {
           anim += "   "+(100/(config.length-1)*(i+trans*0.2))+"% {"+state+unset+"}\n"
         }
         
+        if(Array.isArray(type)) {
+          switch(type[0]) {
+            case "t":
+              anim += "   "+(100/(config.length-1)*(i-trans))+"% {"+state+"}\n"
+              state = type[1]
+              anim += "   "+(100/(config.length-1)*i)+"% {"+state+"}\n"
+              continue
+          }
+        }
+        
         switch(type) {
           case "-t":
             
@@ -80,7 +90,7 @@ var svg = {
             addFrames("opacity:1;", "opacity:0;", "opacity: unset;")
         }
       }
-      anim +="   100% {visibility: hidden;}\n}"
+      anim +="   100% {"+state+"visibility: hidden;}\n}"
       
       v.style.animationDuration = unit+"ms"
       v.style.animationDelay = delay
@@ -157,8 +167,8 @@ module.load(function(name) {
       }
     `,
     build: (cell)=>{
-      let unit = 60000/4
-      let time = 60000/4*5
+      let unit = 60000/4/2
+      let time = 60000/4*6
       
       let minuteDef = {
         parts: {
@@ -214,18 +224,22 @@ module.load(function(name) {
           hourLine1: "line;70;70;90;50",
           hourLine2: "line;70;70;50;90",
           // lineH: "line;69.5;56.5;56.5;69.5"
-          hourLineH: "line;90;50;50;90"
+          hourLine3: "line;90;50;50;90",
+          hourLine4: "line;90;50;50;90"
         }
       }
       let hourAnim = [
         {
           hourDot: "transform: translate(-7px, -7px); stroke-dasharray: 0 100; stroke-dashoffset: -28.3;", 
-          hourLineM: "transform: rotate(90deg); transform-origin: 70px 70px; stroke-dasharray: 18.6 100; stroke-dashoffset: -38.1;", 
+          hourLineM: "transform: rotate(90deg); transform-origin: 70px 70px; stroke-dasharray: 18.5 100; stroke-dashoffset: -38.2;", 
           hourLine1: "transform: rotate(-90deg) translate(6.5px, -13.5px); transform-origin: 80px 60px; stroke-dasharray: 9.9 100;", 
           hourLine2: "transform: rotate(90deg) translate(-13.5px, 6.5px); transform-origin: 60px 80px; stroke-dasharray: 9.9 100;", 
-          hourLineH: "transform: translate(-7px, -7px); stroke-dasharray: 18.35 100; stroke-dashoffset: -19.1;"
+          // hourLine3: "transform: translate(0.5px, 0.5px) rotate(90deg); transform-origin: 70px 70px; stroke-dasharray: 10 100; stroke-dashoffset: -29;",
+          hourLine3: "transform: translate(-7px, -7px); stroke-dasharray: 9.35 100; stroke-dashoffset: -19.1;",
+          hourLine4: "transform: translate(-7px, -7px); stroke-dasharray: 9.35 100; stroke-dashoffset: -28.1;"
         },
-        {hourLineH: "-t"},
+        {hourLine4: "-t", hourLine3: ["t", "transform: translate(0.5px, 0.5px) rotate(90deg); transform-origin: 70px 70px; stroke-dasharray: 10 100; stroke-dashoffset: -29;"]},
+        {hourLine3: "-t"},
         {hourLine2: "-t", hourLine1: "-t"},
         {hourLineM: "-t"},
         {hourDot: "-t"},
@@ -234,7 +248,7 @@ module.load(function(name) {
       for(let i=0;i<4;i++) {
         let h = svg.build(hourDef)
         h.style.transform = "rotate("+90*i+"deg)"
-        svg.animate(h, hourAnim, unit*5, time, 1/12/5)
+        svg.animate(h, hourAnim, unit*6, time, 1/12/5)
         clock.appendChild(h)
       }
       
