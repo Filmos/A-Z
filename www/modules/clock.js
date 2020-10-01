@@ -114,14 +114,14 @@ module.load(function(name) {
       overflow: hidden;
       animation: clockColor;
       animation-iteration-count: 1;
-      // animation-play-state: paused;
+      animation-play-state: paused;
       
       @keyframes clockRotation {
-        0% {transform: rotate(0deg);}
-        25% {transform: rotate(90deg);}
-        50% {transform: rotate(180deg);}
-        75% {transform: rotate(270deg);}
-        100% {transform: rotate(360deg);}
+        0% {transform: rotate(0deg) scale(1.175);}
+        25% {transform: rotate(90deg) scale(1.175);}
+        50% {transform: rotate(180deg) scale(1.175);}
+        75% {transform: rotate(270deg) scale(1.175);}
+        100% {transform: rotate(360deg) scale(1.175);}
       }
       
       @keyframes clockColor {
@@ -167,8 +167,9 @@ module.load(function(name) {
       }
     `,
     build: (cell)=>{
-      let unit = 60000/4/2
-      let time = 60000/4*6
+      let unit = 60000*60
+      // let time = 60000/2*6*(1+1/36)
+      let time = unit*6*2//(1+1/36/8)
       
       let minuteDef = {
         parts: {
@@ -234,7 +235,6 @@ module.load(function(name) {
           hourLineM: "transform: rotate(90deg); transform-origin: 70px 70px; stroke-dasharray: 18.5 100; stroke-dashoffset: -38.2;", 
           hourLine1: "transform: rotate(-90deg) translate(6.5px, -13.5px); transform-origin: 80px 60px; stroke-dasharray: 9.9 100;", 
           hourLine2: "transform: rotate(90deg) translate(-13.5px, 6.5px); transform-origin: 60px 80px; stroke-dasharray: 9.9 100;", 
-          // hourLine3: "transform: translate(0.5px, 0.5px) rotate(90deg); transform-origin: 70px 70px; stroke-dasharray: 10 100; stroke-dashoffset: -29;",
           hourLine3: "transform: translate(-7px, -7px); stroke-dasharray: 9.35 100; stroke-dashoffset: -19.1;",
           hourLine4: "transform: translate(-7px, -7px); stroke-dasharray: 9.35 100; stroke-dashoffset: -28.1;"
         },
@@ -245,11 +245,49 @@ module.load(function(name) {
         {hourDot: "-t"},
         {}
       ]
+      
+      let quadDef = {
+        parts: {
+          quadLine1: "line;76.5;63.5;69.5;56.5",
+          quadLine2: "line;63.5;76.5;56.5;69.5",
+          quadLineH: "line;69.5;56.5;56.5;69.5",
+          quadLineM: "line;63;63;50;50",
+          quadLineO: "line;90;50;50;90",
+          // quadTemp1: "line;83.5;70.5;70.5;83.5",
+          quadTemp2: "line;76.5;63.5;77;77",
+          quadTemp3: "line;63.5;76.5;77;77",
+          // quadTemp4: "line;76.5;63.5;83.5;70.5",
+          // quadTemp5: "line;63.5;76.5;70.5;83.5"
+        }
+      }
+      let quadAnim = [
+        {
+          quadLine1: "transform: rotate(-90deg) translate(-7px, 7px); transform-origin: 76.5px 63.5px; stroke-dasharray: 6 100;",
+          quadLine2: "transform: rotate(90deg) translate(7px, -7px); transform-origin: 63.5px 76.5px; stroke-dasharray: 6 100;",
+          quadLineH: "transform: translate(14px, 14px); stroke-dasharray: 6 100; stroke-dashoffset: -6.2;",
+          quadLineM: "transform: translate(14px, 14px); stroke-dasharray: 0 100;",
+          quadLineO: "transform: translate(7px, 7px); stroke-dasharray: 18.4 100; stroke-dashoffset: -19.1;"
+        },
+        {
+          quadLine1: "transform: rotate(-90deg) translate(-7px, 7px); transform-origin: 76.5px 63.5px; stroke-dasharray: 6 100;",
+          quadLine2: "transform: rotate(90deg) translate(7px, -7px); transform-origin: 63.5px 76.5px; stroke-dasharray: 6 100;",
+          quadLineH: "transform: translate(14px, 14px); stroke-dasharray: 6 100; stroke-dashoffset: -6.2;",
+          quadLineM: "transform: translate(14px, 14px); stroke-dasharray: 0 100;",
+          quadLineO: "transform: translate(7px, 7px); stroke-dasharray: 18.4 100; stroke-dashoffset: -19.1;"
+        },
+        {quadLine1: "-t", quadLine2: "-t", quadLineH: "-t", quadLineM: "-t", quadLineO: "-t"},
+        {}
+      ]
       for(let i=0;i<4;i++) {
         let h = svg.build(hourDef)
         h.style.transform = "rotate("+90*i+"deg)"
         svg.animate(h, hourAnim, unit*6, time, 1/12/5)
         clock.appendChild(h)
+        
+        let q = svg.build(quadDef)
+        q.style.transform = "rotate("+90*i+"deg)"
+        // svg.animate(q, quadAnim, unit*6*2, time, 1/12/6/5)
+        clock.appendChild(q)
       }
       
     }

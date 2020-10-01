@@ -28,8 +28,10 @@ body {
 }
 
 .sq-big {
-  width: 95vmin;
-  height: 95vmin;
+  width: calc(95vmin - 18px);
+  height: calc(95vmin - 18px);
+  border: aliceblue solid;
+  border-radius: 50%;
 }
 
 .full {
