@@ -44,28 +44,38 @@ var svg = {
         anim += "   0% {visibility: visible;"+state+"}\n"
       } else anim += "   0% {visibility: hidden;}\n"
       for(let i=1;i<config.length;i++) {
-        let type = config[i][p]
-        if(!type) continue
+        let con = config[i][p]
+        if(!con) continue
         
         let addFrames = function(active, inactive, unset) {
           anim += "   "+(100/(config.length-1)*(i-trans*1.1))+"% {"+unset+"}\n"
-          anim += "   "+(100/(config.length-1)*(i-trans))+"% {"+state+(type[0]==='-'?active:inactive)+"visibility: "+(type[0]==='-'?"visible":"hidden")+";}\n"
-          anim += "   "+(100/(config.length-1)*i)+"% {"+(type[0]==='-'?inactive:active)+"}\n"
-          anim += "   "+(100/(config.length-1)*(i+trans*0.1))+"% {"+(type[0]==='-'?inactive:active)+"visibility: "+(type[0]==='-'?"hidden":"visible")+";}\n"
-          anim += "   "+(100/(config.length-1)*(i+trans*0.2))+"% {"+state+unset+"}\n"
+          anim += "   "+(100/(config.length-1)*(i-trans))+"% {"+state+(con.type[0]==='-'?active:inactive)+"visibility: "+(con.type[0]==='-'?"visible":"hidden")+";}\n"
+          anim += "   "+(100/(config.length-1)*i)+"% {"+(con.type[0]==='-'?inactive:active)+"}\n"
+          anim += "   "+(100/(config.length-1)*(i+trans*0.1))+"% {"+(con.type[0]==='-'?inactive:active)+"visibility: "+(con.type[0]==='-'?"hidden":"visible")+";}\n"
+          anim += "   "+(100/(config.length-1)*(i+trans*0.100001))+"% {"+(con.jump?con.jump:state+unset)+"}\n"
         }
         
-        if(Array.isArray(type)) {
-          switch(type[0]) {
-            case "t":
-              anim += "   "+(100/(config.length-1)*(i-trans))+"% {"+state+"}\n"
-              state = type[1]
-              anim += "   "+(100/(config.length-1)*i)+"% {"+state+"}\n"
-              continue
+        if(Array.isArray(con)) {
+          con = {
+            type: con[0],
+            data: con[1]
+          }
+        } else if(typeof con === 'string' || con instanceof String) {
+          con = {
+            type: con
           }
         }
         
-        switch(type) {
+        switch(con.type) {
+          case ":t":
+          
+            anim += "   "+(100/(config.length-1)*(i-trans))+"% {"+state+"}\n"
+            state = con.data
+            anim += "   "+(100/(config.length-1)*i)+"% {"+state+"}\n"
+            anim += "   "+(100/(config.length-1)*(i+trans*0.1))+"% {"+state+"}\n"
+            if(con.jump) anim += "   "+(100/(config.length-1)*(i+trans*0.100001))+"% {"+con.jump+"}\n"
+            break
+            
           case "-t":
             
             addFrames(``, `stroke-dasharray: ${Math.sqrt((v.getAttribute("y2")-v.getAttribute("y1"))**2+(v.getAttribute("x2")-v.getAttribute("x1"))**2)} 0; stroke-dashoffset: 0; transform: none;`, ``)
@@ -82,13 +92,15 @@ var svg = {
           case "-lb": case "+lb":
             
             let ang = Math.atan2(v.getAttribute("y2")-v.getAttribute("y1"), v.getAttribute("x2")-v.getAttribute("x1"))
-            ang = "transform-origin: "+(v.getAttribute("x2")*(type[2]==='b'?0:1)+v.getAttribute("x1")*(type[2]==='e'?0:1))/(type[2]==='m'?2:1)+"px "+(v.getAttribute("y2")*(type[2]==='b'?0:1)+v.getAttribute("y1")*(type[2]==='e'?0:1))/(type[2]==='m'?2:1)+"px; transform: rotate3d("+Math.sin(ang)+", "+(-Math.cos(ang))+", 0, "
+            ang = "transform-origin: "+(v.getAttribute("x2")*(con.type[2]==='b'?0:1)+v.getAttribute("x1")*(con.type[2]==='e'?0:1))/(con.type[2]==='m'?2:1)+"px "+(v.getAttribute("y2")*(con.type[2]==='b'?0:1)+v.getAttribute("y1")*(con.type[2]==='e'?0:1))/(con.type[2]==='m'?2:1)+"px; transform: rotate3d("+Math.sin(ang)+", "+(-Math.cos(ang))+", 0, "
             addFrames(ang+"0deg);", ang+"90deg);", "transform: unset;")
             break
             
           default:
             addFrames("opacity:1;", "opacity:0;", "opacity: unset;")
         }
+        
+        if(con.jump) state = con.jump
       }
       anim +="   100% {"+state+"visibility: hidden;}\n}"
       
@@ -114,7 +126,7 @@ module.load(function(name) {
       overflow: hidden;
       animation: clockColor;
       animation-iteration-count: 1;
-      animation-play-state: paused;
+      // animation-play-state: paused;
       
       @keyframes clockRotation {
         0% {transform: rotate(0deg) scale(1.175);}
@@ -167,9 +179,9 @@ module.load(function(name) {
       }
     `,
     build: (cell)=>{
-      let unit = 60000*60
+      let unit = 60000*60/4/4
       // let time = 60000/2*6*(1+1/36)
-      let time = unit*6*2//(1+1/36/8)
+      let time = unit*6*(1+1/36/8)
       
       let minuteDef = {
         parts: {
@@ -238,7 +250,7 @@ module.load(function(name) {
           hourLine3: "transform: translate(-7px, -7px); stroke-dasharray: 9.35 100; stroke-dashoffset: -19.1;",
           hourLine4: "transform: translate(-7px, -7px); stroke-dasharray: 9.35 100; stroke-dashoffset: -28.1;"
         },
-        {hourLine4: "-t", hourLine3: ["t", "transform: translate(0.5px, 0.5px) rotate(90deg); transform-origin: 70px 70px; stroke-dasharray: 10 100; stroke-dashoffset: -29;"]},
+        {hourLine4: "-t", hourLine3: [":t", "transform: translate(0.5px, 0.5px) rotate(90deg); transform-origin: 70px 70px; stroke-dasharray: 10 100; stroke-dashoffset: -29;"]},
         {hourLine3: "-t"},
         {hourLine2: "-t", hourLine1: "-t"},
         {hourLineM: "-t"},
@@ -248,34 +260,43 @@ module.load(function(name) {
       
       let quadDef = {
         parts: {
-          quadLine1: "line;76.5;63.5;69.5;56.5",
-          quadLine2: "line;63.5;76.5;56.5;69.5",
+          quadLine1: "line;79;66;69.5;56.5",
+          quadLine2: "line;66;79;56.5;69.5",
           quadLineH: "line;69.5;56.5;56.5;69.5",
           quadLineM: "line;63;63;50;50",
           quadLineO: "line;90;50;50;90",
-          // quadTemp1: "line;83.5;70.5;70.5;83.5",
-          quadTemp2: "line;76.5;63.5;77;77",
-          quadTemp3: "line;63.5;76.5;77;77",
+          quadTemp1: "line;83.5;70.5;70.5;83.5",
+          // quadTemp2: "line;76.5;63.5;77;77",
+          // quadTemp3: "line;63.5;76.5;77;77",
           // quadTemp4: "line;76.5;63.5;83.5;70.5",
           // quadTemp5: "line;63.5;76.5;70.5;83.5"
         }
       }
       let quadAnim = [
         {
-          quadLine1: "transform: rotate(-90deg) translate(-7px, 7px); transform-origin: 76.5px 63.5px; stroke-dasharray: 6 100;",
-          quadLine2: "transform: rotate(90deg) translate(7px, -7px); transform-origin: 63.5px 76.5px; stroke-dasharray: 6 100;",
-          quadLineH: "transform: translate(14px, 14px); stroke-dasharray: 6 100; stroke-dashoffset: -6.2;",
+          quadLine1: "transform: translate(7px, 7px) rotate( 42.5deg); transform-origin: 69.5px 56.5px; stroke-dasharray: 14 100; stroke-dashoffset: 0;",
+          quadLine2: "transform: translate(7px, 7px) rotate(-42.5deg); transform-origin: 56.5px 69.5px; stroke-dasharray: 14 100; stroke-dashoffset: 0;",
+          quadLineH: "transform: translate(14px, 14px); stroke-dasharray: 0 100; stroke-dashoffset: -9.2;",
           quadLineM: "transform: translate(14px, 14px); stroke-dasharray: 0 100;",
-          quadLineO: "transform: translate(7px, 7px); stroke-dasharray: 18.4 100; stroke-dashoffset: -19.1;"
+          quadLineO: "stroke-dasharray: 0 100; stroke-dashoffset: -28.2; transform: translate(7px, 7px);",
+          quadTemp1: "stroke-dasharray: 0 100; stroke-dashoffset: -9.2;"
         },
+        // {
+        //   quadLine1: "transform: rotate(-90deg) translate(-7px, 7px); transform-origin: 76.5px 63.5px; stroke-dasharray: 6 100;",
+        //   quadLine2: "transform: rotate(90deg) translate(7px, -7px); transform-origin: 63.5px 76.5px; stroke-dasharray: 6 100;",
+        //   quadLineH: "transform: translate(14px, 14px); stroke-dasharray: 6 100; stroke-dashoffset: -6.2;",
+        //   quadLineM: "transform: translate(14px, 14px); stroke-dasharray: 0 100;",
+        //   quadLineO: "transform: translate(7px, 7px); stroke-dasharray: 18.4 100; stroke-dashoffset: -19.1;"
+        // },
         {
-          quadLine1: "transform: rotate(-90deg) translate(-7px, 7px); transform-origin: 76.5px 63.5px; stroke-dasharray: 6 100;",
-          quadLine2: "transform: rotate(90deg) translate(7px, -7px); transform-origin: 63.5px 76.5px; stroke-dasharray: 6 100;",
-          quadLineH: "transform: translate(14px, 14px); stroke-dasharray: 6 100; stroke-dashoffset: -6.2;",
-          quadLineM: "transform: translate(14px, 14px); stroke-dasharray: 0 100;",
-          quadLineO: "transform: translate(7px, 7px); stroke-dasharray: 18.4 100; stroke-dashoffset: -19.1;"
+          quadLine1: {type: ":t", data: "transform: none; stroke-dasharray: 10 100; stroke-dashoffset: -3.6;", jump: "transform: rotate(-90deg) translate(-7px, 7px); transform-origin: 76.5px 63.5px; stroke-dasharray: 6 100;"}, 
+          quadLine2: {type: ":t", data: "transform: none; stroke-dasharray: 10 100; stroke-dashoffset: -3.6;", jump: "transform: rotate( 90deg) translate(7px, -7px); transform-origin: 63.5px 76.5px; stroke-dasharray: 6 100;"}, 
+          quadLineH: {type: "-t", jump: "transform: translate(14px, 14px); stroke-dasharray: 6 100; stroke-dashoffset: -6.2;"}, 
+          quadLineM: {type: "-t", jump: "transform: translate(14px, 14px); stroke-dasharray: 0 100;"}, 
+          quadLineO: {type: "-t", jump: "transform: translate(7px, 7px); stroke-dasharray: 18.4 100; stroke-dashoffset: -19.1;"}, 
+          quadTemp1: "-t"
         },
-        {quadLine1: "-t", quadLine2: "-t", quadLineH: "-t", quadLineM: "-t", quadLineO: "-t"},
+        {quadLine1: {type: ":t", data: "stroke-dasharray: 10 100; stroke-dashoffset: -3.6; visibility: visible;", jump: "visibility: hidden"}, quadLine2: {type: ":t", data: "stroke-dasharray: 10 100; stroke-dashoffset: -3.6; visibility: visible;", jump: "visibility: hidden"}, quadLineH: "-t", quadLineM: "-t", quadLineO: "-t"},
         {}
       ]
       for(let i=0;i<4;i++) {
@@ -286,7 +307,7 @@ module.load(function(name) {
         
         let q = svg.build(quadDef)
         q.style.transform = "rotate("+90*i+"deg)"
-        // svg.animate(q, quadAnim, unit*6*2, time, 1/12/6/5)
+        svg.animate(q, quadAnim, unit*6*3, time, 1/12/6/5)
         clock.appendChild(q)
       }
       
