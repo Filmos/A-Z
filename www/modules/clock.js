@@ -18,6 +18,13 @@ var svg = {
       v.setAttribute("d", `M${startX} ${startY} A${radius} ${radius} 0 0 1 ${endX} ${endY}`)
       v.setAttribute("stroke", "rgb(0, 255, 255)")
       
+      let colsGreen = ["#ccff99", "#66ff33", "#00b300", "#006633"]
+      let colsBlue = ["#d1faf0", "#00cccc", "#3366ff", "#0000cc", "#270066"]
+      let colsMagenta = ["#ffdbf7", "#ff66d9", "#e60073", "#800040", "#400000", "#663300"]
+      let colsYellow = ["#ffecb3", "#ffc21a", "#806000", "#332600"]
+      let cols = ["#ffdbf7", "#ff66d9", "#e60073", "#800040", "#400000", "#663300", "#332600", "#806000", "#ffc21a", "#ffecb3"]
+      v.setAttribute("stroke", cols[Math.floor(Math.random()*cols.length)])
+      v.setAttribute("stroke", cols[i%cols.length])
       svgElem.appendChild(v)
     }
     return svgElem
