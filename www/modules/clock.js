@@ -1,5 +1,27 @@
 var svg = {
   animCache: {},
+  circleFragments: function() {
+    var svgElem = document.createElementNS("http://www.w3.org/2000/svg", "svg")
+    svgElem.setAttribute("viewBox", "0 0 100 100")
+    
+    maxI = 12
+    radius = 45
+    overlap = 0.01
+    for(let i=0; i<maxI; i++) {
+      let v = document.createElementNS(svgElem.namespaceURI, "path")
+      
+      let startY = 50+radius*Math.cos(Math.PI - Math.PI*2/maxI*i + Math.PI*overlap)
+      let startX = 50+radius*Math.sin(Math.PI - Math.PI*2/maxI*i + Math.PI*overlap)
+      let endY = 50+radius*Math.cos(Math.PI - Math.PI*2/maxI*(i+1))
+      let endX = 50+radius*Math.sin(Math.PI - Math.PI*2/maxI*(i+1))
+      
+      v.setAttribute("d", `M${startX} ${startY} A${radius} ${radius} 0 0 1 ${endX} ${endY}`)
+      v.setAttribute("stroke", "rgb(0, 255, 255)")
+      
+      svgElem.appendChild(v)
+    }
+    return svgElem
+  },
   build: function(def) {
     let partConfig = {
       line: ["x1", "y1", "x2", "y2"],
@@ -124,17 +146,6 @@ module.load(function(name) {
   return {
     css: `
       overflow: hidden;
-      animation: clockColor;
-      animation-iteration-count: 1;
-      // animation-play-state: paused;
-      
-      @keyframes clockRotation {
-        0% {transform: rotate(0deg) scale(1.175);}
-        25% {transform: rotate(90deg) scale(1.175);}
-        50% {transform: rotate(180deg) scale(1.175);}
-        75% {transform: rotate(270deg) scale(1.175);}
-        100% {transform: rotate(360deg) scale(1.175);}
-      }
       
       @keyframes clockColor {
         0% {stroke: #de7834; fill: #de7834;}
@@ -146,171 +157,14 @@ module.load(function(name) {
         100% {stroke: #a22edb; fill: #a22edb;}
       }
       
-      @keyframes null7 {
-        100% {transform: none; stroke-dasharray: 56.5 0; stroke-dashoffset: 0;}
-      }
-      
-      .rotator {
-        animation: clockRotation;
-        animation-timing-function: cubic-bezier(.61,.02,.85,1);
-        animation-play-state: inherit;
-        border-radius: 50%;
-        width: 100%;
-        height: 100%;
-        
-        svg {
-          stroke-width: 5;
-          stroke-linecap: round;
-          animation-play-state: inherit;
-          position: fixed;
-          * {
-            animation-timing-function: linear;
-            animation-play-state: inherit;
-            transform-origin: center;
-            stroke-linejoin: round;
-            visibility: visible;
-            fill-opacity: 0.2;
-          }
-          polygon {
-            stroke-width: 1;
-          }
-          
-        }
+      svg {
+        stroke-width: 6px;
+        stroke: palegreen;
+        transform: scale(0.06);
       }
     `,
     build: (cell)=>{
-      let unit = 60000*60/4/4
-      // let time = 60000/2*6*(1+1/36)
-      let time = unit*6*(1+1/36/8)
-      
-      let minuteDef = {
-        parts: {
-          lineH: "line;10;50;90;50",
-          lineV: "line;50;10;50;90",
-          line1: "line;50;10;90;50",
-          line2: "line;90;50;50;90",
-          line3: "line;50;90;10;50",
-          line4: "line;10;50;50;10"
-        }
-      }
-      let clock = document.createElement('div')
-      clock.className = "rotator"
-      cell.appendChild(clock)
-      
-      let minute = svg.build(minuteDef)
-      clock.appendChild(minute)
-      
-      let delay = -(unit-(time%unit))%unit+"ms"
-      cell.style.animationDuration = time+"ms"
-      
-      clock.style.animationDuration = unit/3+"ms"
-      clock.style.animationDelay = delay
-      clock.style.animationIterationCount = Math.ceil(time/unit)*3
-      
-      let minuteAnim = [
-        {line1: true, line2: true, line3: true, line4: true},
-        {lineH: "+lo"},
-        {lineV: "+lo"},
-        {line1: "-lo", line3: "-lo"},
-        {line2: "-lo", line1: "+lo"},
-        {lineH: "-lm"},
-        {lineV: "-lb"},
-        {line3: "+le"},
-        {line1: "-lb", lineV: "+lo"},
-        {line4: "-lo", line1: "+lb"},
-        {line1: "-lb"},
-        {lineV: "-le"},
-        {line3: "-lm"}
-      ]
-      svg.animate(minute, minuteAnim, unit, time)
-      
-      
-      
-      let hourDef = {
-        parts: {
-          // dot: "line;63;63;63;63",
-          hourDot: "line;90;50;50;90",
-          // lineM: "line;50;50;63;63",
-          hourLineM: "line;90;50;50;90",
-          // line1: "line;76.5;63.5;69.5;56.5",
-          // line2: "line;63.5;76.5;56.5;69.5",
-          hourLine1: "line;70;70;90;50",
-          hourLine2: "line;70;70;50;90",
-          // lineH: "line;69.5;56.5;56.5;69.5"
-          hourLine3: "line;90;50;50;90",
-          hourLine4: "line;90;50;50;90"
-        }
-      }
-      let hourAnim = [
-        {
-          hourDot: "transform: translate(-7px, -7px); stroke-dasharray: 0 100; stroke-dashoffset: -28.3;", 
-          hourLineM: "transform: rotate(90deg); transform-origin: 70px 70px; stroke-dasharray: 18.5 100; stroke-dashoffset: -38.2;", 
-          hourLine1: "transform: rotate(-90deg) translate(6.5px, -13.5px); transform-origin: 80px 60px; stroke-dasharray: 9.9 100;", 
-          hourLine2: "transform: rotate(90deg) translate(-13.5px, 6.5px); transform-origin: 60px 80px; stroke-dasharray: 9.9 100;", 
-          hourLine3: "transform: translate(-7px, -7px); stroke-dasharray: 9.35 100; stroke-dashoffset: -19.1;",
-          hourLine4: "transform: translate(-7px, -7px); stroke-dasharray: 9.35 100; stroke-dashoffset: -28.1;"
-        },
-        {hourLine4: "-t", hourLine3: [":t", "transform: translate(0.5px, 0.5px) rotate(90deg); transform-origin: 70px 70px; stroke-dasharray: 10 100; stroke-dashoffset: -29;"]},
-        {hourLine3: "-t"},
-        {hourLine2: "-t", hourLine1: "-t"},
-        {hourLineM: "-t"},
-        {hourDot: "-t"},
-        {}
-      ]
-      
-      let quadDef = {
-        parts: {
-          quadLine1: "line;79;66;69.5;56.5",
-          quadLine2: "line;66;79;56.5;69.5",
-          quadLineH: "line;69.5;56.5;56.5;69.5",
-          quadLineM: "line;63;63;50;50",
-          quadLineO: "line;90;50;50;90",
-          quadTemp1: "line;83.5;70.5;70.5;83.5",
-          // quadTemp2: "line;76.5;63.5;77;77",
-          // quadTemp3: "line;63.5;76.5;77;77",
-          // quadTemp4: "line;76.5;63.5;83.5;70.5",
-          // quadTemp5: "line;63.5;76.5;70.5;83.5"
-        }
-      }
-      let quadAnim = [
-        {
-          quadLine1: "transform: translate(7px, 7px) rotate( 42.5deg); transform-origin: 69.5px 56.5px; stroke-dasharray: 14 100; stroke-dashoffset: 0;",
-          quadLine2: "transform: translate(7px, 7px) rotate(-42.5deg); transform-origin: 56.5px 69.5px; stroke-dasharray: 14 100; stroke-dashoffset: 0;",
-          quadLineH: "transform: translate(14px, 14px); stroke-dasharray: 0 100; stroke-dashoffset: -9.2;",
-          quadLineM: "transform: translate(14px, 14px); stroke-dasharray: 0 100;",
-          quadLineO: "stroke-dasharray: 0 100; stroke-dashoffset: -28.2; transform: translate(7px, 7px);",
-          quadTemp1: "stroke-dasharray: 0 100; stroke-dashoffset: -9.2;"
-        },
-        // {
-        //   quadLine1: "transform: rotate(-90deg) translate(-7px, 7px); transform-origin: 76.5px 63.5px; stroke-dasharray: 6 100;",
-        //   quadLine2: "transform: rotate(90deg) translate(7px, -7px); transform-origin: 63.5px 76.5px; stroke-dasharray: 6 100;",
-        //   quadLineH: "transform: translate(14px, 14px); stroke-dasharray: 6 100; stroke-dashoffset: -6.2;",
-        //   quadLineM: "transform: translate(14px, 14px); stroke-dasharray: 0 100;",
-        //   quadLineO: "transform: translate(7px, 7px); stroke-dasharray: 18.4 100; stroke-dashoffset: -19.1;"
-        // },
-        {
-          quadLine1: {type: ":t", data: "transform: none; stroke-dasharray: 10 100; stroke-dashoffset: -3.6;", jump: "transform: rotate(-90deg) translate(-7px, 7px); transform-origin: 76.5px 63.5px; stroke-dasharray: 6 100;"}, 
-          quadLine2: {type: ":t", data: "transform: none; stroke-dasharray: 10 100; stroke-dashoffset: -3.6;", jump: "transform: rotate( 90deg) translate(7px, -7px); transform-origin: 63.5px 76.5px; stroke-dasharray: 6 100;"}, 
-          quadLineH: {type: "-t", jump: "transform: translate(14px, 14px); stroke-dasharray: 6 100; stroke-dashoffset: -6.2;"}, 
-          quadLineM: {type: "-t", jump: "transform: translate(14px, 14px); stroke-dasharray: 0 100;"}, 
-          quadLineO: {type: "-t", jump: "transform: translate(7px, 7px); stroke-dasharray: 18.4 100; stroke-dashoffset: -19.1;"}, 
-          quadTemp1: "-t"
-        },
-        {quadLine1: {type: ":t", data: "stroke-dasharray: 10 100; stroke-dashoffset: -3.6; visibility: visible;", jump: "visibility: hidden"}, quadLine2: {type: ":t", data: "stroke-dasharray: 10 100; stroke-dashoffset: -3.6; visibility: visible;", jump: "visibility: hidden"}, quadLineH: "-t", quadLineM: "-t", quadLineO: "-t"},
-        {}
-      ]
-      for(let i=0;i<4;i++) {
-        let h = svg.build(hourDef)
-        h.style.transform = "rotate("+90*i+"deg)"
-        svg.animate(h, hourAnim, unit*6, time, 1/12/5)
-        clock.appendChild(h)
-        
-        let q = svg.build(quadDef)
-        q.style.transform = "rotate("+90*i+"deg)"
-        svg.animate(q, quadAnim, unit*6*3, time, 1/12/6/5)
-        clock.appendChild(q)
-      }
-      
+      cell.appendChild(svg.circleFragments())
     }
   }
 })
