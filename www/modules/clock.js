@@ -18,11 +18,11 @@ var svg = {
       v.setAttribute("d", `M${startX} ${startY} A${radius} ${radius} 0 0 1 ${endX} ${endY}`)
       v.setAttribute("stroke", "rgb(0, 255, 255)")
       
-      let colsGreen = ["#ccff99", "#66ff33", "#00b300", "#006633"]
-      let colsBlue = ["#d1faf0", "#00cccc", "#3366ff", "#0000cc", "#270066"]
-      let colsMagenta = ["#ffdbf7", "#ff66d9", "#e60073", "#800040", "#400000", "#663300"]
-      let colsYellow = ["#ffecb3", "#ffc21a", "#806000", "#332600"]
-      let cols = ["#ffdbf7", "#ff66d9", "#e60073", "#800040", "#400000", "#663300", "#332600", "#806000", "#ffc21a", "#ffecb3"]
+      let colsGreen = ["#99ff99", "#53ff1a", "#00b300", "#006633"]
+      let colsBlue = ["#a4e0f4", "#00cccc", "#3366ff", "#0000cc", "#270066"]
+      let colsMagenta = ["#ff99e6", "#ff66d9", "#e60073", "#800040", "#400000", "#663300"]
+      let colsYellow = ["#ffff99", "#ffc21a", "#806000", "#332600"]
+      let cols = [colsYellow[0], colsGreen[0], colsBlue[0], colsMagenta[0], colsYellow[0], colsYellow[1], colsGreen[0], colsGreen[1], colsBlue[0], colsBlue[1], colsMagenta[0], colsMagenta[1]]
       v.setAttribute("stroke", cols[Math.floor(Math.random()*cols.length)])
       v.setAttribute("stroke", cols[i%cols.length])
       svgElem.appendChild(v)
@@ -167,7 +167,6 @@ module.load(function(name) {
       svg {
         stroke-width: 6px;
         stroke: palegreen;
-        transform: scale(0.06);
       }
     `,
     build: (cell)=>{
