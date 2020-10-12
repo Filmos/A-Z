@@ -1,11 +1,10 @@
 var svg = {
   animCache: {},
-  circleFragments: function() {
+  circleFragments: function(cols, radius = 45) {
     var svgElem = document.createElementNS("http://www.w3.org/2000/svg", "svg")
     svgElem.setAttribute("viewBox", "0 0 100 100")
     
-    maxI = 12
-    radius = 45
+    maxI = cols.length
     overlap = 0.01
     for(let i=0; i<maxI; i++) {
       let v = document.createElementNS(svgElem.namespaceURI, "path")
@@ -18,12 +17,6 @@ var svg = {
       v.setAttribute("d", `M${startX} ${startY} A${radius} ${radius} 0 0 1 ${endX} ${endY}`)
       v.setAttribute("stroke", "rgb(0, 255, 255)")
       
-      let colsGreen = ["#99ff99", "#53ff1a", "#00b300", "#006633"]
-      let colsBlue = ["#a4e0f4", "#00cccc", "#3366ff", "#0000cc", "#270066"]
-      let colsMagenta = ["#ff99e6", "#ff66d9", "#e60073", "#800040", "#400000", "#663300"]
-      let colsYellow = ["#ffff99", "#ffc21a", "#806000", "#332600"]
-      let cols = [colsYellow[0], colsGreen[0], colsBlue[0], colsMagenta[0], colsYellow[0], colsYellow[1], colsGreen[0], colsGreen[1], colsBlue[0], colsBlue[1], colsMagenta[0], colsMagenta[1]]
-      v.setAttribute("stroke", cols[Math.floor(Math.random()*cols.length)])
       v.setAttribute("stroke", cols[i%cols.length])
       svgElem.appendChild(v)
     }
@@ -165,12 +158,40 @@ module.load(function(name) {
       }
       
       svg {
-        stroke-width: 6px;
+        stroke-width: 4px;
         stroke: palegreen;
       }
     `,
     build: (cell)=>{
-      cell.appendChild(svg.circleFragments())
+      let colsGreen = ["#99ff99", "#53ff1a", "#00b300", "#006633"]
+      let colsBlue = ["#a4e0f4", "#00cccc", "#3366ff", "#0000cc", "#270066"]
+      let colsMagenta = ["#ff99e6", "#ff66d9", "#e60073", "#800040", "#400000", "#663300"]
+      let colsYellow = ["#ffff99", "#ffc21a", "#806000", "#332600"]
+      
+      let target = new Date();
+      
+      let blank = "black"
+      let cols = [blank, blank]
+      
+      let min = Math.round(target.getMinutes()/5).toString(4)
+      cols.push(colsGreen[parseInt(min[0])])
+      cols.push(colsGreen[parseInt(min[1])])
+      
+      let hour = target.getHours().toString(5)
+      cols.push(colsBlue[parseInt(hour[0])])
+      cols.push(colsBlue[parseInt(hour[1])])
+      
+      let day = target.getDate().toString(6)
+      cols.push(colsMagenta[parseInt(day[0])])
+      cols.push(colsMagenta[parseInt(day[1])])
+      
+      let month = (target.getMonth()+1).toString(4)
+      cols.push(colsYellow[parseInt(month[0])])
+      cols.push(colsYellow[parseInt(month[1])])
+      
+      cols.push(blank)
+      cols.push(blank)
+      cell.appendChild(svg.circleFragments(cols, 48))
     }
   }
 })
