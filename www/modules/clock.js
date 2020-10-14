@@ -4,20 +4,28 @@ var svg = {
     var svgElem = document.createElementNS("http://www.w3.org/2000/svg", "svg")
     svgElem.setAttribute("viewBox", "0 0 100 100")
     
-    maxI = cols.length
+    sum = 0
+    for(let c in cols) {
+      if(!Array.isArray(cols[c])) cols[c] = [1, cols[c]]
+      sum += cols[c][0]
+    }
+    console.log(sum)
+    
     overlap = 0.01
-    for(let i=0; i<maxI; i++) {
+    frag = 0
+    for(let i=0; i<cols.length; i++) {
       let v = document.createElementNS(svgElem.namespaceURI, "path")
       
-      let startY = 50+radius*Math.cos(Math.PI - Math.PI*2/maxI*i + Math.PI*overlap)
-      let startX = 50+radius*Math.sin(Math.PI - Math.PI*2/maxI*i + Math.PI*overlap)
-      let endY = 50+radius*Math.cos(Math.PI - Math.PI*2/maxI*(i+1))
-      let endX = 50+radius*Math.sin(Math.PI - Math.PI*2/maxI*(i+1))
+      let startY = 50+radius*Math.cos(Math.PI - Math.PI*2/sum*frag + Math.PI*overlap)
+      let startX = 50+radius*Math.sin(Math.PI - Math.PI*2/sum*frag + Math.PI*overlap)
+      frag += cols[i][0]
+      let endY = 50+radius*Math.cos(Math.PI - Math.PI*2/sum*frag)
+      let endX = 50+radius*Math.sin(Math.PI - Math.PI*2/sum*frag)
       
       v.setAttribute("d", `M${startX} ${startY} A${radius} ${radius} 0 0 1 ${endX} ${endY}`)
       v.setAttribute("stroke", "rgb(0, 255, 255)")
       
-      v.setAttribute("stroke", cols[i%cols.length])
+      v.setAttribute("stroke", cols[i][1])
       svgElem.appendChild(v)
     }
     return svgElem
@@ -141,7 +149,6 @@ var svg = {
   }
 }
 
-// stroke-dasharray: <line length> 0;
 module.load(function(name) {
   return {
     css: `
@@ -160,6 +167,7 @@ module.load(function(name) {
       svg {
         stroke-width: 4px;
         stroke: palegreen;
+        fill: none;
       }
     `,
     build: (cell)=>{
@@ -169,28 +177,28 @@ module.load(function(name) {
       let colsYellow = ["#ffff99", "#ffc21a", "#806000", "#332600"]
       
       let target = new Date();
+      let precision = [0, 1]
+      let absSize = 0.2
       
+      let blankSize = [3, 5, 4, 4]
       let blank = "black"
-      let cols = [blank, blank]
+      let cols = [[100*(1-absSize)/2, blank]]
       
-      let min = Math.round(target.getMinutes()/5).toString(4)
-      cols.push(colsGreen[parseInt(min[0])])
-      cols.push(colsGreen[parseInt(min[1])])
+      let addAbsMarker = function(value, colors, prec) {
+        if(prec < precision[0]) return
+        if(prec > precision[1]) return
+        
+        let parsed = value.toString(colors.length)
+        cols.push([100*absSize/(precision[1]-precision[0]+1)/2, colors[parseInt(parsed[0])]])
+        cols.push([100*absSize/(precision[1]-precision[0]+1)/2, colors[parseInt(parsed[1])]])
+      }
+      addAbsMarker(Math.round(target.getMinutes()/5), colsGreen, 0)      
+      addAbsMarker(target.getHours(), colsBlue, 1)      
+      addAbsMarker(target.getDate(), colsMagenta, 2)      
+      addAbsMarker(target.getMonth()+1, colsYellow, 3)      
       
-      let hour = target.getHours().toString(5)
-      cols.push(colsBlue[parseInt(hour[0])])
-      cols.push(colsBlue[parseInt(hour[1])])
-      
-      let day = target.getDate().toString(6)
-      cols.push(colsMagenta[parseInt(day[0])])
-      cols.push(colsMagenta[parseInt(day[1])])
-      
-      let month = (target.getMonth()+1).toString(4)
-      cols.push(colsYellow[parseInt(month[0])])
-      cols.push(colsYellow[parseInt(month[1])])
-      
-      cols.push(blank)
-      cols.push(blank)
+      console.log(cols)
+      cols.push([100*(1-absSize)/2, blank])
       cell.appendChild(svg.circleFragments(cols, 48))
     }
   }
