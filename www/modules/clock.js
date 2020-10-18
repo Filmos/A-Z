@@ -1,34 +1,53 @@
+class svgCollection {
+  constructor() {
+    this.elements = []
+  }
+  add(el) {
+    this.elements.push(el)
+    return this
+  }
+  class(name) {
+    for(let e of this.elements) e.classList.add(name)
+    return this
+  }
+  build(svgElem) {
+    if(!svgElem) {
+      svgElem = document.createElementNS("http://www.w3.org/2000/svg", "svg")
+      svgElem.setAttribute("viewBox", "0 0 100 100")
+    }
+    for(let e of this.elements) svgElem.appendChild(e)
+    return svgElem
+  }
+}
+
 var svg = {
-  animCache: {},
-  circleFragments: function(cols, radius = 45) {
-    var svgElem = document.createElementNS("http://www.w3.org/2000/svg", "svg")
-    svgElem.setAttribute("viewBox", "0 0 100 100")
+  circleFragments: function(cols, radius = 45, offset = 0) {
+    var svgColl = new svgCollection()
     
     sum = 0
     for(let c in cols) {
       if(!Array.isArray(cols[c])) cols[c] = [1, cols[c]]
       sum += cols[c][0]
     }
-    console.log(sum)
     
     overlap = 0.01
     frag = 0
     for(let i=0; i<cols.length; i++) {
-      let v = document.createElementNS(svgElem.namespaceURI, "path")
+      let v = document.createElementNS("http://www.w3.org/2000/svg", "path")
       
-      let startY = 50+radius*Math.cos(Math.PI - Math.PI*2/sum*frag + Math.PI*overlap)
-      let startX = 50+radius*Math.sin(Math.PI - Math.PI*2/sum*frag + Math.PI*overlap)
+      let startY = 50+radius*Math.cos(Math.PI - Math.PI*2/sum*(frag+offset) + Math.PI*overlap)
+      let startX = 50+radius*Math.sin(Math.PI - Math.PI*2/sum*(frag+offset) + Math.PI*overlap)
       frag += cols[i][0]
-      let endY = 50+radius*Math.cos(Math.PI - Math.PI*2/sum*frag)
-      let endX = 50+radius*Math.sin(Math.PI - Math.PI*2/sum*frag)
+      let endY = 50+radius*Math.cos(Math.PI - Math.PI*2/sum*(frag+offset))
+      let endX = 50+radius*Math.sin(Math.PI - Math.PI*2/sum*(frag+offset))
       
-      v.setAttribute("d", `M${startX} ${startY} A${radius} ${radius} 0 0 1 ${endX} ${endY}`)
-      v.setAttribute("stroke", "rgb(0, 255, 255)")
-      
+      if(cols[i][1] === "NONE") continue
+      v.setAttribute("d", `M${startX} ${startY} A${radius} ${radius} 0 ${cols[i][0]>=sum/2?1:0} 1 ${endX} ${endY}`)
+      v.setAttribute("pathLength", "100")
       v.setAttribute("stroke", cols[i][1])
-      svgElem.appendChild(v)
+      svgColl.add(v)
     }
-    return svgElem
+    return svgColl
   },
   build: function(def) {
     let partConfig = {
@@ -137,14 +156,7 @@ var svg = {
       v.style.animationDuration = unit+"ms"
       v.style.animationDelay = delay
       v.style.animationIterationCount = Math.ceil(time/unit)
-      
-      let animHash = Math.abs(hash(anim.replace(/\s+/g,"")))
-      if(!this.animCache[animHash]) {
-        anim = "@keyframes svg-anim-"+animHash+anim
-        css.inject(anim)
-        this.animCache[animHash] = true
-      }
-      v.style.animationName = "svg-anim-"+animHash
+      v.style.animationName = css.injectAnimation(anim)
     }
   }
 }
@@ -168,6 +180,10 @@ module.load(function(name) {
         stroke-width: 4px;
         stroke: palegreen;
         fill: none;
+        * {
+          animation-fill-mode: forwards;
+          animation-timing-function: cubic-bezier(0.45, 0, 0.55, 1);
+        }
       }
     `,
     build: (cell)=>{
@@ -176,13 +192,13 @@ module.load(function(name) {
       let colsMagenta = ["#ff99e6", "#ff66d9", "#e60073", "#800040", "#400000", "#663300"]
       let colsYellow = ["#ffff99", "#ffc21a", "#806000", "#332600"]
       
-      let target = new Date();
+      let target = new Date()
+      let radius = 48
       let precision = [0, 1]
       let absSize = 0.2
       
       let blankSize = [3, 5, 4, 4]
-      let blank = "black"
-      let cols = [[100*(1-absSize)/2, blank]]
+      let cols = [[100*(1-absSize), "NONE"]]
       
       let addAbsMarker = function(value, colors, prec) {
         if(prec < precision[0]) return
@@ -197,9 +213,49 @@ module.load(function(name) {
       addAbsMarker(target.getDate(), colsMagenta, 2)      
       addAbsMarker(target.getMonth()+1, colsYellow, 3)      
       
-      console.log(cols)
-      cols.push([100*(1-absSize)/2, blank])
-      cell.appendChild(svg.circleFragments(cols, 48))
+      let svgHolder = svg.circleFragments(cols, radius, 100*(absSize-1)/2).build()
+      cell.appendChild(svgHolder)
+      let relAnimLine = svg.circleFragments([[1-absSize, "purple"], [absSize, "NONE"]], radius, (absSize-1)/2).class("clockAnimLine").elements[0]
+      let relAnimStripes = svg.circleFragments([[1-absSize, "orange"], [absSize, "NONE"]], radius, (absSize-1)/2).class("clockAnimStripes").elements[0]
+      
+      let addRelativeAnim = function(step) {
+        let r = x => Math.round(x*1000)/1000
+        let ticks = Math.ceil(step/2)-1
+        let partSize = r(100/(1+5*ticks/3)*2/3)
+        let anim = "{\n"
+        
+        let arcSize = (i) => (100-partSize*i)/(i+(i==ticks && step%2==1 ?0:1))
+        for(let i=0;i<ticks+1;i++) {
+          state = " 0"
+          for(let j=0;j<i;j++) state += " " + r((j==0 && i==ticks && step%2==1 ?0:arcSize(i))) + " " + r(partSize)
+          if(i!=ticks) state += " " + r(arcSize(i+1)+partSize/2) + " 0"
+          state += " 150"
+          for(let j=i*2;j<step-3;j++) {state += " 0"}
+          
+          anim += 100/(step-1)*i+`% {stroke-dasharray:${state};}\n`
+          if(i!=ticks) anim += 100/(step-1)*(i+0.8)+`% {stroke-dasharray:${state};}\n`
+        }
+        
+        arcSize = r(arcSize(ticks))
+        for(let i=1;i<step-ticks;i++) {
+          state = ""
+          if(step%2==1) state += " "+partSize+" 0"
+          for(let j=0;j<i;j++) state += " " + r((j==0?0:partSize)+arcSize*(j==step-ticks-2?1.1:1)) + " " + 0
+          for(let j=i;j<ticks+1-(step%2);j++) state += " " + partSize + " " + arcSize
+          state += " 0 150"
+          anim += Math.min(100/(step-1)*(i+ticks), 100)+`% {stroke-dasharray:${state};}\n`
+        }
+        
+        console.log(anim)
+        relAnimStripes.style.animationName = css.injectAnimation(anim+"}")
+        relAnimStripes.style.animationDuration = "15s"
+        // setInterval(() => relAnimStripes.style.stroke = `rgb(${55+Math.floor(Math.random()*200)}, ${55+Math.floor(Math.random()*200)}, ${Math.floor(Math.random()*255)})`, 10000/(step-1))
+      }
+      addRelativeAnim(12)
+      
+      
+      svgHolder.appendChild(relAnimLine)
+      svgHolder.appendChild(relAnimStripes)
     }
   }
 })

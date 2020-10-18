@@ -22,6 +22,7 @@ var hash = function(inp) {
   return hash;
 }
 var css = {
+  animCache: {},
   parse: function(css) {
     let parsing = css.split(/([{;}])/).map(s => s.trim()).filter(s => s)
     let parsed = ""
@@ -86,6 +87,15 @@ var css = {
     sheet.type = "text/css"
     sheet.innerText = css
     document.head.appendChild(sheet)
+  },
+  injectAnimation: function(anim) {
+    let animHash = Math.abs(hash(anim.replace(/\s+/g,"")))
+    if(!this.animCache[animHash]) {
+      anim = "@keyframes anim-"+animHash+anim
+      this.inject(anim)
+      this.animCache[animHash] = true
+    }
+    return "anim-"+animHash
   }
 }
 
