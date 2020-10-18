@@ -30,7 +30,8 @@ var svg = {
       sum += cols[c][0]
     }
     
-    overlap = 0.01
+    let r = x => Math.round(x*10000)/10000
+    overlap = 0.005
     frag = 0
     for(let i=0; i<cols.length; i++) {
       let v = document.createElementNS("http://www.w3.org/2000/svg", "path")
@@ -218,11 +219,15 @@ module.load(function(name) {
       let relAnimLine = svg.circleFragments([[1-absSize, "purple"], [absSize, "NONE"]], radius, (absSize-1)/2).class("clockAnimLine").elements[0]
       let relAnimStripes = svg.circleFragments([[1-absSize, "orange"], [absSize, "NONE"]], radius, (absSize-1)/2).class("clockAnimStripes").elements[0]
       
-      let addRelativeAnim = function(step) {
+      let fullTime = 30
+      
+      let delay = 0
+      let lastColor = "black"
+      let addRelativeAnim = function(step, time, color) {
         let r = x => Math.round(x*1000)/1000
         let ticks = Math.ceil(step/2)-1
         let partSize = r(100/(1+5*ticks/3)*2/3)
-        let anim = "{\n"
+        let anim = `{\n0%,100%{stroke:${color};}\n`
         
         let arcSize = (i) => (100-partSize*i)/(i+(i==ticks && step%2==1 ?0:1))
         for(let i=0;i<ticks+1;i++) {
@@ -246,12 +251,19 @@ module.load(function(name) {
           anim += Math.min(100/(step-1)*(i+ticks), 100)+`% {stroke-dasharray:${state};}\n`
         }
         
-        console.log(anim)
-        relAnimStripes.style.animationName = css.injectAnimation(anim+"}")
-        relAnimStripes.style.animationDuration = "15s"
+        relAnimStripes.style.animationName += (relAnimStripes.style.animationName?", ":"")+css.injectAnimation(anim+"}")
+        relAnimStripes.style.animationDuration += (relAnimStripes.style.animationDuration?", ":"")+time+"s"
+        relAnimStripes.style.animationDelay += (relAnimStripes.style.animationDelay?", ":"")+delay+"s"
+        relAnimLine.style.animationName += (relAnimLine.style.animationName?", ":"")+css.injectAnimation(`{0%, 100%{stroke:${lastColor};}}`)
+        relAnimLine.style.animationDuration += (relAnimLine.style.animationDuration?", ":"")+time+"s"
+        relAnimLine.style.animationDelay += (relAnimLine.style.animationDelay?", ":"")+delay+"s"
+        delay += time
+        lastColor = color
         // setInterval(() => relAnimStripes.style.stroke = `rgb(${55+Math.floor(Math.random()*200)}, ${55+Math.floor(Math.random()*200)}, ${Math.floor(Math.random()*255)})`, 10000/(step-1))
       }
-      addRelativeAnim(12)
+      addRelativeAnim(12, 15, "brown")
+      addRelativeAnim(7, 10, "aliceblue")
+      addRelativeAnim(4, 5, "magenta")
       
       
       svgHolder.appendChild(relAnimLine)
