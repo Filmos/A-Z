@@ -194,10 +194,12 @@ module.load(function(name) {
       let colsYellow = ["#ffff99", "#ffc21a", "#806000", "#332600"]
       
       let target = new Date()
+      target.setHours(18, 30)
       let radius = 48
       let precision = [0, 1]
       let absSize = 0.2
       
+      let fullTime = (target - (new Date()))/1000
       let blankSize = [3, 5, 4, 4]
       let cols = [[100*(1-absSize), "NONE"]]
       
@@ -219,52 +221,57 @@ module.load(function(name) {
       let relAnimLine = svg.circleFragments([[1-absSize, "purple"], [absSize, "NONE"]], radius, (absSize-1)/2).class("clockAnimLine").elements[0]
       let relAnimStripes = svg.circleFragments([[1-absSize, "orange"], [absSize, "NONE"]], radius, (absSize-1)/2).class("clockAnimStripes").elements[0]
       
-      let fullTime = 30
-      
-      let delay = 0
       let lastColor = "black"
-      let addRelativeAnim = function(step, time, color) {
-        let r = x => Math.round(x*1000)/1000
-        let ticks = Math.ceil(step/2)-1
-        let partSize = r(100/(1+5*ticks/3)*2/3)
-        let anim = `{\n0%,100%{stroke:${color};}\n`
-        
-        let arcSize = (i) => (100-partSize*i)/(i+(i==ticks && step%2==1 ?0:1))
-        for(let i=0;i<ticks+1;i++) {
-          state = " 0"
-          for(let j=0;j<i;j++) state += " " + r((j==0 && i==ticks && step%2==1 ?0:arcSize(i))) + " " + r(partSize)
-          if(i!=ticks) state += " " + r(arcSize(i+1)+partSize/2) + " 0"
-          state += " 150"
-          for(let j=i*2;j<step-3;j++) {state += " 0"}
+      let addRelativeAnim = function(step, time, color, last = false) {
+        if(fullTime > time/step) {
+          let r = x => Math.round(x*1000)/1000
+          let ticks = Math.ceil(step/2)-1
+          let partSize = r(100/(1+5*ticks/3)*2/3)
+          let anim = `{\n0%,100%{stroke:${color};}\n`
           
-          anim += 100/(step-1)*i+`% {stroke-dasharray:${state};}\n`
-          if(i!=ticks) anim += 100/(step-1)*(i+0.8)+`% {stroke-dasharray:${state};}\n`
-        }
+          let arcSize = (i) => (100-partSize*i)/(i+(i==ticks && step%2==1 ?0:1))
+          for(let i=0;i<ticks+1;i++) {
+            state = " 0"
+            for(let j=0;j<i;j++) state += " " + r((j==0 && i==ticks && step%2==1 ?0:arcSize(i))) + " " + r(partSize)
+            if(i!=ticks) state += " " + r(arcSize(i+1)+partSize/2) + " 0"
+            state += " 150"
+            for(let j=i*2;j<step-3;j++) {state += " 0"}
+            
+            anim += 100/(step-1)*i+`% {stroke-dasharray:${state};}\n`
+            if(i!=ticks) anim += 100/(step-1)*(i+0.8)+`% {stroke-dasharray:${state};}\n`
+          }
+          
+          arcSize = r(arcSize(ticks))
+          for(let i=1;i<step-ticks;i++) {
+            state = ""
+            if(step%2==1) state += " "+partSize+" 0"
+            for(let j=0;j<i;j++) state += " " + r((j==0?0:partSize)+arcSize*(j==step-ticks-2?1.1:1)) + " " + 0
+            for(let j=i;j<ticks+1-(step%2);j++) state += " " + partSize + " " + arcSize
+            state += " 0 150"
+            anim += Math.min(100/(step-1)*(i+ticks), 100)+`% {stroke-dasharray:${state};}\n`
+          }
         
-        arcSize = r(arcSize(ticks))
-        for(let i=1;i<step-ticks;i++) {
-          state = ""
-          if(step%2==1) state += " "+partSize+" 0"
-          for(let j=0;j<i;j++) state += " " + r((j==0?0:partSize)+arcSize*(j==step-ticks-2?1.1:1)) + " " + 0
-          for(let j=i;j<ticks+1-(step%2);j++) state += " " + partSize + " " + arcSize
-          state += " 0 150"
-          anim += Math.min(100/(step-1)*(i+ticks), 100)+`% {stroke-dasharray:${state};}\n`
+          let delay = fullTime-time
+          let animTime = (last?time:time/step*(step-1))
+          relAnimStripes.style.animationName += (relAnimStripes.style.animationName?", ":"")+css.injectAnimation(anim+"}")
+          relAnimStripes.style.animationDuration += (relAnimStripes.style.animationDuration?", ":"")+animTime+"s"
+          relAnimStripes.style.animationDelay += (relAnimStripes.style.animationDelay?", ":"")+delay+"s"
+          relAnimLine.style.animationName += (relAnimLine.style.animationName?", ":"")+css.injectAnimation(`{0%, 100%{stroke:${lastColor};}}`)
+          relAnimLine.style.animationDuration += (relAnimLine.style.animationDuration?", ":"")+animTime+"s"
+          relAnimLine.style.animationDelay += (relAnimLine.style.animationDelay?", ":"")+delay+"s"
         }
-        
-        relAnimStripes.style.animationName += (relAnimStripes.style.animationName?", ":"")+css.injectAnimation(anim+"}")
-        relAnimStripes.style.animationDuration += (relAnimStripes.style.animationDuration?", ":"")+time+"s"
-        relAnimStripes.style.animationDelay += (relAnimStripes.style.animationDelay?", ":"")+delay+"s"
-        relAnimLine.style.animationName += (relAnimLine.style.animationName?", ":"")+css.injectAnimation(`{0%, 100%{stroke:${lastColor};}}`)
-        relAnimLine.style.animationDuration += (relAnimLine.style.animationDuration?", ":"")+time+"s"
-        relAnimLine.style.animationDelay += (relAnimLine.style.animationDelay?", ":"")+delay+"s"
-        delay += time
         lastColor = color
         // setInterval(() => relAnimStripes.style.stroke = `rgb(${55+Math.floor(Math.random()*200)}, ${55+Math.floor(Math.random()*200)}, ${Math.floor(Math.random()*255)})`, 10000/(step-1))
       }
-      addRelativeAnim(12, 15, "brown")
-      addRelativeAnim(7, 10, "aliceblue")
-      addRelativeAnim(4, 5, "magenta")
-      
+      addRelativeAnim(10, 60*60*24*7*4*12*10, "#f3f9c9") // Years, up to 10
+      addRelativeAnim(12, 60*60*24*7*4*12, "#095169") // Months
+      addRelativeAnim(4,  60*60*24*7*4, "#f6ae96") // Weeks
+      addRelativeAnim(7,  60*60*24*7, "#059b9a") // Days
+      addRelativeAnim(4,  60*60*24, "#fa6465") // Hours, by 6
+      addRelativeAnim(6,  60*60*6, "#53ba83") // Last 6 hours
+      addRelativeAnim(12, 60*60, "#ac457c") // Minutes, by 5
+      addRelativeAnim(5,  60*5, "#9fd96b") // Last 5 minutes
+      addRelativeAnim(12, 60, "#602694", true) // Seconds
       
       svgHolder.appendChild(relAnimLine)
       svgHolder.appendChild(relAnimStripes)
