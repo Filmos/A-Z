@@ -30,8 +30,6 @@ body {
 .sq-big {
   width: calc(95vmin - 18px);
   height: calc(95vmin - 18px);
-  border: aliceblue solid;
-  border-radius: 50%;
 }
 
 .full {

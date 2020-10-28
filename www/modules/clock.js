@@ -19,6 +19,25 @@ class svgCollection {
     return svgElem
   }
 }
+class animSequence {
+  constructor() {
+    this.phases = []
+  }
+  add(el) {
+    this.phases.push(el)
+    return this
+  }
+  apply(el) {
+    let defaults = {IterationCount: 1}
+    let flags = {}
+    for(let ph of this.phases) for(let p in ph) flags[p] = []
+    for(let ph of this.phases) for(let p in flags) flags[p].push(ph[p] || defaults[p] || "initial")
+    chan.debug(`Applying ${this.phases.length}-long animation sequence to an element...`)
+    console.log(flags)
+    for(let p in flags) {el.style["animation"+p] = flags[p].join(", "); console.log(p, flags[p].join(", "))}
+    return this
+  }
+}
 
 var svg = {
   circleFragments: function(cols, radius = 45, offset = 0) {
@@ -183,7 +202,6 @@ module.load(function(name) {
         fill: none;
         * {
           animation-fill-mode: forwards;
-          animation-timing-function: cubic-bezier(0.45, 0, 0.55, 1);
         }
       }
     `,
@@ -194,12 +212,14 @@ module.load(function(name) {
       let colsYellow = ["#ffff99", "#ffc21a", "#806000", "#332600"]
       
       let target = new Date()
-      target.setHours(18, 30)
+      target.setHours(12, 30)
       let radius = 48
       let precision = [0, 1]
       let absSize = 0.2
+      let timeScale = 1
       
-      let fullTime = (target - (new Date()))/1000
+      let fullTime = (target - (new Date()))/1000/timeScale
+      fullTime = 6
       let blankSize = [3, 5, 4, 4]
       let cols = [[100*(1-absSize), "NONE"]]
       
@@ -222,7 +242,11 @@ module.load(function(name) {
       let relAnimStripes = svg.circleFragments([[1-absSize, "orange"], [absSize, "NONE"]], radius, (absSize-1)/2).class("clockAnimStripes").elements[0]
       
       let lastColor = "black"
+      let stripeAnim = new animSequence()
+      let lineAnim = new animSequence()
+      
       let addRelativeAnim = function(step, time, color, last = false) {
+        time = time/timeScale
         if(fullTime > time/step) {
           let r = x => Math.round(x*1000)/1000
           let ticks = Math.ceil(step/2)-1
@@ -245,7 +269,7 @@ module.load(function(name) {
           for(let i=1;i<step-ticks;i++) {
             state = ""
             if(step%2==1) state += " "+partSize+" 0"
-            for(let j=0;j<i;j++) state += " " + r((j==0?0:partSize)+arcSize*(j==step-ticks-2?1.1:1)) + " " + 0
+            for(let j=0;j<i;j++) state += " " + r((j==0?0:partSize)+arcSize+(j==step-ticks-2?2:0)) + " " + 0
             for(let j=i;j<ticks+1-(step%2);j++) state += " " + partSize + " " + arcSize
             state += " 0 150"
             anim += Math.min(100/(step-1)*(i+ticks), 100)+`% {stroke-dasharray:${state};}\n`
@@ -253,15 +277,20 @@ module.load(function(name) {
         
           let delay = fullTime-time
           let animTime = (last?time:time/step*(step-1))
-          relAnimStripes.style.animationName += (relAnimStripes.style.animationName?", ":"")+css.injectAnimation(anim+"}")
-          relAnimStripes.style.animationDuration += (relAnimStripes.style.animationDuration?", ":"")+animTime+"s"
-          relAnimStripes.style.animationDelay += (relAnimStripes.style.animationDelay?", ":"")+delay+"s"
-          relAnimLine.style.animationName += (relAnimLine.style.animationName?", ":"")+css.injectAnimation(`{0%, 100%{stroke:${lastColor};}}`)
-          relAnimLine.style.animationDuration += (relAnimLine.style.animationDuration?", ":"")+animTime+"s"
-          relAnimLine.style.animationDelay += (relAnimLine.style.animationDelay?", ":"")+delay+"s"
+          
+          stripeAnim.add({
+            Name: css.injectAnimation(anim+"}"), 
+            Duration: animTime+"s",
+            Delay: delay+"s",
+            TimingFunction: "cubic-bezier(0.45, 0, 0.55, 1)"
+          })
+          lineAnim.add({
+            Name: css.injectAnimation(`{0%, 100%{stroke:${lastColor};}}`),
+            Duration: animTime+"s",
+            Delay: delay+"s"
+          })
         }
         lastColor = color
-        // setInterval(() => relAnimStripes.style.stroke = `rgb(${55+Math.floor(Math.random()*200)}, ${55+Math.floor(Math.random()*200)}, ${Math.floor(Math.random()*255)})`, 10000/(step-1))
       }
       addRelativeAnim(10, 60*60*24*7*4*12*10, "#f3f9c9") // Years, up to 10
       addRelativeAnim(12, 60*60*24*7*4*12, "#095169") // Months
@@ -272,6 +301,68 @@ module.load(function(name) {
       addRelativeAnim(12, 60*60, "#ac457c") // Minutes, by 5
       addRelativeAnim(5,  60*5, "#9fd96b") // Last 5 minutes
       addRelativeAnim(12, 60, "#602694", true) // Seconds
+      
+      let addOvertimeAnim = function(time, col1, col2) {
+        time = time/timeScale
+        
+        let delay = fullTime
+        delay = 5-time
+        let offset = 10
+        stripeAnim.add({
+          Name: css.injectAnimation(`{0% {stroke-dashoffset: ${offset}; stroke-dasharray: 10 100; stroke:${col1};} 50% {stroke:${col1};} 100% {stroke-dashoffset: ${offset-time*5}; stroke-dasharray: 10 5; stroke:${col2};}}`), 
+          Duration: time+"s",
+          Delay: delay+"s",
+          TimingFunction: "linear"
+        })
+        lineAnim.add({
+          Name: css.injectAnimation(`{0%, 100%{stroke:${lastColor};}}`),
+          Duration: (time-1)+"s",
+          Delay: delay+"s"
+        })
+        offset -= time*5
+        
+        delay += time
+        lineAnim.add({
+          Name: css.injectAnimation(`{0% {stroke:${lastColor};} 100%{stroke:${col1};}}`),
+          Duration: "1s",
+          Delay: (delay-1)+"s"
+        })
+        stripeAnim.add({
+          Name: css.injectAnimation(`{0% {stroke-dashoffset: ${offset}; stroke-dasharray: 10 5; stroke:${col2};} 100% {stroke-dashoffset: ${offset-Math.floor(time/2)*2*35}; stroke-dasharray: 10 5; stroke:${col2};}}`), 
+          Duration: Math.floor(time/2)*2+"s",
+          Delay: delay+"s",
+          TimingFunction: "linear"
+        })
+        lineAnim.add({
+          Name: css.injectAnimation(`{50% {stroke:${lastColor};} 0%, 100%{stroke:${col1};}}`),
+          Duration: "2s",
+          Delay: delay+"s",
+          IterationCount: Math.floor(time/2)
+        })
+        offset -= Math.floor(time/2)*2*35
+        
+        delay += Math.floor(time/2)*2
+        stripeAnim.add({
+          Name: css.injectAnimation(`{0% {stroke-dashoffset: ${offset}; stroke-dasharray: 10 5; stroke:${col2};} 45%,55% {stroke:${col1}} 100% {stroke-dashoffset: ${offset-15*4}; stroke-dasharray: 10 5; stroke:${col2};}}`), 
+          Duration: "2s",
+          Delay: delay+"s",
+          TimingFunction: "linear",
+          IterationCount: "infinite"
+        })
+        lineAnim.add({
+          Name: css.injectAnimation(`{50% {stroke:${col2};} 0%, 100%{stroke:${col1};}}`),
+          Duration: "2s",
+          Delay: delay+"s",
+          IterationCount: "infinite"
+        })
+      }
+      // 20 - 50
+      // 20*60 - 70
+      // addOvertimeAnim(20, "#d2ed48", "#f36235")
+      addOvertimeAnim(10, "#ffc185", "#ff2424")
+      
+      stripeAnim.apply(relAnimStripes)
+      lineAnim.apply(relAnimLine)
       
       svgHolder.appendChild(relAnimLine)
       svgHolder.appendChild(relAnimStripes)
