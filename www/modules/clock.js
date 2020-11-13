@@ -33,8 +33,7 @@ class animSequence {
     for(let ph of this.phases) for(let p in ph) flags[p] = []
     for(let ph of this.phases) for(let p in flags) flags[p].push(ph[p] || defaults[p] || "initial")
     chan.debug(`Applying ${this.phases.length}-long animation sequence to an element...`)
-    console.log(flags)
-    for(let p in flags) {el.style["animation"+p] = flags[p].join(", "); console.log(p, flags[p].join(", "))}
+    for(let p in flags) el.style["animation"+p] = flags[p].join(", ")
     return this
   }
 }
@@ -212,14 +211,15 @@ module.load(function(name) {
       let colsYellow = ["#ffff99", "#ffc21a", "#806000", "#332600"]
       
       let target = new Date()
-      target.setHours(12, 30)
+      target.setSeconds(target.getSeconds() + 15);
+      // target.setHours(12, 30)
       let radius = 48
       let precision = [0, 1]
       let absSize = 0.2
       let timeScale = 1
       
       let fullTime = (target - (new Date()))/1000/timeScale
-      fullTime = 6
+      // fullTime = 4
       let blankSize = [3, 5, 4, 4]
       let cols = [[100*(1-absSize), "NONE"]]
       
@@ -306,7 +306,6 @@ module.load(function(name) {
         time = time/timeScale
         
         let delay = fullTime
-        delay = 5-time
         let offset = 10
         stripeAnim.add({
           Name: css.injectAnimation(`{0% {stroke-dashoffset: ${offset}; stroke-dasharray: 10 100; stroke:${col1};} 50% {stroke:${col1};} 100% {stroke-dashoffset: ${offset-time*5}; stroke-dasharray: 10 5; stroke:${col2};}}`), 
@@ -355,14 +354,119 @@ module.load(function(name) {
           Delay: delay+"s",
           IterationCount: "infinite"
         })
+        
+        
+        const reverb = new Tone.Reverb({
+        	"wet": 0.5,
+        	"decay": 1.5,
+        	"preDelay": 0.01
+        }).toDestination();
+          
+        var ampEnv = new Tone.AmplitudeEnvelope({
+          attack: 0.02,
+          decay: 0.3,
+          sustain: 1.0,
+          release: 0.02,
+        }).connect(reverb);
+        var osc = new Tone.Oscillator(470).connect(ampEnv).start(); 
+        
+        var ampEnv2 = new Tone.AmplitudeEnvelope({
+          attack: 0.02,
+          decay: 0.3,
+          sustain: 1.0,
+          release: 0.02,
+        }).connect(reverb);
+        var osc2 = new Tone.Oscillator(650).connect(ampEnv2).start(); 
+        
+        var ampEnv3 = new Tone.AmplitudeEnvelope({
+          attack: 0.02,
+          decay: 0.3,
+          sustain: 1.0,
+          release: 0.02,
+        }).connect(reverb);
+        var osc3 = new Tone.Oscillator(820).connect(ampEnv3).start(); 
+        
+        setTimeout(() => {
+        setInterval(() => {
+          let td = ((new Date()) - target)/1000
+          if(td < time) {
+            ampEnv.triggerAttackRelease("8t");
+          } else if(td < time+Math.floor(time/2)*2) {
+            ampEnv.triggerAttackRelease("8t");
+            ampEnv2.triggerAttackRelease("8t", "+0.3");
+          } else {
+            ampEnv.triggerAttackRelease("8t");
+            ampEnv3.triggerAttackRelease("8t", "+0.25");
+            ampEnv2.triggerAttackRelease("8t", "+0.5");
+          }
+          
+          // let dec = Math.floor(Math.random()*100)/100 // 0.5
+          // let wet = Math.floor(Math.random()*200)/200 // 1
+          // let pitch = Math.floor(Math.random()*80)/80 // 0.3
+          // let enRel = Math.floor(Math.random()*70)/70 // 0.1
+          // console.log(dec+":"+wet+":"+pitch+":"+enRel)
+          // const reverb = new Tone.Reverb({
+          // 	"wet": 1,
+          // 	"decay": 1.5,
+          // 	"preDelay": 0.01
+          // }).toDestination();
+          // var plucky = new Tone.Synth({
+          //   pitchDecay: 0.01,
+          //   octaves: 10,
+          //   oscillator: {type: "sine"},
+          //   envelope: {
+          //     attack: 0.001,
+          //     decay: 0.1,
+          //     sustain: 0.01,
+          //     release: 0.2,
+          //     attackCurve: "exponential"
+          //   }
+          // }).connect(reverb);
+          // plucky.triggerAttackRelease("B3", 1, "+0");
+          // plucky.triggerAttackRelease("B3", 1, "+1");
+          // plucky.triggerAttackRelease("B3", 1, "+2");
+          // 
+          // const reverb = new Tone.Reverb({
+          // 	"wet": 1,
+          // 	"decay": 1.5,
+          // 	"preDelay": 0.01
+          // }).toDestination();
+          // var plucky = new Tone.MembraneSynth({
+          //   pitchDecay: 0.05,
+          //   octaves: 10,
+          //   oscillator: {type: "sine"},
+          //   envelope: {
+          //     attack: 0.001,
+          //     decay: 0.1,
+          //     sustain: 0.01,
+          //     release: 0.5,
+          //     attackCurve: "exponential"
+          //   }
+          // }).connect(reverb);
+          // plucky.triggerAttackRelease("D4", "8t");
+          
+        }, 2000)}, fullTime*1000)
       }
       // 20 - 50
       // 20*60 - 70
       // addOvertimeAnim(20, "#d2ed48", "#f36235")
-      addOvertimeAnim(10, "#ffc185", "#ff2424")
+      addOvertimeAnim(20, "#ffc185", "#ff2424")
       
       stripeAnim.apply(relAnimStripes)
       lineAnim.apply(relAnimLine)
+      
+      function playMP3(file, time=0) {
+        setTimeout(()=>{
+          let src = cordova.file.applicationDirectory + 'www/audio/' + file
+          var myMedia =
+            new Media(src,
+              function () { },
+              function (e) { alert('Media Error: ' + JSON.stringify(e)); }
+            );
+          myMedia.play();
+          myMedia.setVolume('0.5');
+        }, time)
+      }
       
       svgHolder.appendChild(relAnimLine)
       svgHolder.appendChild(relAnimStripes)
