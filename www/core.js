@@ -1,7 +1,3 @@
-// Wait for the deviceready event before using any of Cordova's device APIs.
-// See https://cordova.apache.org/docs/en/latest/cordova/events/events.html#deviceready
-document.addEventListener('deviceready', onDeviceReady, false);
-
 var hash = function(inp) {
   if(inp === null) return 0
   
@@ -100,14 +96,51 @@ var css = {
 }
 
 var module = {
+  // Meta-data about loaded modules
   data: {},
+  // A module:array queue with actions awaiting for a module to be loaded. Each actions should have:
+  //   postInit() - function which is executed after a module is laoded
   buildQueue: {},
   postponed: false,
   cells: {},
-  load: function(init) {
+  load: function(par1, par2) {
     let mod = document.currentScript.src.match(/\/([^/]+?)\.js/i)
-    if(!mod) {chan.debug("Tried loading invalid module: "+document.currentScript.src, "error"); return}
+    if(!mod) {chan.debug("Tried loading invalid module \""+mod+"\"", "error"); return}
     mod = mod[1]
+    chan.debug('Pre-loading "'+mod+'" module...')
+    
+    dependencies = []
+    let parseDependencies = (p) => {
+      if(!p) return
+      if(Array.isArray(p)) {dependencies = p; return}
+      if(typeof p === 'string' || p instanceof String) {dependencies = [p]; return}
+      chan.debug("Module \""+mod+"\" has an invalid dependency parameter", "warn");
+    }
+    
+    init = ()=>{}
+    if (typeof par1 === "function") {init = par1; parseDependencies(par2)}
+    else if (typeof par2 === "function") {init = par2; parseDependencies(par1)}
+    else {chan.debug("Tried loading module \""+mod+"\", which is lacking an initializer", "error"); return}
+    
+    let dependencyCount = dependencies.length
+    dependencies = dependencies.filter(m => !this.data[m] && this.buildQueue[m]===undefined)
+    if(dependencies.length==0) {this.innerLoad(mod, init); return}
+    
+    chan.debug("Module \""+mod+"\" requested "+dependencyCount+" "+(dependencyCount==1?"dependency":"dependencies")+", out of which "+dependencies.length+" "+(dependencies.length==1?"requires":"require")+" activation.");
+    let moduleQueuer = {
+      toLoad: dependencies.length,
+      initFunction: init,
+      moduleName: mod,
+      postInit: function() {
+        this.toLoad--
+        if(this.toLoad<0) {chan.debug("Module queuer for \""+this.moduleName+"\" was pinged more times than the amount of dependencies", "warn"); return}
+        if(this.toLoad==0) module.innerLoad(this.moduleName, this.initFunction)
+      }
+    }
+    for(let dm of dependencies) this.addToBuildQueue(moduleQueuer, dm)
+  },
+  innerLoad: function(mod, init) {
+    if(this.data[mod]) {chan.debug("Tried loading an already loaded module \""+mod+"\"", "warn"); return}
     chan.debug('Loading "'+mod+'" module...', 'important')
     
     let data = {}
@@ -121,7 +154,7 @@ var module = {
     this.data[mod] = data
     if(data.css) css.inject(css.parse(`*[class*=' m-${mod}'] {${data.css}}`))
     if(this.buildQueue[mod]) {
-      this.buildQueue[mod].forEach(e => this.forceBuild(e, mod))
+      this.buildQueue[mod].forEach(e => e.postInit())
       this.buildQueue[mod] = null
     }
     if(this.postponed !== false && this.postponed[0] == mod) {
@@ -139,6 +172,7 @@ var module = {
     }
     
     if(this.postponed===false) {
+      chan.debug('Requesting "'+mod+'" module...', "important")
       injectJS('modules/'+mod+'.js')
       if(tag=="l1") {
         chan.debug('Module "'+mod+'" requested a level 1 loading lock')
@@ -146,12 +180,19 @@ var module = {
       }
     } else this.postponed.push([mod, tag])
   },
+  addToBuildQueue: function(el, mod, tag) {
+    if(this.data[mod]) {el.postInit(); return}
+    if(this.buildQueue[mod]) {this.buildQueue[mod].push(el); return}
+    this.buildQueue[mod] = [el]
+    this.import(mod, tag)
+  },
   build: function(el, mod, tag) {
-    if(!this.data[mod]) {
-      if(this.buildQueue[mod]) {this.buildQueue[mod].push(el); return}
-      this.buildQueue[mod] = [el]
-      this.import(mod, tag)
-    } else this.forceBuild(el, mod)
+    let elf = {
+      elementToBuild: el,
+      moduleName: mod,
+      postInit: function() {module.forceBuild(this.elementToBuild, this.moduleName)}
+    }
+    this.addToBuildQueue(elf, mod, tag)
   },
   forceBuild: function(el, mod) {
     if(!this.data[mod]) {chan.debug('Force build requested for an unloaded module "'+mod+'"', "error"); return}
@@ -193,6 +234,7 @@ var chan = new Proxy({}, {
 })
 
 
+document.addEventListener('deviceready', onDeviceReady, false);
 function onDeviceReady() {
   for(let el of document.body.children) {
     for(let cl of el.classList) {

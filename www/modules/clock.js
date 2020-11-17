@@ -180,7 +180,7 @@ var svg = {
   }
 }
 
-module.load(function(name) {
+module.load(["audio"], function(name) {
   return {
     css: `
       overflow: hidden;
@@ -211,7 +211,7 @@ module.load(function(name) {
       let colsYellow = ["#ffff99", "#ffc21a", "#806000", "#332600"]
       
       let target = new Date()
-      target.setSeconds(target.getSeconds() + 15);
+      target.setSeconds(target.getSeconds() + 45);
       // target.setHours(12, 30)
       let radius = 48
       let precision = [0, 1]
@@ -451,6 +451,8 @@ module.load(function(name) {
       // 20*60 - 70
       // addOvertimeAnim(20, "#d2ed48", "#f36235")
       addOvertimeAnim(20, "#ffc185", "#ff2424")
+      
+      chan.sound("Hi!")
       
       stripeAnim.apply(relAnimStripes)
       lineAnim.apply(relAnimLine)
