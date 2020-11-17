@@ -212,7 +212,7 @@ var chan = new Proxy({}, {
   get: function(target, name) {
     let buildIn = {
       addListener: (chanId, listener) => {
-        if(chanId in buildIn) chan.debug('Tried creating channel with a reserved name "'+chanId+'"', "error")
+        if(chanId in buildIn) {chan.debug('Tried creating channel with a reserved name "'+chanId+'"', "error"); return}
         if(!(chanId in target)) target[chanId] = []
         target[chanId].push(listener)
       },

@@ -180,7 +180,7 @@ var svg = {
   }
 }
 
-module.load(["audio"], function(name) {
+module.load(["audio"], function(name) {  
   return {
     css: `
       overflow: hidden;
@@ -211,7 +211,7 @@ module.load(["audio"], function(name) {
       let colsYellow = ["#ffff99", "#ffc21a", "#806000", "#332600"]
       
       let target = new Date()
-      target.setSeconds(target.getSeconds() + 45);
+      target.setSeconds(target.getSeconds() + 2);
       // target.setHours(12, 30)
       let radius = 48
       let precision = [0, 1]
@@ -389,70 +389,34 @@ module.load(["audio"], function(name) {
         setTimeout(() => {
         setInterval(() => {
           let td = ((new Date()) - target)/1000
+          
+          chan.sound([{
+            type:"OscAmpEnv",
+            oscillator: 470,
+            envelope: {
+              attack: 0.02,
+              decay: 0.3,
+              sustain: 1.0,
+              release: 0.02,
+            }
+          }], "8t")
+          
           if(td < time) {
-            ampEnv.triggerAttackRelease("8t");
+            // ampEnv.triggerAttackRelease("8t");
           } else if(td < time+Math.floor(time/2)*2) {
-            ampEnv.triggerAttackRelease("8t");
-            ampEnv2.triggerAttackRelease("8t", "+0.3");
+            // ampEnv.triggerAttackRelease("8t");
+            // ampEnv2.triggerAttackRelease("8t", "+0.3");
           } else {
-            ampEnv.triggerAttackRelease("8t");
-            ampEnv3.triggerAttackRelease("8t", "+0.25");
-            ampEnv2.triggerAttackRelease("8t", "+0.5");
+            // ampEnv.triggerAttackRelease("8t");
+            // ampEnv3.triggerAttackRelease("8t", "+0.25");
+            // ampEnv2.triggerAttackRelease("8t", "+0.5");
           }
-          
-          // let dec = Math.floor(Math.random()*100)/100 // 0.5
-          // let wet = Math.floor(Math.random()*200)/200 // 1
-          // let pitch = Math.floor(Math.random()*80)/80 // 0.3
-          // let enRel = Math.floor(Math.random()*70)/70 // 0.1
-          // console.log(dec+":"+wet+":"+pitch+":"+enRel)
-          // const reverb = new Tone.Reverb({
-          // 	"wet": 1,
-          // 	"decay": 1.5,
-          // 	"preDelay": 0.01
-          // }).toDestination();
-          // var plucky = new Tone.Synth({
-          //   pitchDecay: 0.01,
-          //   octaves: 10,
-          //   oscillator: {type: "sine"},
-          //   envelope: {
-          //     attack: 0.001,
-          //     decay: 0.1,
-          //     sustain: 0.01,
-          //     release: 0.2,
-          //     attackCurve: "exponential"
-          //   }
-          // }).connect(reverb);
-          // plucky.triggerAttackRelease("B3", 1, "+0");
-          // plucky.triggerAttackRelease("B3", 1, "+1");
-          // plucky.triggerAttackRelease("B3", 1, "+2");
-          // 
-          // const reverb = new Tone.Reverb({
-          // 	"wet": 1,
-          // 	"decay": 1.5,
-          // 	"preDelay": 0.01
-          // }).toDestination();
-          // var plucky = new Tone.MembraneSynth({
-          //   pitchDecay: 0.05,
-          //   octaves: 10,
-          //   oscillator: {type: "sine"},
-          //   envelope: {
-          //     attack: 0.001,
-          //     decay: 0.1,
-          //     sustain: 0.01,
-          //     release: 0.5,
-          //     attackCurve: "exponential"
-          //   }
-          // }).connect(reverb);
-          // plucky.triggerAttackRelease("D4", "8t");
-          
         }, 2000)}, fullTime*1000)
       }
       // 20 - 50
       // 20*60 - 70
       // addOvertimeAnim(20, "#d2ed48", "#f36235")
       addOvertimeAnim(20, "#ffc185", "#ff2424")
-      
-      chan.sound("Hi!")
       
       stripeAnim.apply(relAnimStripes)
       lineAnim.apply(relAnimLine)
