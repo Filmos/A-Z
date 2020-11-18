@@ -103,10 +103,14 @@ var module = {
   buildQueue: {},
   postponed: false,
   cells: {},
-  load: function(par1, par2) {
+  getCurrentModule: function() {
     let mod = document.currentScript.src.match(/\/([^/]+?)\.js/i)
-    if(!mod) {chan.debug("Tried loading invalid module \""+mod+"\"", "error"); return}
-    mod = mod[1]
+    if(!mod) return null
+    return mod[1]
+  },
+  load: function(par1, par2) {
+    let mod = this.getCurrentModule()
+    if(!mod) {chan.debug("Tried loading invalid module", "error"); return}
     chan.debug('Pre-loading "'+mod+'" module...')
     
     dependencies = []
@@ -126,7 +130,7 @@ var module = {
     dependencies = dependencies.filter(m => !this.data[m] && this.buildQueue[m]===undefined)
     if(dependencies.length==0) {this.innerLoad(mod, init); return}
     
-    chan.debug("Module \""+mod+"\" requested "+dependencyCount+" "+(dependencyCount==1?"dependency":"dependencies")+", out of which "+dependencies.length+" "+(dependencies.length==1?"requires":"require")+" activation.");
+    chan.debug("Module \""+mod+"\" requested "+dependencyCount+" "+(dependencyCount==1?"dependency":"dependencies")+", out of which "+dependencies.length+" "+(dependencies.length==1?"requires":"require")+" activation");
     let moduleQueuer = {
       toLoad: dependencies.length,
       initFunction: init,
@@ -213,6 +217,9 @@ var chan = new Proxy({}, {
     let buildIn = {
       addListener: (chanId, listener) => {
         if(chanId in buildIn) {chan.debug('Tried creating channel with a reserved name "'+chanId+'"', "error"); return}
+        let mod = module.getCurrentModule()
+        if(!mod) chan.debug('An unknown module registered listener for the "'+chanId+'" channel', "warn")
+        else {chan.debug('Module "'+mod+'" registered listener for the "'+chanId+'" channel')}
         if(!(chanId in target)) target[chanId] = []
         target[chanId].push(listener)
       },
@@ -225,8 +232,8 @@ var chan = new Proxy({}, {
     if(name in target) return function() {
       for(f of target[name]) f(...arguments)
     }
-    return function(data, type) {
-      let mes = "["+name+(type?"\\"+type:"")+"] "+data
+    return function(data) {
+      let mes = "["+name+"] "+data
       if(!chan.exists("debug")) console.warn(mes)
       else chan.debug(mes, "warn")
     }

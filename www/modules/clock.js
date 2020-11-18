@@ -180,7 +180,51 @@ var svg = {
   }
 }
 
-module.load(["audio"], function(name) {  
+module.load(["audio"], function(name) { 
+  
+  chan.registerSound("ClockAlarm1", {
+    type:"OscAmpEnv",
+    oscillator: 470,
+    envelope: {
+      attack: 0.02,
+      decay: 0.3,
+      sustain: 1.0,
+      release: 0.02,
+    }
+  })
+  chan.registerSound("ClockAlarm2", ["ClockAlarm1",{
+    type:"OscAmpEnv",
+    oscillator: 650,
+    envelope: {
+      attack: 0.02,
+      decay: 0.3,
+      sustain: 1.0,
+      release: 0.02,
+    },
+    delay: "+0.3"
+  }])
+  chan.registerSound("ClockAlarm3", ["ClockAlarm1",{
+      type:"OscAmpEnv",
+      oscillator: 820,
+      envelope: {
+        attack: 0.02,
+        decay: 0.3,
+        sustain: 1.0,
+        release: 0.02,
+      },
+      delay: "+0.25"
+    },{
+      type:"OscAmpEnv",
+      oscillator: 650,
+      envelope: {
+        attack: 0.02,
+        decay: 0.3,
+        sustain: 1.0,
+        release: 0.02,
+      },
+      delay: "+0.5"
+  }])
+   
   return {
     css: `
       overflow: hidden;
@@ -355,61 +399,22 @@ module.load(["audio"], function(name) {
           IterationCount: "infinite"
         })
         
-        
         const reverb = new Tone.Reverb({
         	"wet": 0.5,
         	"decay": 1.5,
         	"preDelay": 0.01
         }).toDestination();
           
-        var ampEnv = new Tone.AmplitudeEnvelope({
-          attack: 0.02,
-          decay: 0.3,
-          sustain: 1.0,
-          release: 0.02,
-        }).connect(reverb);
-        var osc = new Tone.Oscillator(470).connect(ampEnv).start(); 
-        
-        var ampEnv2 = new Tone.AmplitudeEnvelope({
-          attack: 0.02,
-          decay: 0.3,
-          sustain: 1.0,
-          release: 0.02,
-        }).connect(reverb);
-        var osc2 = new Tone.Oscillator(650).connect(ampEnv2).start(); 
-        
-        var ampEnv3 = new Tone.AmplitudeEnvelope({
-          attack: 0.02,
-          decay: 0.3,
-          sustain: 1.0,
-          release: 0.02,
-        }).connect(reverb);
-        var osc3 = new Tone.Oscillator(820).connect(ampEnv3).start(); 
-        
         setTimeout(() => {
         setInterval(() => {
           let td = ((new Date()) - target)/1000
           
-          chan.sound([{
-            type:"OscAmpEnv",
-            oscillator: 470,
-            envelope: {
-              attack: 0.02,
-              decay: 0.3,
-              sustain: 1.0,
-              release: 0.02,
-            }
-          }], "8t")
-          
           if(td < time) {
-            // ampEnv.triggerAttackRelease("8t");
+            chan.sound("ClockAlarm1")
           } else if(td < time+Math.floor(time/2)*2) {
-            // ampEnv.triggerAttackRelease("8t");
-            // ampEnv2.triggerAttackRelease("8t", "+0.3");
+            chan.sound("ClockAlarm2")
           } else {
-            // ampEnv.triggerAttackRelease("8t");
-            // ampEnv3.triggerAttackRelease("8t", "+0.25");
-            // ampEnv2.triggerAttackRelease("8t", "+0.5");
+            chan.sound("ClockAlarm3")
           }
         }, 2000)}, fullTime*1000)
       }
@@ -420,19 +425,6 @@ module.load(["audio"], function(name) {
       
       stripeAnim.apply(relAnimStripes)
       lineAnim.apply(relAnimLine)
-      
-      function playMP3(file, time=0) {
-        setTimeout(()=>{
-          let src = cordova.file.applicationDirectory + 'www/audio/' + file
-          var myMedia =
-            new Media(src,
-              function () { },
-              function (e) { alert('Media Error: ' + JSON.stringify(e)); }
-            );
-          myMedia.play();
-          myMedia.setVolume('0.5');
-        }, time)
-      }
       
       svgHolder.appendChild(relAnimLine)
       svgHolder.appendChild(relAnimStripes)
