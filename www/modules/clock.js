@@ -182,6 +182,13 @@ var svg = {
 
 module.load(["audio"], function(name) { 
   
+  chan.registerModifier("Reverb", {
+    "type": "Reverb",
+    "wet": 0.5,
+    "decay": 1.5,
+    "preDelay": 0.01
+  })
+  
   chan.registerSound("ClockAlarm1", {
     type:"OscAmpEnv",
     oscillator: 470,
@@ -190,7 +197,8 @@ module.load(["audio"], function(name) {
       decay: 0.3,
       sustain: 1.0,
       release: 0.02,
-    }
+    },
+    modifier: "Reverb"
   })
   chan.registerSound("ClockAlarm2", ["ClockAlarm1",{
     type:"OscAmpEnv",
@@ -201,7 +209,8 @@ module.load(["audio"], function(name) {
       sustain: 1.0,
       release: 0.02,
     },
-    delay: "+0.3"
+    delay: "+0.3",
+    modifier: "Reverb"
   }])
   chan.registerSound("ClockAlarm3", ["ClockAlarm1",{
       type:"OscAmpEnv",
@@ -212,7 +221,8 @@ module.load(["audio"], function(name) {
         sustain: 1.0,
         release: 0.02,
       },
-      delay: "+0.25"
+      delay: "+0.25",
+      modifier: "Reverb"
     },{
       type:"OscAmpEnv",
       oscillator: 650,
@@ -222,7 +232,8 @@ module.load(["audio"], function(name) {
         sustain: 1.0,
         release: 0.02,
       },
-      delay: "+0.5"
+      delay: "+0.5",
+      modifier: "Reverb"
   }])
    
   return {
@@ -399,12 +410,6 @@ module.load(["audio"], function(name) {
           IterationCount: "infinite"
         })
         
-        const reverb = new Tone.Reverb({
-        	"wet": 0.5,
-        	"decay": 1.5,
-        	"preDelay": 0.01
-        }).toDestination();
-          
         setTimeout(() => {
         setInterval(() => {
           let td = ((new Date()) - target)/1000
