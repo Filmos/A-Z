@@ -139,6 +139,37 @@ module.load(function(name) {
     prebuildModifiers[name] = lastMod
   })
   
+  var melodyCache = {}
+  chan.addListener("melody", function (id, melody) {
+    if(melodyCache[id]) {chan.debug('Melody "'+id+'" is already playing, ignoring new request', "warn"); return}
+    chan.debug('Playing melody "'+id+'"...')
+    if(!Array.isArray(melody)) melody = [melody]
+    melodyCache[id] = []
+    
+    let delay = Tone.Time()
+    for(let m of melody) {
+      m = {
+        interval: "1s",
+        delay: "0s",
+        ...m
+      }
+      if(!m.sound) {chan.debug('Melody "'+id+'" includes an undefined sound, skipping', "error"); continue}
+      melodyCache[id].push(new Tone.Loop({
+        ...m,
+        callback: (time) => {chan.sound(m.sound, {delay: time})}
+      }).start(delay+m.delay))
+      
+      if(!m.iterations) break
+      delay += Tone.Time(m.delay)+Tone.Time(m.interval)*m.iterations
+    }
+    Tone.Transport.start();
+  })
+  chan.addListener("stopMelody", function (id) {
+    if(!melodyCache[id]) {chan.debug('Tried stopping non-existent melody "'+id+'"', "warn"); return}
+    for(let l of melodyCache[id]) l.dispose()
+    melodyCache[id] = undefined
+  })
+  
   return {
     css: ``
   }

@@ -410,18 +410,9 @@ module.load(["audio"], function(name) {
           IterationCount: "infinite"
         })
         
-        setTimeout(() => {
-        setInterval(() => {
-          let td = ((new Date()) - target)/1000
-          
-          if(td < time) {
-            chan.sound("ClockAlarm1")
-          } else if(td < time+Math.floor(time/2)*2) {
-            chan.sound("ClockAlarm2")
-          } else {
-            chan.sound("ClockAlarm3")
-          }
-        }, 2000)}, fullTime*1000)
+        chan.melody("ClockAlarm", [{sound: "ClockAlarm1", interval: "2s", iterations: Math.floor(time/2), delay: fullTime},
+                                   {sound: "ClockAlarm2", interval: "2s", iterations: Math.ceil(time/2)},
+                                   {sound: "ClockAlarm3", interval: "2s"}])
       }
       // 20 - 50
       // 20*60 - 70
@@ -431,6 +422,7 @@ module.load(["audio"], function(name) {
       stripeAnim.apply(relAnimStripes)
       lineAnim.apply(relAnimLine)
       
+      svgHolder.addEventListener("click", ()=>{chan.stopMelody("ClockAlarm")});
       svgHolder.appendChild(relAnimLine)
       svgHolder.appendChild(relAnimStripes)
     }
