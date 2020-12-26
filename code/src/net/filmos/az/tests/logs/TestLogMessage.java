@@ -1,4 +1,4 @@
-package net.filmos.az.tests;
+package net.filmos.az.tests.logs;
 
 import net.filmos.az.colors.Color;
 import net.filmos.az.logs.LogMessage;

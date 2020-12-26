@@ -1,4 +1,4 @@
-package net.filmos.az.tests;
+package net.filmos.az.tests.logs;
 
 import net.filmos.az.colors.Color;
 import net.filmos.az.logs.LogChannel;
@@ -17,6 +17,16 @@ import java.util.List;
 import static org.mockito.Mockito.*;
 
 public class TestLogChannel {
+
+    @Test
+    public void channelHasValidName() {
+        PrintStream mockPrintStream = mock(PrintStream.class);
+        LogChannel channel = new LogChannelConsole(mockPrintStream);
+
+        String name = channel.getName();
+        Assert.assertNotNull(name);
+        Assert.assertNotEquals("", name);
+    }
 
     @Test
     public void channelTransfersMessages() {
