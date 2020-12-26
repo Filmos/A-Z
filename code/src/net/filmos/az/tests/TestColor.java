@@ -36,4 +36,10 @@ public class TestColor {
         Assert.assertEquals(123/255d, paintColor.getGreen(), 1/255d);
         Assert.assertEquals(245/255d, paintColor.getBlue(), 1/255d);
     }
+
+    @Test
+    public void convertToHexString() {
+        Color color = new Color(50, 168, 82);
+        Assert.assertEquals("#32a852", color.toHexString());
+    }
 }

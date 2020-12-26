@@ -15,4 +15,5 @@ public class Color {
     public int getGreen() {return green;}
     public int getBlue() {return blue;}
     public javafx.scene.paint.Color toPaintColor() {return new javafx.scene.paint.Color(getRed()/255f, getGreen()/255f, getBlue()/255f, 1);}
+    public String toHexString() {return "#"+Integer.toHexString(red)+Integer.toHexString(green)+Integer.toHexString(blue);}
 }

@@ -41,5 +41,7 @@
     </orderEntry>
     <orderEntry type="library" name="org.testfx:testfx-junit:4.0.15-alpha" level="project" />
     <orderEntry type="library" name="org.mockito:mockito-core:2.2.2" level="project" />
+    <orderEntry type="library" name="org.kordamp.ikonli:ikonli-javafx:2.3.0" level="project" />
+    <orderEntry type="library" name="org.kordamp.ikonli:ikonli-dashicons-pack:2.3.0" level="project" />
   </component>
 </module>

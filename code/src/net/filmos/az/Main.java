@@ -23,6 +23,7 @@ public class Main extends Application {
         initWindow(stage);
 
         app.addSegment(new LogInterfaceSegment());
+        app.test();
     }
 
     private void initWindow(Stage stage) {

@@ -17,6 +17,10 @@ public class DisplayElementText extends DisplayElement {
         outerNode.setStyle("-fx-padding: 8;");
         font = defaultFont;
         this.defaultColor = defaultColor;
+
+
+        DisplayElement icon = new DisplayElementIcon("dashicons-analytics", "200px", new Color(160, 255, 80));
+        outerNode.getChildren().add(icon.getNode());
     }
 
     @Override
