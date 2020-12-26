@@ -8,6 +8,7 @@ import java.util.List;
 
 public final class LogDistributor {
     List<LogChannel> channels = new ArrayList<>();
+    List<LogMessage> messageBuffer = new ArrayList<>();
     private enum LogType {
         Info(162, 237, 104),
         Important(77, 213, 254),
@@ -22,6 +23,7 @@ public final class LogDistributor {
 
     public void addChannel(LogChannel channel) {
         channels.add(channel);
+        messageBuffer.forEach(channel::log);
     }
 
     public void log(String messageContent, String additionalInformation) {
@@ -47,6 +49,7 @@ public final class LogDistributor {
         return message;
     }
     private void distributeMessage(LogMessage message) {
+        messageBuffer.add(message);
         channels.forEach(channel -> channel.log(message));
     }
 }

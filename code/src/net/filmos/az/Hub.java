@@ -11,6 +11,10 @@ public class Hub {
     private final LogDistributor logDistributor = new LogDistributor();
     private StageNodePositioner segmentPositioner;
 
+    public Hub() {
+        logImportant("Launching A-Z");
+    }
+
     public void log(String message) {log(message, "");}
     public void log(String message, String additionalInformation) {logDistributor.log(message, additionalInformation);}
     public void logImportant(String message) {logImportant(message, "");}

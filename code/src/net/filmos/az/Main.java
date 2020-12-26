@@ -13,7 +13,6 @@ import java.util.Comparator;
 
 public class Main extends Application {
     private static final Hub app = new Hub();
-    private StageFactory stageFactory;
 
     public static void main(String [] args) {
         app.addLogChannel(new LogChannelConsole(System.out));
@@ -24,15 +23,10 @@ public class Main extends Application {
         initWindow(stage);
 
         app.addSegment(new LogInterfaceSegment());
-
-        app.logImportant("Hi");
-        app.log("Hello world");
-        app.logWarning("Wow!");
-        app.logError("No way");
     }
 
     private void initWindow(Stage stage) {
-        stageFactory = new StageFactory(stage);
+        StageFactory stageFactory = new StageFactory(stage);
         Screen thinnestScreen = Collections.min(Screen.getScreens(),
                 Comparator.comparing(s -> s.getVisualBounds().getWidth()));
         StageBuilder thinStage = stageFactory.createFullscreenStage(thinnestScreen.getVisualBounds());

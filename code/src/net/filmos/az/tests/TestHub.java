@@ -47,12 +47,16 @@ public class TestHub {
         hub.logError("Hi");
 
         ArgumentCaptor<String> argument = ArgumentCaptor.forClass(String.class);
-        verify(mockPrintStream, times(4)).println(argument.capture());
+        verify(mockPrintStream, atLeast(4)).println(argument.capture());
         List<String> results = argument.getAllValues();
         HashMap<String, Boolean> unique = new HashMap<>();
+        int count = 0;
         for(String result : results) {
+            if(!result.contains("Hi")) continue;
+            count++;
             Assert.assertNull("Message \""+result+"\" appeared more than once,",unique.get(result));
             unique.put(result, true);
         }
+        Assert.assertEquals(4, count);
     }
 }
