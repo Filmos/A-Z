@@ -1,19 +1,16 @@
 package net.filmos.az.gui;
 
 import javafx.scene.Node;
-import javafx.scene.Parent;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
-import javafx.scene.text.FontPosture;
-import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import net.filmos.az.colors.Color;
 import org.jetbrains.annotations.NotNull;
 
 public class DisplayElementText extends DisplayElement {
-    private VBox outerNode;
-    private Font font;
-    private Color defaultColor;
+    private final VBox outerNode;
+    private final Font font;
+    private final Color defaultColor;
 
     public DisplayElementText(Font defaultFont, @NotNull Color defaultColor) {
         outerNode = new VBox();

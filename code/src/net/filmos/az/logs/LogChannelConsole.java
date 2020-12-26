@@ -7,6 +7,9 @@ import java.io.PrintStream;
 public class LogChannelConsole implements LogChannel {
     private final PrintStream outputStream;
 
+    @Override
+    public String getName() {return "console";}
+
     public LogChannelConsole(PrintStream outputStream) {
         this.outputStream = outputStream;
     }

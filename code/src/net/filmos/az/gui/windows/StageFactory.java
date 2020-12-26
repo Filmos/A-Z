@@ -1,4 +1,4 @@
-package net.filmos.az.gui;
+package net.filmos.az.gui.windows;
 
 import javafx.geometry.Rectangle2D;
 import javafx.stage.Stage;

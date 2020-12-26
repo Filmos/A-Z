@@ -1,16 +1,15 @@
 package net.filmos.az;
 
-import javafx.scene.Group;
-import javafx.scene.Scene;
-import javafx.scene.text.Font;
-import net.filmos.az.gui.DisplayElementText;
+import javafx.stage.Stage;
+import net.filmos.az.gui.InterfaceSegment;
+import net.filmos.az.gui.windows.StageNodePositioner;
 import net.filmos.az.logs.LogChannel;
-import net.filmos.az.logs.LogChannelDisplay;
 import net.filmos.az.logs.LogDistributor;
 import org.jetbrains.annotations.NotNull;
 
 public class Hub {
     private final LogDistributor logDistributor = new LogDistributor();
+    private StageNodePositioner segmentPositioner;
 
     public void log(String message) {log(message, "");}
     public void log(String message, String additionalInformation) {logDistributor.log(message, additionalInformation);}
@@ -22,15 +21,13 @@ public class Hub {
     public void logError(String message, String additionalInformation) {logDistributor.logError(message, additionalInformation);}
 
     public void addLogChannel(LogChannel logChannel) {
+        log("Adding new "+logChannel.getName()+" log channel...");
         logDistributor.addChannel(logChannel);
     }
 
-    // TODO: major rework of UI initialization
-    public void addUserInterface(@NotNull Scene scene) {
-        DisplayElementText text = new DisplayElementText(Font.font("consolas", 18), new net.filmos.az.colors.Color(255, 255, 255));
-        ((Group) scene.getRoot()).getChildren().add(text.getNode());
-        addLogChannel(new LogChannelDisplay(text));
-        text.addText("Hello");
-        text.addText("there");
+    public void setUserInterface(@NotNull Stage stage) {segmentPositioner = new StageNodePositioner(stage);}
+    public void addSegment(InterfaceSegment segment) {
+        logImportant("Adding interface segment \""+segment.getName()+"\"...");
+        segmentPositioner.addNode(segment.buildNode(this));
     }
 }
