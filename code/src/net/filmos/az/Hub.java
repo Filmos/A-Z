@@ -1,17 +1,14 @@
 package net.filmos.az;
 
-import javafx.scene.Node;
-import javafx.scene.control.Button;
 import javafx.stage.Stage;
+import jfxtras.scene.layout.CircularPane;
 import net.filmos.az.colors.Color;
-import net.filmos.az.gui.DisplayElement;
 import net.filmos.az.gui.DisplayElementIcon;
 import net.filmos.az.gui.InterfaceSegment;
 import net.filmos.az.gui.windows.StageNodePositioner;
 import net.filmos.az.logs.LogChannel;
 import net.filmos.az.logs.LogDistributor;
 import org.jetbrains.annotations.NotNull;
-import org.kordamp.ikonli.javafx.FontIcon;
 
 public class Hub {
     private final LogDistributor logDistributor = new LogDistributor();
@@ -41,7 +38,8 @@ public class Hub {
         segmentPositioner.addNode(segment.buildNode(this));
     }
     public void test() {
-        DisplayElement icon = new DisplayElementIcon("dashicons-analytics", "200px", new Color(160, 255, 80));
-        segmentPositioner.addNode(icon.getNode());
+        CircularPane pane = new CircularPane();
+        for(int i=0;i<27;i++) pane.getChildren().add(new DisplayElementIcon("dashicons-analytics", "40px", Color.random()).getNode());
+        segmentPositioner.addNodeCenter(pane);
     }
 }

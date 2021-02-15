@@ -39,7 +39,7 @@ public class TestColor {
 
     @Test
     public void convertToHexString() {
-        Color color = new Color(50, 168, 82);
-        Assert.assertEquals("#32a852", color.toHexString());
+        Color color = new Color(5, 168, 2);
+        Assert.assertEquals("#05a802", color.toHexString());
     }
 }

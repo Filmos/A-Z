@@ -2,6 +2,8 @@ package net.filmos.az.gui.windows;
 
 import javafx.scene.Group;
 import javafx.scene.Node;
+import javafx.scene.Scene;
+import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 
 public class StageNodePositioner {
@@ -15,4 +17,12 @@ public class StageNodePositioner {
     public void addNode(Node node) {
         ((Group) stage.getScene().getRoot()).getChildren().add(node);
     }
+    public void addNodeCenter(Node node) {
+        BorderPane alignmentPane = new BorderPane();
+        alignmentPane.setCenter(node);
+        alignmentPane.prefHeightProperty().bind(getScene().heightProperty());
+        alignmentPane.prefWidthProperty().bind(getScene().widthProperty());
+        addNode(alignmentPane);
+    }
+    public Scene getScene() { return stage.getScene();}
 }
