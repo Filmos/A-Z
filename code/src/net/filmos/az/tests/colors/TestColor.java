@@ -1,4 +1,4 @@
-package net.filmos.az.tests;
+package net.filmos.az.tests.colors;
 
 import net.filmos.az.colors.Color;
 import org.junit.Assert;
@@ -17,7 +17,7 @@ public class TestColor {
     @Test
     public void multipleColorsRetainInformation() {
         Color color1 = new Color(34, 123, 245);
-        Color color2 = new Color(213, 4, 111);
+        Color color2 = new Color(213L, 4L, 111L);
 
         Assert.assertEquals(34, color1.getRed());
         Assert.assertEquals(123, color1.getGreen());

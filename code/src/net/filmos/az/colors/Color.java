@@ -12,6 +12,11 @@ public class Color {
         this.green = green;
         this.blue = blue;
     }
+    public Color(long red, long green, long blue) {
+        this.red = (int) red;
+        this.green = (int) green;
+        this.blue = (int) blue;
+    }
 
     public int getRed() {return red;}
     public int getGreen() {return green;}

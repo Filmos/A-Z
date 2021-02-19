@@ -5,18 +5,19 @@ import javafx.scene.Node;
 import javafx.scene.shape.Polygon;
 import jfxtras.scene.layout.CircularPane;
 import net.filmos.az.colors.Color;
+import net.filmos.az.colors.ColorGradient;
 import net.filmos.az.colors.ColorPalette;
 import net.filmos.az.gui.DisplayElementIcon;
 import org.kordamp.ikonli.dashicons.Dashicons;
 
 public class PB_IconSelector extends PanelBase {
-    private Group root;
+    private final Group root;
 
     public PB_IconSelector() {
         root = new Group();
         ColorPalette palette = ColorPalette.defaultPalette();
         createBackground(palette);
-        createIconList();
+        createIconList(palette.getContentGradient());
     }
     private void createBackground(ColorPalette palette) {
         Polygon hexagon = new Polygon();
@@ -34,11 +35,11 @@ public class PB_IconSelector extends PanelBase {
 
         root.getChildren().add(hexagon);
     }
-    private void createIconList() {
+    private void createIconList(ColorGradient gradient) {
         CircularPane pane = new CircularPane();
         pane.setTranslateX(45.0);
         Dashicons[] icons = Dashicons.values();
-        for(int i=0;i<29;i++) pane.getChildren().add(new DisplayElementIcon(icons[i].getDescription(), "40px", Color.random()).getNode());
+        for(int i=0;i<29;i++) pane.getChildren().add(new DisplayElementIcon(icons[i].getDescription(), "40px", gradient.getColor((float) (Math.sin(i/2f)/3f+0.5f))).getNode());
         root.getChildren().add(pane);
     }
 
