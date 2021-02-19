@@ -1,15 +1,8 @@
 package net.filmos.az.gui;
 
 import javafx.scene.Node;
-import javafx.scene.control.Button;
-import javafx.scene.layout.VBox;
-import javafx.scene.text.Font;
-import javafx.scene.text.Text;
 import net.filmos.az.colors.Color;
-import org.jetbrains.annotations.NotNull;
 import org.kordamp.ikonli.javafx.FontIcon;
-
-import java.util.Random;
 
 public class DisplayElementIcon extends DisplayElement {
     private final FontIcon icon;

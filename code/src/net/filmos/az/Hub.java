@@ -1,10 +1,8 @@
 package net.filmos.az;
 
 import javafx.stage.Stage;
-import jfxtras.scene.layout.CircularPane;
-import net.filmos.az.colors.Color;
-import net.filmos.az.gui.DisplayElementIcon;
 import net.filmos.az.gui.InterfaceSegment;
+import net.filmos.az.gui.panels.PB_IconSelector;
 import net.filmos.az.gui.windows.StageNodePositioner;
 import net.filmos.az.logs.LogChannel;
 import net.filmos.az.logs.LogDistributor;
@@ -38,8 +36,9 @@ public class Hub {
         segmentPositioner.addNode(segment.buildNode(this));
     }
     public void test() {
-        CircularPane pane = new CircularPane();
-        for(int i=0;i<27;i++) pane.getChildren().add(new DisplayElementIcon("dashicons-analytics", "40px", Color.random()).getNode());
-        segmentPositioner.addNodeCenter(pane);
+        PB_IconSelector panel = new PB_IconSelector();
+
+        segmentPositioner.addNodeCenter(panel.getNode());
+
     }
 }
