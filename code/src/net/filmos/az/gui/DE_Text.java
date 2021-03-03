@@ -7,12 +7,12 @@ import javafx.scene.text.Text;
 import net.filmos.az.colors.Color;
 import org.jetbrains.annotations.NotNull;
 
-public class DisplayElementText extends DisplayElement {
+public class DE_Text extends DisplayElement {
     private final VBox outerNode;
     private final Font font;
     private final Color defaultColor;
 
-    public DisplayElementText(Font defaultFont, @NotNull Color defaultColor) {
+    public DE_Text(Font defaultFont, @NotNull Color defaultColor) {
         outerNode = new VBox();
         outerNode.setStyle("-fx-padding: 8;");
         font = defaultFont;

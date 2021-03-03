@@ -20,8 +20,8 @@ public class StageNodePositioner {
     public void addNodeCenter(Node node) {
         BorderPane alignmentPane = new BorderPane();
         alignmentPane.setCenter(node);
-        alignmentPane.prefHeightProperty().bind(getScene().heightProperty());
-        alignmentPane.prefWidthProperty().bind(getScene().widthProperty());
+        alignmentPane.prefHeightProperty().bind(stage.getScene().heightProperty());
+        alignmentPane.prefWidthProperty().bind(stage.getScene().widthProperty());
         addNode(alignmentPane);
     }
     public Scene getScene() { return stage.getScene();}

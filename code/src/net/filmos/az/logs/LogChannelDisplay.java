@@ -1,14 +1,13 @@
 package net.filmos.az.logs;
 
-import net.filmos.az.colors.Color;
-import net.filmos.az.gui.DisplayElementText;
+import net.filmos.az.gui.DE_Text;
 
 public class LogChannelDisplay implements LogChannel{
-    private DisplayElementText displayNode;
+    private DE_Text displayNode;
 
     @Override
     public String getName() {return "display";}
-    public LogChannelDisplay(DisplayElementText displayNode) {
+    public LogChannelDisplay(DE_Text displayNode) {
         this.displayNode = displayNode;
     }
 

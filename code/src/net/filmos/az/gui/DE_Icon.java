@@ -4,14 +4,13 @@ import javafx.scene.Node;
 import net.filmos.az.colors.Color;
 import org.kordamp.ikonli.javafx.FontIcon;
 
-public class DisplayElementIcon extends DisplayElement {
+public class DE_Icon extends DisplayElement {
     private final FontIcon icon;
     private String iconName;
-    private String size;
+    private int size;
     private Color color;
 
-    // TODO: change size from string to cssSize class
-    public DisplayElementIcon(String iconName, String size, Color color) {
+    public DE_Icon(String iconName, int size, Color color) {
         icon = new FontIcon();
         this.iconName = iconName;
         this.size = size;
@@ -24,9 +23,8 @@ public class DisplayElementIcon extends DisplayElement {
     public Node getNode() {return icon;}
 
     private void updateStyle() {
-        icon.setStyle("-fx-icon-color: "+color.toHexString()
-                    +";-fx-icon-size: "+size
-                    +";-fx-icon-code: "+iconName
-                    +";");
+        icon.setIconSize(size);
+        icon.setIconLiteral(iconName);
+        icon.setIconColor(color.toPaintColor());
     }
 }

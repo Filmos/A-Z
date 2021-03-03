@@ -1,23 +1,22 @@
 package net.filmos.az.gui.panels;
 
-import javafx.scene.Group;
 import javafx.scene.Node;
+import javafx.scene.layout.StackPane;
 import javafx.scene.shape.Polygon;
-import jfxtras.scene.layout.CircularPane;
 import net.filmos.az.colors.Color;
-import net.filmos.az.colors.ColorGradient;
 import net.filmos.az.colors.ColorPalette;
-import net.filmos.az.gui.DisplayElementIcon;
+import net.filmos.az.gui.DE_Icon;
+import net.filmos.az.gui.DE_RotatingSelector;
 import org.kordamp.ikonli.dashicons.Dashicons;
 
 public class PB_IconSelector extends PanelBase {
-    private final Group root;
+    private final StackPane root;
 
     public PB_IconSelector() {
-        root = new Group();
+        root = new StackPane();
         ColorPalette palette = ColorPalette.defaultPalette();
         createBackground(palette);
-        createIconList(palette.getContentGradient());
+        createIconList(palette.getContent());
     }
     private void createBackground(ColorPalette palette) {
         Polygon hexagon = new Polygon();
@@ -35,11 +34,21 @@ public class PB_IconSelector extends PanelBase {
 
         root.getChildren().add(hexagon);
     }
-    private void createIconList(ColorGradient gradient) {
-        CircularPane pane = new CircularPane();
-        pane.setTranslateX(45.0);
-        Dashicons[] icons = Dashicons.values();
-        for(int i=0;i<29;i++) pane.getChildren().add(new DisplayElementIcon(icons[i].getDescription(), "40px", gradient.getColor((float) (Math.sin(i/2f)/3f+0.5f))).getNode());
+    private void createIconList(Color color) {
+        Dashicons[] iconsRaw = Dashicons.values();
+        Node[] icons = new Node[iconsRaw.length];
+        for(int i=0;i<iconsRaw.length;i++)
+            icons[i] = new DE_Icon(iconsRaw[i].getDescription(), 40, color).getNode();
+
+//        Node[] icons = new Node[10];
+//        for(int i=0;i<10;i++)
+//            icons[i] = new DE_Icon("dashicons-editor-help", (i*3+10), color).getNode();
+
+//        Node[] icons = new Node[10];
+//        for(int i=0;i<10;i++)
+//            icons[i] = new DE_Icon("dashicons-editor-help", 40, color).getNode();
+
+        Node pane = new DE_RotatingSelector(560d, icons).getNode();
         root.getChildren().add(pane);
     }
 

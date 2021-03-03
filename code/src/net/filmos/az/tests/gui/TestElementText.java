@@ -4,7 +4,7 @@ import javafx.scene.Node;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import net.filmos.az.colors.Color;
-import net.filmos.az.gui.DisplayElementText;
+import net.filmos.az.gui.DE_Text;
 import org.junit.Assert;
 import org.junit.Test;
 import org.testfx.framework.junit.ApplicationTest;
@@ -18,7 +18,7 @@ public class TestElementText extends ApplicationTest {
 
     @Test
     public void textIsAdded() {
-        DisplayElementText displayElement = new DisplayElementText(Font.font("consolas", 18), new Color(255, 255, 255));
+        DE_Text displayElement = new DE_Text(Font.font("consolas", 18), new Color(255, 255, 255));
         Node node = displayElement.getNode();
 
         assertEmpty(from(node).lookup(TextMatchers.hasText("Hello")).tryQuery());
@@ -28,7 +28,7 @@ public class TestElementText extends ApplicationTest {
 
     @Test
     public void textIsPersistent() {
-        DisplayElementText displayElement = new DisplayElementText(Font.font("consolas", 18), new Color(255, 255, 255));
+        DE_Text displayElement = new DE_Text(Font.font("consolas", 18), new Color(255, 255, 255));
         Node node = displayElement.getNode();
 
         displayElement.addText("This");
@@ -47,7 +47,7 @@ public class TestElementText extends ApplicationTest {
         Color color1 = new Color(220, 135, 98);
         Color color2 = new Color(2, 185, 198);
 
-        DisplayElementText displayElement = new DisplayElementText(Font.font("consolas", 18), defaultColor);
+        DE_Text displayElement = new DE_Text(Font.font("consolas", 18), defaultColor);
         Node node = displayElement.getNode();
 
         displayElement.addText("Default");
