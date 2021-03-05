@@ -48,8 +48,9 @@ public class PB_IconSelector extends PanelBase {
 //        for(int i=0;i<10;i++)
 //            icons[i] = new DE_Icon("dashicons-editor-help", 40, color).getNode();
 
-        Node pane = new DE_RotatingSelector(560d, icons).getNode();
-        root.getChildren().add(pane);
+        DE_RotatingSelector pane = new DE_RotatingSelector(560d, icons);
+        pane.setPadding(4);
+        root.getChildren().add(pane.getNode());
     }
 
     @Override
