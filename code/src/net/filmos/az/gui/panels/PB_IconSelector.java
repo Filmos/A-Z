@@ -1,15 +1,22 @@
 package net.filmos.az.gui.panels;
 
 import javafx.scene.Node;
+import javafx.scene.control.TextField;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.StackPane;
 import javafx.scene.shape.Polygon;
 import net.filmos.az.colors.ColorPalette;
+import net.filmos.az.gui.base.DisplayElementGroup;
 import net.filmos.az.gui.elements.DE_Icon;
 import net.filmos.az.gui.elements.DE_RotatingDisplay;
 import net.filmos.az.gui.input.BinaryInputDisplay;
 import net.filmos.az.gui.input.BinaryInputDisplay_Color;
 import net.filmos.az.gui.input.NodeSelector;
 import org.kordamp.ikonli.dashicons.Dashicons;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class PB_IconSelector extends PanelBase {
     private final StackPane root;
@@ -39,18 +46,30 @@ public class PB_IconSelector extends PanelBase {
     }
     private void createIconList(ColorPalette palette) {
         Dashicons[] iconsRaw = Dashicons.values();
-        BinaryInputDisplay[] icons = new BinaryInputDisplay[iconsRaw.length];
+        List<BinaryInputDisplay> iconInput = new ArrayList<>();
+        DisplayElementGroup iconGroup = new DisplayElementGroup();
 
-        for(int i=0;i<iconsRaw.length;i++) {
-            DE_Icon icon = new DE_Icon(iconsRaw[i].getDescription(), 40, palette.getContent());
-            icons[i] = new BinaryInputDisplay_Color(icon, palette);
+        for (Dashicons iconCode : iconsRaw) {
+            DE_Icon icon = new DE_Icon(iconCode.getDescription(), 40, palette.getContent());
+            iconInput.add(new BinaryInputDisplay_Color(icon, palette));
+            iconGroup.addLabeledElement(icon, iconCode.getDescription());
         }
+        NodeSelector userSelector = new NodeSelector(iconInput);
 
-        NodeSelector userSelector = new NodeSelector(icons);
 
-        DE_RotatingDisplay pane = new DE_RotatingDisplay(560d, userSelector.getAllNodes());
+        DE_RotatingDisplay pane = new DE_RotatingDisplay(560d, iconGroup);
         pane.setPadding(4);
         root.getChildren().add(pane.getNode());
+
+
+        TextField textField = new TextField();
+        textField.setMaxWidth(222.5);
+        textField.setTranslateY(-222.5);
+        textField.setOnKeyTyped((KeyEvent event) -> {
+            iconGroup.setFilter(textField.getText());
+            pane.updateNodes();
+        });
+        root.getChildren().add(textField);
     }
 
     @Override

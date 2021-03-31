@@ -4,13 +4,14 @@ import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
 import net.filmos.az.gui.base.DisplayElement;
 
-import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class NodeSelector {
-    private final BinaryInputDisplay[] wrappedElements;
+    private final List<BinaryInputDisplay> wrappedElements;
     private BinaryInputDisplay selectedElement;
 
-    public NodeSelector(BinaryInputDisplay... elements) {
+    public NodeSelector(List<BinaryInputDisplay> elements) {
         wrappedElements = elements;
         for(BinaryInputDisplay el : wrappedElements) rigElement(el);
     }
@@ -27,8 +28,8 @@ public class NodeSelector {
     public Node getSelection() {
         return selectedElement.getNode();
     }
-    public Node[] getAllNodes() {
-        return Arrays.stream(wrappedElements).map(DisplayElement::getNode).toArray(Node[]::new);
+    public List<Node> getAllNodes() {
+        return wrappedElements.stream().map(DisplayElement::getNode).collect(Collectors.toList());
     }
 
 }
