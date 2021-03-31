@@ -4,6 +4,7 @@ import javafx.scene.Node;
 import net.filmos.az.colors.Color;
 import net.filmos.az.colors.ColorPalette;
 import net.filmos.az.gui.base.ColorableDisplayElement;
+import net.filmos.az.gui.base.DisplayElement;
 
 public class BinaryInputDisplay_Color extends BinaryInputDisplay {
     private final ColorableDisplayElement rootElement;
@@ -23,8 +24,10 @@ public class BinaryInputDisplay_Color extends BinaryInputDisplay {
         rootElement.setColor(newColor);
     }
 
-    @Override
     public Node getNode() {
         return rootElement.getNode();
     }
+
+    @Override
+    public DisplayElement getDisplayElement() {return rootElement;}
 }

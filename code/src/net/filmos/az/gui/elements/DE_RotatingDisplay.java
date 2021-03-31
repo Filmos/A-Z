@@ -68,8 +68,11 @@ public class DE_RotatingDisplay extends DisplayElement {
 
     public void setPadding(int newPadding) {
         padding = newPadding;
-        root.setStartAngle(180d/maxElements*(newPadding%2));
+        setAngle(180d/maxElements*(newPadding%2));
         updateNodes();
+    }
+    public void setAngle(double angle) {
+        root.setStartAngle(angle);
     }
 
     @Override

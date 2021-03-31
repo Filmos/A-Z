@@ -7,6 +7,7 @@ import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.StackPane;
 import javafx.scene.shape.Polygon;
 import net.filmos.az.colors.ColorPalette;
+import net.filmos.az.gui.base.DisplayElement;
 import net.filmos.az.gui.base.DisplayElementGroup;
 import net.filmos.az.gui.elements.DE_Icon;
 import net.filmos.az.gui.elements.DE_RotatingDisplay;
@@ -17,6 +18,8 @@ import org.kordamp.ikonli.dashicons.Dashicons;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
+import java.util.function.Function;
 
 public class PB_IconSelector extends PanelBase {
     private final StackPane root;
@@ -54,17 +57,25 @@ public class PB_IconSelector extends PanelBase {
             iconInput.add(new BinaryInputDisplay_Color(icon, palette));
             iconGroup.addLabeledElement(icon, iconCode.getDescription());
         }
-        NodeSelector userSelector = new NodeSelector(iconInput);
-
 
         DE_RotatingDisplay pane = new DE_RotatingDisplay(560d, iconGroup);
-        pane.setPadding(4);
+        pane.setPadding(5);
+        pane.setAngle(0d);
         root.getChildren().add(pane.getNode());
 
 
+        Consumer<DisplayElement> onSelected = (DisplayElement el) -> {iconGroup.pinElement(el); pane.updateNodes();};
+        Consumer<DisplayElement> onUnselected = (DisplayElement el) -> {iconGroup.unpinElement(el); pane.updateNodes();};
+        NodeSelector userSelector = new NodeSelector(iconInput);
+        userSelector.addSelectedListener(onSelected);
+        userSelector.addUnselectedListener(onUnselected);
+        userSelector.selectRandom();
+
+
         TextField textField = new TextField();
-        textField.setMaxWidth(222.5);
+        textField.setMaxWidth(252.5);
         textField.setTranslateY(-222.5);
+        textField.setTranslateX(-15);
         textField.setOnKeyTyped((KeyEvent event) -> {
             iconGroup.setFilter(textField.getText());
             pane.updateNodes();

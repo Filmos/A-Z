@@ -1,8 +1,9 @@
 package net.filmos.az.gui.input;
 
 import net.filmos.az.gui.base.DisplayElement;
+import net.filmos.az.gui.base.DisplayElementWrapper;
 
-public abstract class BinaryInputDisplay extends DisplayElement {
+public abstract class BinaryInputDisplay extends DisplayElementWrapper {
     protected boolean state = false;
 
     public void activate() {
