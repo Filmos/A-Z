@@ -1,10 +1,11 @@
-package net.filmos.az.gui;
+package net.filmos.az.gui.elements;
 
 import javafx.scene.Node;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import net.filmos.az.colors.Color;
+import net.filmos.az.gui.base.DisplayElement;
 import org.jetbrains.annotations.NotNull;
 
 public class DE_Text extends DisplayElement {

@@ -1,6 +1,6 @@
 package net.filmos.az.logs;
 
-import net.filmos.az.gui.DE_Text;
+import net.filmos.az.gui.elements.DE_Text;
 
 public class LogChannelDisplay implements LogChannel{
     private DE_Text displayNode;

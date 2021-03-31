@@ -4,8 +4,8 @@ import javafx.scene.Node;
 import javafx.scene.text.Font;
 import net.filmos.az.Hub;
 import net.filmos.az.colors.Color;
-import net.filmos.az.gui.DE_Text;
-import net.filmos.az.gui.InterfaceSegment;
+import net.filmos.az.gui.elements.DE_Text;
+import net.filmos.az.gui.base.InterfaceSegment;
 
 public class LogInterfaceSegment implements InterfaceSegment {
     @Override

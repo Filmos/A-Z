@@ -1,7 +1,7 @@
 package net.filmos.az;
 
 import javafx.stage.Stage;
-import net.filmos.az.gui.InterfaceSegment;
+import net.filmos.az.gui.base.InterfaceSegment;
 import net.filmos.az.gui.panels.PB_IconSelector;
 import net.filmos.az.gui.windows.StageNodePositioner;
 import net.filmos.az.logs.LogChannel;

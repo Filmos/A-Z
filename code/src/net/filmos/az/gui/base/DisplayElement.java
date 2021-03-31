@@ -1,4 +1,4 @@
-package net.filmos.az.gui;
+package net.filmos.az.gui.base;
 
 import javafx.scene.Node;
 

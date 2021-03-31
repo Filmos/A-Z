@@ -1,30 +1,31 @@
-package net.filmos.az.gui;
+package net.filmos.az.gui.elements;
 
 import javafx.scene.Node;
 import net.filmos.az.colors.Color;
+import net.filmos.az.gui.base.ColorableDisplayElement;
 import org.kordamp.ikonli.javafx.FontIcon;
 
-public class DE_Icon extends DisplayElement {
+public class DE_Icon extends ColorableDisplayElement {
     private final FontIcon icon;
     private String iconName;
     private int size;
-    private Color color;
 
     public DE_Icon(String iconName, int size, Color color) {
-        icon = new FontIcon();
         this.iconName = iconName;
         this.size = size;
-        this.color = color;
 
-        updateStyle();
+        icon = new FontIcon();
+        icon.setIconSize(size);
+        icon.setIconLiteral(iconName);
+
+        setColor(color);
     }
 
     @Override
     public Node getNode() {return icon;}
 
-    private void updateStyle() {
-        icon.setIconSize(size);
-        icon.setIconLiteral(iconName);
+    @Override
+    protected void updateColor(Color color) {
         icon.setIconColor(color.toPaintColor());
     }
 }

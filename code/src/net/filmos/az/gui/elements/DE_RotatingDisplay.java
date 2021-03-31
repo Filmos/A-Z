@@ -1,21 +1,21 @@
-package net.filmos.az.gui;
+package net.filmos.az.gui.elements;
 
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableArray;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.VBox;
 import jfxtras.scene.layout.CircularPane;
+import net.filmos.az.gui.base.DisplayElement;
 
-public class DE_RotatingSelector extends DisplayElement {
+public class DE_RotatingDisplay extends DisplayElement {
     private final CircularPane root;
     private final Node[] allElements;
     private int startingIndex = 0;
     private final int maxElements;
     private int padding;
 
-    public DE_RotatingSelector(double diameter, Node... elements) {
+    public DE_RotatingDisplay(double diameter, Node... elements) {
         allElements = elements;
         maxElements = (int) Math.floor(diameter/20d);
 

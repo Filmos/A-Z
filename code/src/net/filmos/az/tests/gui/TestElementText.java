@@ -4,7 +4,7 @@ import javafx.scene.Node;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import net.filmos.az.colors.Color;
-import net.filmos.az.gui.DE_Text;
+import net.filmos.az.gui.elements.DE_Text;
 import org.junit.Assert;
 import org.junit.Test;
 import org.testfx.framework.junit.ApplicationTest;
