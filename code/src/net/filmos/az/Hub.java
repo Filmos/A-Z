@@ -1,8 +1,10 @@
 package net.filmos.az;
 
 import javafx.stage.Stage;
+import net.filmos.az.colors.ColorPalette;
 import net.filmos.az.gui.base.InterfaceSegment;
 import net.filmos.az.gui.panels.PB_IconSelector;
+import net.filmos.az.gui.panels.Panel_NewEvent;
 import net.filmos.az.gui.windows.StageNodePositioner;
 import net.filmos.az.logs.LogChannel;
 import net.filmos.az.logs.LogDistributor;
@@ -36,7 +38,8 @@ public class Hub {
         segmentPositioner.addNode(segment.buildNode(this));
     }
     public void test() {
-        PB_IconSelector panel = new PB_IconSelector();
+        Panel_NewEvent panel = new Panel_NewEvent(ColorPalette.defaultPalette());
+//        PB_IconSelector panel = new PB_IconSelector(ColorPalette.defaultPalette());
 
         segmentPositioner.addNodeCenter(panel.getNode());
 

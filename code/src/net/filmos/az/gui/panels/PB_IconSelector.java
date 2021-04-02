@@ -19,14 +19,15 @@ import org.kordamp.ikonli.dashicons.Dashicons;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
-import java.util.function.Function;
 
 public class PB_IconSelector extends PanelBase {
     private final StackPane root;
+    private NodeSelector userSelector;
+    private DisplayElementGroup iconGroup;
+    private DE_RotatingDisplay pane;
 
-    public PB_IconSelector() {
+    public PB_IconSelector(ColorPalette palette) {
         root = new StackPane();
-        ColorPalette palette = ColorPalette.defaultPalette();
         createBackground(palette);
         createIconList(palette);
     }
@@ -50,7 +51,7 @@ public class PB_IconSelector extends PanelBase {
     private void createIconList(ColorPalette palette) {
         Dashicons[] iconsRaw = Dashicons.values();
         List<BinaryInputDisplay> iconInput = new ArrayList<>();
-        DisplayElementGroup iconGroup = new DisplayElementGroup();
+        iconGroup = new DisplayElementGroup();
 
         for (Dashicons iconCode : iconsRaw) {
             DE_Icon icon = new DE_Icon(iconCode.getDescription(), 40, palette.getContent());
@@ -58,24 +59,27 @@ public class PB_IconSelector extends PanelBase {
             iconGroup.addLabeledElement(icon, iconCode.getDescription());
         }
 
-        DE_RotatingDisplay pane = new DE_RotatingDisplay(560d, iconGroup);
+        pane = new DE_RotatingDisplay(560d, iconGroup);
         pane.setPadding(5);
         pane.setAngle(0d);
         root.getChildren().add(pane.getNode());
 
-
+        addSelectionEvents(iconInput);
+        addSearchBar();
+    }
+    private void addSelectionEvents(List<BinaryInputDisplay> iconInput) {
         Consumer<DisplayElement> onSelected = (DisplayElement el) -> {iconGroup.pinElement(el); pane.updateNodes();};
         Consumer<DisplayElement> onUnselected = (DisplayElement el) -> {iconGroup.unpinElement(el); pane.updateNodes();};
-        NodeSelector userSelector = new NodeSelector(iconInput);
+        userSelector = new NodeSelector(iconInput);
         userSelector.addSelectedListener(onSelected);
         userSelector.addUnselectedListener(onUnselected);
         userSelector.selectRandom();
-
-
+    }
+    private void addSearchBar() {
         TextField textField = new TextField();
-        textField.setMaxWidth(252.5);
+        textField.setMaxWidth(256.5);
         textField.setTranslateY(-222.5);
-        textField.setTranslateX(-15);
+        textField.setTranslateX(-17);
         textField.setOnKeyTyped((KeyEvent event) -> {
             iconGroup.setFilter(textField.getText());
             pane.updateNodes();
