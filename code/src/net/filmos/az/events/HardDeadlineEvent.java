@@ -1,32 +1,33 @@
 package net.filmos.az.events;
 
-import java.util.Date;
-import java.util.List;
+import java.time.Duration;
+import java.time.LocalDateTime;
+
+import static java.time.temporal.ChronoUnit.SECONDS;
 
 public class HardDeadlineEvent extends FutureEvent {
-    private Date deadline;
-    private EstimatedCompletionTime estimatedTime;
-    private Importance importance;
 
-    public HardDeadlineEvent(String title, String description, String icon) {
-        super(title, description, icon);
+    public HardDeadlineEvent(LocalDateTime deadline, Duration estimatedTime, Loss importance) {
+        super(deadline, estimatedTime, importance);
     }
 
-    public void setDeadline(Date deadline, EstimatedCompletionTime estimatedTime, Importance importance) {
-        this.deadline = deadline;
-        this.estimatedTime = estimatedTime;
-        this.importance = importance;
-    }
+    @Override
+    public double getNormalizedLoss(LocalDateTime date) {
+        LocalDateTime tooLate = getDeadline().minusSeconds((long) (getEstimatedTimeSeconds()*0.35));
+        if(date.isAfter(tooLate)) return 1;
 
-    public Importance getImportance() {return importance;}
-    public EstimatedCompletionTime getEstimatedTime() {return estimatedTime;}
-    public Date getDeadline() {return deadline;}
+        LocalDateTime lastChance = getDeadline().minusSeconds((long) (getEstimatedTimeSeconds()*0.75));
+        if(date.isAfter(lastChance)) return 1-date.until(tooLate, SECONDS)/((double) lastChance.until(tooLate, SECONDS))*0.15;
 
-    public static List<HardDeadlineEvent> sortEvents(List<HardDeadlineEvent> events) {
-        events.sort((lhs, rhs) -> {
-            int compareDeadlines = lhs.getDeadline().compareTo(rhs.getDeadline());
-            return (compareDeadlines != 0) ? compareDeadlines : rhs.getImportance().value.compareTo(lhs.getImportance().value);
-        });
-        return events;
+        LocalDateTime estimatedTime = getDeadline().minusSeconds(getEstimatedTimeSeconds());
+        if(date.isAfter(estimatedTime)) return 0.85-date.until(lastChance, SECONDS)/((double) estimatedTime.until(lastChance, SECONDS))*0.3;
+
+        LocalDateTime comfortBuffer = getDeadline().minusSeconds((long) (getEstimatedTimeSeconds()*1.5+3600));
+        if(date.isAfter(comfortBuffer)) return 0.55-date.until(estimatedTime, SECONDS)/((double) comfortBuffer.until(estimatedTime, SECONDS))*0.5;
+
+        LocalDateTime startDrop = getDeadline().minusSeconds(getEstimatedTimeSeconds()*12+72*3600);
+        if(date.isAfter(startDrop)) return 0.05-date.until(comfortBuffer, SECONDS)/((double) startDrop.until(comfortBuffer, SECONDS))*0.05;
+
+        return 0;
     }
 }

@@ -1,45 +1,65 @@
 package net.filmos.az.events;
 
 import java.time.Duration;
-import java.util.Date;
+import java.time.LocalDateTime;
 
-public class FutureEvent {
-    public enum Importance {
-        OPTIONAL(0),
-        LOW(1),
-        MEDIUM(2),
-        HIGH(3);
+public abstract class FutureEvent {
+    public enum Loss {
+        LACK(1,"Free reschedule"),
+        POTENTIAL(3, "Loss of potential"),
+        VALUE(8, "Loss of value"),
+        RECURSIVE(30, "Recursive loss"),
+        COLLABORATIVE(90, "Collaborative loss");
 
-        Integer value;
-        Importance(Integer val) {
+        private Integer value;
+        private String name;
+
+        Loss(Integer val, String nam) {
             value = val;
+            name = nam;
         }
 
-    }
-    public enum EstimatedCompletionTime {
-        INSTANT(Duration.ofMinutes(5)),
-        QUICK(Duration.ofMinutes(30)),
-        SHORT(Duration.ofMinutes(90)),
-        MEDIUM(Duration.ofHours(4)),
-        LONG(Duration.ofHours(7));
+        Integer getMultiplier() {return value;}
+        String getName() {return name;}
 
-        Duration estimatedTime;
-        EstimatedCompletionTime(Duration time) {
-            estimatedTime = time;
-        }
     }
 
-    private final String title;
-    private final String description;
-    private final String icon;
 
-    public FutureEvent(String title, String description, String icon) {
+    private Loss importance;
+    private Duration estimatedTime;
+    private String title;
+    private String description;
+    private String icon;
+    private LocalDateTime deadline;
+
+    public String getTitle() {return title;}
+    public String getDescription() {return description;}
+    public String getIcon() {return icon;}
+    public Loss getImportance() {return importance;}
+    public Duration getEstimatedTime() {return estimatedTime;}
+    public LocalDateTime getDeadline() {return deadline;}
+
+    public FutureEvent(LocalDateTime deadline, Duration estimatedTime, Loss importance) {
+        this.deadline = deadline;
+        this.estimatedTime = estimatedTime;
+        this.importance = importance;
+    }
+
+    public void setDetails(String title, String description, String icon) {
         this.title = title;
         this.description = description;
         this.icon = icon;
     }
 
-    public String getTitle() {return title;}
-    public String getDescription() {return description;}
-    public String getIcon() {return icon;}
+
+    public long getEstimatedTimeSeconds() {
+        if(estimatedTime == null) return 0;
+        return estimatedTime.getSeconds();
+    }
+
+
+    public abstract double getNormalizedLoss(LocalDateTime date);
+    public double getWeightedLoss(LocalDateTime date) {
+        return getNormalizedLoss(date)*getImportance().getMultiplier();
+    }
 }
