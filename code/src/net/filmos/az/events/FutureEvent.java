@@ -2,6 +2,7 @@ package net.filmos.az.events;
 
 import net.filmos.az.gui.storage.InvalidStorableDictException;
 import net.filmos.az.gui.storage.Storable;
+import net.filmos.az.gui.storage.StorableDict;
 
 import java.lang.reflect.Constructor;
 import java.time.Duration;
@@ -38,6 +39,7 @@ public abstract class FutureEvent implements Storable {
     private String description;
     private String icon;
     private LocalDateTime deadline;
+    private String storageId;
 
     public String getTitle() {return title;}
     public String getDescription() {return description;}
@@ -45,6 +47,8 @@ public abstract class FutureEvent implements Storable {
     public Importance getImportance() {return importance;}
     public Duration getEstimatedTime() {return estimatedTime;}
     public LocalDateTime getDeadline() {return deadline;}
+
+    public void setStorageId(String storageId) {this.storageId = storageId;}
 
     public FutureEvent(LocalDateTime deadline, Duration estimatedTime, Importance importance) {
         this.deadline = deadline;
@@ -71,8 +75,8 @@ public abstract class FutureEvent implements Storable {
     }
 
 
-    public Map<String, String> getStorableDict() {
-        Map<String, String> storableDict = new HashMap<>();
+    public StorableDict getStorableDict() {
+        StorableDict storableDict = new StorableDict();
         storableDict.put("deadline", deadline.toString());
         storableDict.put("duration", estimatedTime.toString());
         storableDict.put("importance", importance.name());
@@ -83,7 +87,7 @@ public abstract class FutureEvent implements Storable {
 
         return storableDict;
     }
-    public static FutureEvent fromStorableDict(Map<String, String> storableDict) throws InvalidStorableDictException {
+    public static FutureEvent fromStorableDict(StorableDict storableDict) throws InvalidStorableDictException {
         if(storableDict.get("type") == null) throw new InvalidStorableDictException("Missing type");
 
         LocalDateTime deadline;

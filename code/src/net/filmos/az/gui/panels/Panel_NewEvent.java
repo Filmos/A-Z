@@ -1,5 +1,6 @@
 package net.filmos.az.gui.panels;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -22,7 +23,10 @@ import net.filmos.az.gui.base.DisplayElement;
 import net.filmos.az.gui.elements.DE_Text;
 import net.filmos.az.gui.elements.DateTimePicker;
 import net.filmos.az.gui.storage.InvalidStorableDictException;
+import net.filmos.az.gui.storage.StorableDict;
+import net.filmos.az.gui.storage.Storage;
 
+import java.io.IOException;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -162,20 +166,16 @@ public class Panel_NewEvent extends DisplayElement {
             allFieldsValid = false;
         }
 
-        System.out.println(iconSelector.getSelectedIcon());
-        System.out.println(name);
-        System.out.println(importance);
-        System.out.println(deadline);
-        System.out.println(duration);
-
         if(!allFieldsValid) return false;
 
         FutureEvent event = new HardDeadlineEvent(deadline, duration, importance);
         event.setDetails(name, "", iconSelector.getSelectedIcon());
 
+        //TODO: improve exception handling
         try {
-            System.out.println(FutureEvent.fromStorableDict(event.getStorableDict()));
-        } catch (InvalidStorableDictException e) {
+            StorableDict storableEvent = event.getStorableDict();
+            event.setStorageId(Storage.addToStorage("futureEvents", storableEvent));
+        } catch (IOException e) {
             e.printStackTrace();
         }
 
