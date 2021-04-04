@@ -44,4 +44,7 @@ public class DE_Text extends DisplayElement {
     public void setTextAlignment(TextAlignment alignment) {
         outerNode.getChildren().forEach((Node textNode) -> ((Text) textNode).setTextAlignment(alignment));
     }
+    public void setMaxWidth(double maxWidth) {
+        outerNode.setMaxWidth(maxWidth);
+    }
 }

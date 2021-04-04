@@ -44,5 +44,6 @@
     <orderEntry type="library" name="org.kordamp.ikonli:ikonli-javafx:2.3.0" level="project" />
     <orderEntry type="library" name="org.kordamp.ikonli:ikonli-dashicons-pack:2.3.0" level="project" />
     <orderEntry type="library" name="org.jfxtras:jfxtras-all:10.0-r1" level="project" />
+    <orderEntry type="library" name="KotlinJavaRuntime" level="project" />
   </component>
 </module>

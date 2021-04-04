@@ -6,7 +6,6 @@ import net.filmos.az.events.EventTimeline;
 import net.filmos.az.events.FutureEvent;
 import net.filmos.az.events.HardDeadlineEvent;
 import net.filmos.az.gui.base.InterfaceSegment;
-import net.filmos.az.gui.panels.PB_IconSelector;
 import net.filmos.az.gui.panels.Panel_NewEvent;
 import net.filmos.az.gui.windows.StageNodePositioner;
 import net.filmos.az.logs.LogChannel;
@@ -51,7 +50,7 @@ public class Hub {
         segmentPositioner.addNodeCenter(panel.getNode());
 
 
-        FutureEvent task1 = new HardDeadlineEvent(LocalDateTime.now().plusDays(7), Duration.ofHours(4), FutureEvent.Loss.POTENTIAL);
+        FutureEvent task1 = new HardDeadlineEvent(LocalDateTime.now().plusDays(7), Duration.ofHours(4), FutureEvent.Importance.POTENTIAL);
         log("Too early: "+task1.getNormalizedLoss(LocalDateTime.now()));
         log("Right before: "+task1.getNormalizedLoss(LocalDateTime.now().plusDays(2)));
         log("Start decline: "+task1.getNormalizedLoss(LocalDateTime.now().plusDays(2).plusHours(6)));

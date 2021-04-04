@@ -7,7 +7,7 @@ import static java.time.temporal.ChronoUnit.SECONDS;
 
 public class HardDeadlineEvent extends FutureEvent {
 
-    public HardDeadlineEvent(LocalDateTime deadline, Duration estimatedTime, Loss importance) {
+    public HardDeadlineEvent(LocalDateTime deadline, Duration estimatedTime, Importance importance) {
         super(deadline, estimatedTime, importance);
     }
 

@@ -4,7 +4,7 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 
 public abstract class FutureEvent {
-    public enum Loss {
+    public enum Importance {
         LACK(1,"Free reschedule"),
         POTENTIAL(3, "Loss of potential"),
         VALUE(8, "Loss of value"),
@@ -14,18 +14,19 @@ public abstract class FutureEvent {
         private Integer value;
         private String name;
 
-        Loss(Integer val, String nam) {
+        Importance(Integer val, String nam) {
             value = val;
             name = nam;
         }
 
-        Integer getMultiplier() {return value;}
-        String getName() {return name;}
+        public Integer getMultiplier() {return value;}
+        public String getName() {return name;}
+        public String toString() {return getName();}
 
     }
 
 
-    private Loss importance;
+    private Importance importance;
     private Duration estimatedTime;
     private String title;
     private String description;
@@ -35,11 +36,11 @@ public abstract class FutureEvent {
     public String getTitle() {return title;}
     public String getDescription() {return description;}
     public String getIcon() {return icon;}
-    public Loss getImportance() {return importance;}
+    public Importance getImportance() {return importance;}
     public Duration getEstimatedTime() {return estimatedTime;}
     public LocalDateTime getDeadline() {return deadline;}
 
-    public FutureEvent(LocalDateTime deadline, Duration estimatedTime, Loss importance) {
+    public FutureEvent(LocalDateTime deadline, Duration estimatedTime, Importance importance) {
         this.deadline = deadline;
         this.estimatedTime = estimatedTime;
         this.importance = importance;
