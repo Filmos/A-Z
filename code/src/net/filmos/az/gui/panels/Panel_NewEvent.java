@@ -21,6 +21,7 @@ import net.filmos.az.events.HardDeadlineEvent;
 import net.filmos.az.gui.base.DisplayElement;
 import net.filmos.az.gui.elements.DE_Text;
 import net.filmos.az.gui.elements.DateTimePicker;
+import net.filmos.az.gui.storage.InvalidStorableDictException;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -104,6 +105,7 @@ public class Panel_NewEvent extends DisplayElement {
         durationInput = new TextField();
         durationInput.setMaxWidth(320);
         durationInput.setTranslateY(posY+26);
+        durationInput.setText("1:30");
         root.getChildren().add(durationInput);
 
         DE_Text durationTitle = new DE_Text(Font.font("Verdana", 18), palette.getContent());
@@ -132,6 +134,7 @@ public class Panel_NewEvent extends DisplayElement {
         root.getChildren().add(buttonCancel);
     }
 
+
     private boolean onAddEvent() {
         boolean allFieldsValid = true;
 
@@ -154,7 +157,7 @@ public class Panel_NewEvent extends DisplayElement {
         }
 
         Duration duration = parseDuration(durationInput.getText());
-        if(duration == null) {
+        if(duration == null || duration.isZero()) {
             blinkField(durationInput);
             allFieldsValid = false;
         }
@@ -170,12 +173,20 @@ public class Panel_NewEvent extends DisplayElement {
         FutureEvent event = new HardDeadlineEvent(deadline, duration, importance);
         event.setDetails(name, "", iconSelector.getSelectedIcon());
 
+        try {
+            System.out.println(FutureEvent.fromStorableDict(event.getStorableDict()));
+        } catch (InvalidStorableDictException e) {
+            e.printStackTrace();
+        }
+
+        closePanel();
         return true;
 
     }
     public void closePanel() {
 
     }
+
 
     private Duration parseDuration(String input) {
         try {
@@ -196,6 +207,13 @@ public class Panel_NewEvent extends DisplayElement {
             return Duration.between(
                     LocalTime.MIN,
                     LocalTime.parse("00:"+input)
+            );
+        } catch (DateTimeParseException e) {}
+
+        try {
+            return Duration.between(
+                    LocalTime.MIN,
+                    LocalTime.parse("00:0"+input)
             );
         } catch (DateTimeParseException e) {}
 

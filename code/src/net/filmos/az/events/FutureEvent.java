@@ -1,9 +1,15 @@
 package net.filmos.az.events;
 
+import net.filmos.az.gui.storage.InvalidStorableDictException;
+import net.filmos.az.gui.storage.Storable;
+
+import java.lang.reflect.Constructor;
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.Map;
 
-public abstract class FutureEvent {
+public abstract class FutureEvent implements Storable {
     public enum Importance {
         LACK(1,"Free reschedule"),
         POTENTIAL(3, "Loss of potential"),
@@ -62,5 +68,44 @@ public abstract class FutureEvent {
     public abstract double getNormalizedLoss(LocalDateTime date);
     public double getWeightedLoss(LocalDateTime date) {
         return getNormalizedLoss(date)*getImportance().getMultiplier();
+    }
+
+
+    public Map<String, String> getStorableDict() {
+        Map<String, String> storableDict = new HashMap<>();
+        storableDict.put("deadline", deadline.toString());
+        storableDict.put("duration", estimatedTime.toString());
+        storableDict.put("importance", importance.name());
+        storableDict.put("title", title);
+        storableDict.put("description", description);
+        storableDict.put("icon", icon);
+        storableDict.put("type", getClass().getCanonicalName());
+
+        return storableDict;
+    }
+    public static FutureEvent fromStorableDict(Map<String, String> storableDict) throws InvalidStorableDictException {
+        if(storableDict.get("type") == null) throw new InvalidStorableDictException("Missing type");
+
+        LocalDateTime deadline;
+        try {deadline = LocalDateTime.parse(storableDict.get("deadline"));}
+        catch (Exception e) {throw new InvalidStorableDictException("Invalid deadline value");}
+
+        Duration duration;
+        try {duration = Duration.parse(storableDict.get("duration"));}
+        catch (Exception e) {throw new InvalidStorableDictException("Invalid duration value");}
+
+        Importance importance;
+        try {importance = Importance.valueOf(storableDict.get("importance"));}
+        catch (Exception e) {throw new InvalidStorableDictException("Invalid importance value");}
+
+        try {
+            Class<?> c = Class.forName(storableDict.get("type"));
+            Constructor<?> cons = c.getConstructor(LocalDateTime.class, Duration.class, Importance.class);
+            FutureEvent event = (FutureEvent) cons.newInstance(deadline, duration, importance);
+            event.setDetails(storableDict.get("title"), storableDict.get("description"), storableDict.get("icon"));
+            return event;
+        } catch (Exception e) {
+            throw new InvalidStorableDictException("Missing type");
+        }
     }
 }
