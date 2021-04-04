@@ -9,6 +9,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 
 /**
  * A DateTimePicker with configurable datetime format where both date and time can be changed
@@ -39,6 +40,7 @@ public class DateTimePicker extends DatePicker {
 
         // Synchronize changes to the underlying date value back to the dateTimeValue
         valueProperty().addListener((observable, oldValue, newValue) -> {
+            System.out.println("HA");
             if (newValue == null) {
                 dateTimeValue.set(null);
             } else {
@@ -51,7 +53,7 @@ public class DateTimePicker extends DatePicker {
             }
         });
 
-        // Syncronize changes to dateTimeValue back to the underlying date value
+        // Synchronize changes to dateTimeValue back to the underlying date value
         dateTimeValue.addListener((observable, oldValue, newValue) -> {
             if (newValue != null) {
                 LocalDate dateValue = newValue.toLocalDate();
@@ -79,6 +81,13 @@ public class DateTimePicker extends DatePicker {
 
     public LocalDateTime getDateTimeValue() {
         return dateTimeValue.get();
+    }
+    public LocalDateTime getParsedDateTimeValue() {
+        try {
+            return LocalDateTime.parse(getEditor().getText(), formatter);
+        } catch (DateTimeParseException e) {
+            return null;
+        }
     }
 
     public void setDateTimeValue(LocalDateTime dateTimeValue) {

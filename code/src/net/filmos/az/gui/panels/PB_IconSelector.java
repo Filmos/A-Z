@@ -86,6 +86,9 @@ public class PB_IconSelector extends PanelBase {
         });
         root.getChildren().add(textField);
     }
+    public String getSelectedIcon() {
+        return ((DE_Icon) userSelector.getSelection()).getIconName();
+    }
 
     @Override
     public Node getNode() {

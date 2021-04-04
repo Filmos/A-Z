@@ -21,6 +21,10 @@ public class DE_Icon extends ColorableDisplayElement {
         setColor(color);
     }
 
+    public String getIconName() {
+        return icon.getIconCode().getDescription();
+    }
+
     @Override
     public Node getNode() {return icon;}
 

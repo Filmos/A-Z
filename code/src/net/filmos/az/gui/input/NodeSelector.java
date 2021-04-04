@@ -55,8 +55,8 @@ public class NodeSelector {
         int randomNum = ThreadLocalRandom.current().nextInt(0, wrappedElements.size());
         triggerChange(wrappedElements.get(randomNum));
     }
-    public Node getSelection() {
-        return selectedElement.getWrappedNode();
+    public DisplayElement getSelection() {
+        return selectedElement.getDisplayElement();
     }
     public List<Node> getAllNodes() {
         return wrappedElements.stream().map(DisplayElementWrapper::getWrappedNode).collect(Collectors.toList());
