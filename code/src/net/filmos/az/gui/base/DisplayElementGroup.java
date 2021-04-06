@@ -70,4 +70,10 @@ public class DisplayElementGroup {
     public int getLength() {
         return filteredElements.size();
     }
+
+    public void clearGroup() {
+        allElements = new ArrayList<>();
+        filteredElements = new ArrayList<>();
+        pinnedElements = new ArrayList<>();
+    }
 }

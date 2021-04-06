@@ -1,4 +1,4 @@
-package net.filmos.az.gui.storage;
+package net.filmos.az.storage;
 
 public class InvalidStorableDictException extends Exception {
     public InvalidStorableDictException(String message) {

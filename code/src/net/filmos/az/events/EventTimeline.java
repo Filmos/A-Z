@@ -5,19 +5,11 @@ import org.jetbrains.annotations.NotNull;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.NavigableSet;
-import java.util.TreeSet;
+import java.util.*;
 
 public class EventTimeline {
-    private final LogDistributor logger;
     private final NavigableSet<LocalDateTime> timestamps = new TreeSet<>();
     private final Map<LocalDateTime, FutureEvent> timestampedEvents = new HashMap<>();
-
-    public EventTimeline(LogDistributor logDistributor) {
-        logger = logDistributor;
-    }
 
 
     public boolean addEvent(@NotNull FutureEvent event, @NotNull LocalDateTime time) {
@@ -94,5 +86,30 @@ public class EventTimeline {
         FutureEvent event = timestampedEvents.get(timestamp);
         if(event == null) return LocalDateTime.now().minusDays(7);
         return timestamp.plusSeconds(event.getEstimatedTimeSeconds());
+    }
+
+    //TODO: add timeline logic
+    public static EventTimeline fromEventList(List<FutureEvent> events) {
+        EventTimeline timeline = new EventTimeline();
+        for(FutureEvent event : events) {
+            try {
+                timeline.smartAddEvent(event);
+            } catch (ZeroDurationEventException e) {
+                e.printStackTrace();
+            }
+        }
+        return timeline;
+    }
+    public void smartAddEvent(FutureEvent event) throws ZeroDurationEventException {
+        LocalDateTime spot = findSpotAfter(event.getEstimatedTime(), LocalDateTime.now());
+        addEvent(event, spot);
+    }
+
+    public List<FutureEvent> getOrderedEvents() {
+        List<FutureEvent> orderedEvents = new ArrayList<>();
+        for(LocalDateTime stamp : timestamps)
+            orderedEvents.add(timestampedEvents.get(stamp));
+        System.out.println(orderedEvents);
+        return orderedEvents;
     }
 }

@@ -32,23 +32,22 @@ public class Hub {
     public void logError(String message) {logError(message, "");}
     public void logError(String message, String additionalInformation) {logDistributor.logError(message, additionalInformation);}
 
+    public LogDistributor getLogDistributor() {
+        return logDistributor;
+    }
+
     public void addLogChannel(LogChannel logChannel) {
         log("Adding new "+logChannel.getName()+" log channel...");
         logDistributor.addChannel(logChannel);
     }
 
     public void setUserInterface(@NotNull Stage stage) {segmentPositioner = new StageNodePositioner(stage);}
-    public void addSegment(InterfaceSegment segment) {
+    public void addSegment(InterfaceSegment segment, StageNodePositioner.Position position) {
         logImportant("Adding interface segment \""+segment.getName()+"\"...");
-        segmentPositioner.addNode(segment.buildNode(this));
+        segmentPositioner.addNode(segment.buildNode(this), position);
     }
 
     public void test() {
-        Panel_NewEvent panel = new Panel_NewEvent(ColorPalette.defaultPalette());
-//        PB_IconSelector panel = new PB_IconSelector(ColorPalette.defaultPalette());
-
-        segmentPositioner.addNodeCenter(panel.getNode());
-
 
         FutureEvent task1 = new HardDeadlineEvent(LocalDateTime.now().plusDays(7), Duration.ofHours(4), FutureEvent.Importance.POTENTIAL);
         log("Too early: "+task1.getNormalizedLoss(LocalDateTime.now()));
@@ -61,7 +60,7 @@ public class Hub {
         log("After deadline: "+task1.getNormalizedLoss(LocalDateTime.now().plusDays(7).plusHours(2)));
 
         LocalDateTime start = LocalDateTime.now().withHour(0).withMinute(0).withSecond(0).withNano(0);
-        EventTimeline line = new EventTimeline(logDistributor);
+        EventTimeline line = new EventTimeline();
         logWarning(":"+line.addEvent(task1, start.plusHours(2)));
         logWarning(":"+line.addEvent(task1, start.plusHours(4)));
         logWarning(":"+line.addEvent(task1, start.plusHours(1)));

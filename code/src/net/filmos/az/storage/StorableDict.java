@@ -1,4 +1,4 @@
-package net.filmos.az.gui.storage;
+package net.filmos.az.storage;
 
 import java.util.HashMap;
 

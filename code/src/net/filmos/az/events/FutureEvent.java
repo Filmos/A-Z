@@ -1,14 +1,12 @@
 package net.filmos.az.events;
 
-import net.filmos.az.gui.storage.InvalidStorableDictException;
-import net.filmos.az.gui.storage.Storable;
-import net.filmos.az.gui.storage.StorableDict;
+import net.filmos.az.storage.InvalidStorableDictException;
+import net.filmos.az.storage.Storable;
+import net.filmos.az.storage.StorableDict;
 
 import java.lang.reflect.Constructor;
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.Map;
 
 public abstract class FutureEvent implements Storable {
     public enum Importance {

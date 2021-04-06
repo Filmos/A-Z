@@ -1,4 +1,4 @@
-package net.filmos.az.gui.storage;
+package net.filmos.az.storage;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 //TODO: add tests for StorableDataset
 public class StorableDataset {
@@ -29,4 +30,6 @@ public class StorableDataset {
 
     public int getNextId() {return nextId;}
     public Map<String, StorableDict> getDataset() {return dataset;}
+
+    public Set<Map.Entry<String,StorableDict>> entrySet() {return dataset.entrySet();}
 }

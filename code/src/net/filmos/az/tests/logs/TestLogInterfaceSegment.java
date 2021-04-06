@@ -6,6 +6,7 @@ import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import net.filmos.az.Hub;
+import net.filmos.az.gui.windows.StageNodePositioner;
 import net.filmos.az.logs.LogInterfaceSegment;
 import org.junit.Test;
 import org.testfx.framework.junit.ApplicationTest;
@@ -21,7 +22,7 @@ public class TestLogInterfaceSegment extends ApplicationTest {
 
         hub = new Hub();
         hub.setUserInterface(stage);
-        hub.addSegment(new LogInterfaceSegment());
+        hub.addSegment(new LogInterfaceSegment(), StageNodePositioner.Position.FULLSCREEN);
     }
 
     @Test

@@ -3,6 +3,8 @@ package net.filmos.az;
 import javafx.application.Application;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
+import net.filmos.az.events.EventsInterfaceSegment;
+import net.filmos.az.gui.windows.StageNodePositioner;
 import net.filmos.az.logs.LogInterfaceSegment;
 import net.filmos.az.gui.windows.StageBuilder;
 import net.filmos.az.gui.windows.StageFactory;
@@ -22,7 +24,8 @@ public class Main extends Application {
     @Override public void start(Stage stage) {
         initWindow(stage);
 
-        app.addSegment(new LogInterfaceSegment());
+        app.addSegment(new LogInterfaceSegment(), StageNodePositioner.Position.FULLSCREEN);
+        app.addSegment(new EventsInterfaceSegment(), StageNodePositioner.Position.CENTER);
         app.test();
     }
 

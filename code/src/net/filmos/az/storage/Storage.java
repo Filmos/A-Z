@@ -1,4 +1,4 @@
-package net.filmos.az.gui.storage;
+package net.filmos.az.storage;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -19,6 +19,7 @@ public class Storage {
             ObjectMapper mapper = new ObjectMapper();
             returnDataset = mapper.readValue(new File("storage/"+storageName), StorableDataset.class);
         } catch (IOException e) {
+            e.printStackTrace();
             returnDataset = new StorableDataset();
         }
 
