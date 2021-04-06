@@ -6,7 +6,7 @@ import net.filmos.az.gui.base.ColorableDisplayElement;
 import org.kordamp.ikonli.javafx.FontIcon;
 
 public class DE_Icon extends ColorableDisplayElement {
-    private final FontIcon icon;
+    protected final FontIcon icon;
     private String iconName;
     private int size;
 

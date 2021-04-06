@@ -4,6 +4,11 @@ import javafx.scene.Node;
 import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
+import javafx.scene.paint.Color;
+import javafx.scene.paint.CycleMethod;
+import javafx.scene.paint.LinearGradient;
+import javafx.scene.paint.Stop;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.util.Duration;
@@ -11,6 +16,7 @@ import net.filmos.az.Hub;
 import net.filmos.az.colors.ColorPalette;
 import net.filmos.az.gui.base.DisplayElementGroup;
 import net.filmos.az.gui.base.InterfaceSegment;
+import net.filmos.az.gui.elements.DE_EventIcon;
 import net.filmos.az.gui.elements.DE_Icon;
 import net.filmos.az.gui.elements.DE_RotatingDisplay;
 import net.filmos.az.gui.panels.Panel_NewEvent;
@@ -84,6 +90,10 @@ public class EventsInterfaceSegment implements InterfaceSegment {
         tooltip.setStyle("-fx-background-color: "+palette.getBackground().toHexString()+"cc; -fx-text-fill: "+palette.getContentActive().toHexString()+"; -fx-padding: 6;");
         Tooltip.install(newEventIcon.getNode(), tooltip);
         eventsGroup.addElement(newEventIcon);
+        root.getChildren().add(newEventIcon.getNode());
+
+        DE_EventIcon testIcon = new DE_EventIcon("dashicons-heart", 40, palette.getContentActive());
+        root.getChildren().add(testIcon.getNode());
 
         eventsDisplay.updateNodes();
     }
