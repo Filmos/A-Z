@@ -1,6 +1,12 @@
 package net.filmos.az.events;
 
 import javafx.scene.Node;
+import javafx.scene.control.Tooltip;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.StackPane;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
+import javafx.util.Duration;
 import net.filmos.az.Hub;
 import net.filmos.az.colors.ColorPalette;
 import net.filmos.az.gui.base.DisplayElementGroup;
@@ -13,6 +19,7 @@ import net.filmos.az.storage.StorableDataset;
 import net.filmos.az.storage.StorableDict;
 import net.filmos.az.storage.Storage;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -21,6 +28,7 @@ public class EventsInterfaceSegment implements InterfaceSegment {
     private EventTimeline timeline;
     private DE_RotatingDisplay eventsDisplay;
     private DisplayElementGroup eventsGroup;
+    private StackPane root;
     private Hub hub;
 
     @Override
@@ -33,9 +41,11 @@ public class EventsInterfaceSegment implements InterfaceSegment {
         eventsGroup = new DisplayElementGroup();
         eventsDisplay = new DE_RotatingDisplay(560d, eventsGroup);
 
+        root = new StackPane();
+        root.getChildren().setAll(eventsDisplay.getNode());
         updateEvents();
 
-        return eventsDisplay.getNode();
+        return root;
     }
 
     public void updateEvents() {
@@ -62,11 +72,56 @@ public class EventsInterfaceSegment implements InterfaceSegment {
 
         eventsGroup.clearGroup();
         for(FutureEvent event : timeline.getOrderedEvents()) {
-            hub.logWarning(event.getIcon());
-            eventsGroup.addElement(new DE_Icon(event.getIcon(), 40, palette.getContent()));
+            DE_Icon icon = new DE_Icon(event.getIcon(), 40, palette.getContent());
+            Tooltip tooltip = createTooltip(event.getTitle(), palette);
+            Tooltip.install(icon.getNode(), tooltip);
+            eventsGroup.addElement(icon);
         }
-        eventsDisplay.updateNodes();
 
-//        eventsGroup.addElement(new DE_Icon("", 40, palette.getContent()));
+        DE_Icon newEventIcon = new DE_Icon("dashicons-plus", 40, palette.getContentActive());
+        newEventIcon.getNode().setOnMouseClicked((MouseEvent event) -> displayNewEventPanel());
+        Tooltip tooltip = createTooltip("Add a new event", palette);
+        tooltip.setStyle("-fx-background-color: "+palette.getBackground().toHexString()+"cc; -fx-text-fill: "+palette.getContentActive().toHexString()+"; -fx-padding: 6;");
+        Tooltip.install(newEventIcon.getNode(), tooltip);
+        eventsGroup.addElement(newEventIcon);
+
+        eventsDisplay.updateNodes();
+    }
+    private Tooltip createTooltip(String text, ColorPalette palette) {
+        final Tooltip tooltip = new Tooltip();
+        tooltip.setText(text);
+        tooltip.setFont(Font.font("Verdana", FontWeight.BOLD,15));
+        tooltip.setShowDelay(Duration.seconds(0));
+        tooltip.setHideDelay(Duration.seconds(0));
+        tooltip.setStyle("-fx-background-color: "+palette.getBackground().toHexString()+"cc; -fx-text-fill: "+palette.getHeader().toHexString()+"; -fx-padding: 6;");
+        return tooltip;
+    }
+
+    private void displayNewEventPanel() {
+        ColorPalette palette = ColorPalette.defaultPalette();
+        Panel_NewEvent panel = new Panel_NewEvent(palette, (FutureEvent event) -> {
+            addNewEvent(event);
+            hideNewEventPanel();
+        });
+
+        root.getChildren().setAll(panel.getNode());
+    }
+    private void hideNewEventPanel() {
+        root.getChildren().setAll(eventsDisplay.getNode());
+    }
+
+    private void addNewEvent(FutureEvent event) {
+        if(event == null) return;
+        hub.log("Adding new event to memory...");
+
+        //TODO: improve exception handling
+        try {
+            StorableDict storableEvent = event.getStorableDict();
+            event.setStorageId(Storage.addToStorage("futureEvents", storableEvent));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        updateEvents();
     }
 }

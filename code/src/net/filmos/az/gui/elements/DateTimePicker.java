@@ -40,7 +40,6 @@ public class DateTimePicker extends DatePicker {
 
         // Synchronize changes to the underlying date value back to the dateTimeValue
         valueProperty().addListener((observable, oldValue, newValue) -> {
-            System.out.println("HA");
             if (newValue == null) {
                 dateTimeValue.set(null);
             } else {

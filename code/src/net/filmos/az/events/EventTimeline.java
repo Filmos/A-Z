@@ -109,7 +109,6 @@ public class EventTimeline {
         List<FutureEvent> orderedEvents = new ArrayList<>();
         for(LocalDateTime stamp : timestamps)
             orderedEvents.add(timestampedEvents.get(stamp));
-        System.out.println(orderedEvents);
         return orderedEvents;
     }
 }

@@ -26,6 +26,7 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeParseException;
+import java.util.function.Consumer;
 
 public class Panel_NewEvent extends DisplayElement {
     private final StackPane root;
@@ -34,8 +35,10 @@ public class Panel_NewEvent extends DisplayElement {
     private ChoiceBox importanceInput;
     private DateTimePicker deadlineInput;
     private TextField durationInput;
+    private Consumer<FutureEvent> afterClose;
 
-    public Panel_NewEvent(ColorPalette palette) {
+    public Panel_NewEvent(ColorPalette palette, Consumer<FutureEvent> afterClose) {
+        this.afterClose = afterClose;
         root = new StackPane();
         iconSelector = new PB_IconSelector(palette);
         root.getChildren().add(iconSelector.getNode());
@@ -129,7 +132,7 @@ public class Panel_NewEvent extends DisplayElement {
         buttonCancel.setTranslateY(posY);
         buttonCancel.setTranslateX(-80);
         buttonCancel.setMaxWidth(90);
-        buttonCancel.setOnMouseClicked((MouseEvent event) -> closePanel());
+        buttonCancel.setOnMouseClicked((MouseEvent event) -> afterClose.accept(null));
         root.getChildren().add(buttonCancel);
     }
 
@@ -166,19 +169,8 @@ public class Panel_NewEvent extends DisplayElement {
         FutureEvent event = new HardDeadlineEvent(deadline, duration, importance);
         event.setDetails(name, "", iconSelector.getSelectedIcon());
 
-        //TODO: improve exception handling
-        try {
-            StorableDict storableEvent = event.getStorableDict();
-            event.setStorageId(Storage.addToStorage("futureEvents", storableEvent));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        closePanel();
+        afterClose.accept(event);
         return true;
-
-    }
-    public void closePanel() {
 
     }
 
