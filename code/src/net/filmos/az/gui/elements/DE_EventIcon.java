@@ -1,52 +1,96 @@
 package net.filmos.az.gui.elements;
 
+import javafx.animation.RotateTransition;
+import javafx.animation.ScaleTransition;
 import javafx.scene.Node;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.StackPane;
-import javafx.scene.paint.CycleMethod;
-import javafx.scene.paint.LinearGradient;
-import javafx.scene.paint.Stop;
 import javafx.scene.shape.Rectangle;
+import javafx.util.Duration;
 import net.filmos.az.colors.Color;
+import net.filmos.az.events.FutureEvent;
+import net.filmos.az.gui.base.DisplayElement;
 import org.kordamp.ikonli.javafx.FontIcon;
 
-public class DE_EventIcon {
+import java.time.LocalDateTime;
+
+public class DE_EventIcon extends DisplayElement {
     private final Pane root;
+    private final FutureEvent event;
 
-    public DE_EventIcon(String iconName, int size, Color color) {
-
+    public DE_EventIcon(FutureEvent event, int size) {
+        this.event = event;
         root = new Pane();
-//        root.getChildren().add(getGradient(size));
 
-        FontIcon icon = new FontIcon();
-        icon.setIconSize(size);
-        icon.setIconLiteral(iconName);
-        icon.setStyle(icon.getStyle()+";-fx-icon-color: #ff00cc");
-
-        icon.setLayoutX(0);
-        icon.setLayoutY(size);
-        icon.setClip(getGradient(size));
-        root.getChildren().add(icon);
-
-//        Rectangle gradient = getGradient(size);
-//        gradient.setClip(icon);
-//        root.getChildren().add(gradient);
-//        root.setTranslateX(size*3);
-//        root.setTranslateY(size*3);
-
-//        root.setClip(icon);
+        addIcon(size);
+        if(event.getNormalizedLoss(LocalDateTime.now())>0.7) addBigRotationAnimation();
+        else {
+            if (event.getNormalizedLoss(LocalDateTime.now().plusMinutes(45)) > 0.3) {
+                addSmallRotationAnimation();
+                if (event.getNormalizedLoss(LocalDateTime.now().plusHours(6)) > 0.3) addScaleAnimation(0.43);
+            } else if (event.getNormalizedLoss(LocalDateTime.now().plusHours(6)) > 0.3) addScaleAnimation(0.25);
+        }
     }
-    private Rectangle getGradient(int size) {
-        Stop[] stops = new Stop[] { new Stop(0, javafx.scene.paint.Color.BLACK), new Stop(1, javafx.scene.paint.Color.RED)};
-        LinearGradient lg1 = new LinearGradient(0, 0, 1, 0, true, CycleMethod.NO_CYCLE, stops);
+    private void addIcon(int size) {
+        FontIcon leftIcon = new FontIcon();
+        leftIcon.setIconSize(size);
+        leftIcon.setIconLiteral(event.getIcon());
+        leftIcon.setStyle(leftIcon.getStyle()+";-fx-fill: linear-gradient("+Color.mapToGradient(event.getColorMarks())+")");
 
-        Rectangle r1 = new Rectangle(0, -size, size/2d, size);
-//        r1.setTranslateX(size/4);
-        r1.setFill(lg1);
+        leftIcon.setLayoutX(0);
+        leftIcon.setLayoutY(size);
+        leftIcon.setClip(new Rectangle(0, -size, size/1.95, size));
+        root.getChildren().add(leftIcon);
 
-        return r1;
+
+        FontIcon rightIcon = new FontIcon();
+        rightIcon.setIconSize(size);
+        rightIcon.setIconLiteral(event.getIcon());
+        rightIcon.setStyle(leftIcon.getStyle()+";-fx-fill: linear-gradient("+Color.mapToGradient(event.getColorMarks())+")");
+
+        rightIcon.setLayoutX(0);
+        rightIcon.setLayoutY(size);
+        rightIcon.setClip(new Rectangle(size/2d, -size, size/1.95, size));
+        root.getChildren().add(rightIcon);
     }
+    private void addSmallRotationAnimation() {
+        RotateTransition rotateTransition = new RotateTransition();
 
+        rotateTransition.setDuration(Duration.millis(350));
+        rotateTransition.setFromAngle(-17);
+        rotateTransition.setToAngle(17);
+
+        rotateTransition.setCycleCount(-1);
+        rotateTransition.setAutoReverse(true);
+
+        rotateTransition.setNode(root);
+        rotateTransition.play();
+    }
+    private void addBigRotationAnimation() {
+        RotateTransition rotateTransition = new RotateTransition();
+
+        rotateTransition.setDuration(Duration.millis(2500));
+        rotateTransition.setFromAngle(0);
+        rotateTransition.setToAngle(180);
+
+        rotateTransition.setCycleCount(-1);
+        rotateTransition.setAutoReverse(true);
+
+        rotateTransition.setNode(root);
+        rotateTransition.play();
+    }
+    private void addScaleAnimation(double strength) {
+        ScaleTransition scaleTransition = new ScaleTransition();
+
+        scaleTransition.setDuration(Duration.millis(200/strength));
+        scaleTransition.setByY(strength);
+        scaleTransition.setByX(strength);
+
+        scaleTransition.setCycleCount(-1);
+        scaleTransition.setAutoReverse(true);
+
+        scaleTransition.setNode(root);
+        scaleTransition.play();
+    }
     public Node getNode() {
         return root;
     }

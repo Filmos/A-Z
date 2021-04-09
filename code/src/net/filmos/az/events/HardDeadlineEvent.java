@@ -1,7 +1,12 @@
 package net.filmos.az.events;
 
+import net.filmos.az.colors.Color;
+import net.filmos.az.colors.ColorGradient;
+
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.Map;
 
 import static java.time.temporal.ChronoUnit.SECONDS;
 
@@ -29,5 +34,19 @@ public class HardDeadlineEvent extends FutureEvent {
         if(date.isAfter(startDrop)) return 0.05-date.until(comfortBuffer, SECONDS)/((double) startDrop.until(comfortBuffer, SECONDS))*0.05;
 
         return 0;
+    }
+
+    @Override
+    public Map<Double, Color> getColorMarks() {
+        ColorGradient gradient = new ColorGradient(new Color(255, 247, 209), new Color(248, 141, 109));
+        Map<Double, Color> colorMarks = new HashMap<>();
+
+        colorMarks.put(0.25, gradient.getColor(getNormalizedLoss(LocalDateTime.now().plusMinutes(20))));
+        colorMarks.put(0.35, gradient.getColor(getNormalizedLoss(LocalDateTime.now().plusHours(3))));
+        colorMarks.put(0.45, gradient.getColor(getNormalizedLoss(LocalDateTime.now().plusHours(8))));
+        colorMarks.put(0.55, gradient.getColor(getNormalizedLoss(LocalDateTime.now().plusHours(24))));
+        colorMarks.put(0.65, gradient.getColor(getNormalizedLoss(LocalDateTime.now().plusDays(3))));
+        colorMarks.put(0.75, gradient.getColor(getNormalizedLoss(LocalDateTime.now().plusDays(7))));
+        return colorMarks;
     }
 }

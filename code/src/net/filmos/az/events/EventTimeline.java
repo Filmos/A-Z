@@ -1,6 +1,5 @@
 package net.filmos.az.events;
 
-import net.filmos.az.logs.LogDistributor;
 import org.jetbrains.annotations.NotNull;
 
 import java.time.Duration;
@@ -110,5 +109,28 @@ public class EventTimeline {
         for(LocalDateTime stamp : timestamps)
             orderedEvents.add(timestampedEvents.get(stamp));
         return orderedEvents;
+    }
+
+    public static EventTimeline _getTimescaleDisplay() {
+        List<FutureEvent> timemarks = new ArrayList<>();
+
+        for(int i=1;i<4;i++) timemarks.add(_exampleEvent(LocalDateTime.now().plusMinutes(i*15), i*15+" minutes", "dashicons-heart"));
+        timemarks.add(_exampleEvent(LocalDateTime.now().plusHours(1), "1 hour", "dashicons-warning"));
+        for(int i=3;i<7;i++) timemarks.add(_exampleEvent(LocalDateTime.now().plusMinutes(i*30), ((double) i)/2+" hours", "dashicons-heart"));
+        timemarks.add(_exampleEvent(LocalDateTime.now().plusHours(4), "4 hours", "dashicons-warning"));
+        for(int i=3;i<6;i++) timemarks.add(_exampleEvent(LocalDateTime.now().plusHours(i*2), i*2+" hours", "dashicons-heart"));
+        for(int i=3;i<6;i++) timemarks.add(_exampleEvent(LocalDateTime.now().plusHours(i*4), i*4+" hours", "dashicons-heart"));
+        timemarks.add(_exampleEvent(LocalDateTime.now().plusHours(24), "24 hours", "dashicons-warning"));
+        for(int i=5;i<9;i++) timemarks.add(_exampleEvent(LocalDateTime.now().plusHours(i*6), (i/4)+" days"+(i%4==0?"":" "+i%4*6+" hours"), "dashicons-heart"));
+        for(int i=7;i<9;i++) timemarks.add(_exampleEvent(LocalDateTime.now().plusHours(i*8), (i/3)+" days"+(i%3==0?"":" "+i%3*8+" hours"), "dashicons-heart"));
+        timemarks.add(_exampleEvent(LocalDateTime.now().plusDays(3), "3 days", "dashicons-warning"));
+        for(int i=4;i<9;i++) timemarks.add(_exampleEvent(LocalDateTime.now().plusDays(i), i+" days", "dashicons-heart"));
+
+        return EventTimeline.fromEventList(timemarks);
+    }
+    private static FutureEvent _exampleEvent(LocalDateTime deadline, String title, String iconCode) {
+        FutureEvent event = new HardDeadlineEvent(deadline, java.time.Duration.ofHours(1), FutureEvent.Importance.POTENTIAL);
+        event.setDetails(title, "", iconCode);
+        return event;
     }
 }

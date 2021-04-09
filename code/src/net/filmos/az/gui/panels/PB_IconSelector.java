@@ -2,10 +2,14 @@ package net.filmos.az.gui.panels;
 
 import javafx.scene.Node;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Tooltip;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.StackPane;
 import javafx.scene.shape.Polygon;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
+import javafx.util.Duration;
 import net.filmos.az.colors.ColorPalette;
 import net.filmos.az.gui.base.DisplayElement;
 import net.filmos.az.gui.base.DisplayElementGroup;
@@ -55,6 +59,7 @@ public class PB_IconSelector extends PanelBase {
 
         for (Dashicons iconCode : iconsRaw) {
             DE_Icon icon = new DE_Icon(iconCode.getDescription(), 40, palette.getContent());
+            addTooltip(icon, palette);
             iconInput.add(new BinaryInputDisplay_Color(icon, palette));
             iconGroup.addLabeledElement(icon, iconCode.getDescription());
         }
@@ -66,6 +71,16 @@ public class PB_IconSelector extends PanelBase {
 
         addSelectionEvents(iconInput);
         addSearchBar();
+    }
+    //TODO: normalize tooltip creation
+    private void addTooltip(DE_Icon icon, ColorPalette palette) {
+        final Tooltip tooltip = new Tooltip();
+        tooltip.setText(icon.getIconName());
+        tooltip.setFont(Font.font("Verdana", FontWeight.BOLD,15));
+        tooltip.setShowDelay(Duration.seconds(0));
+        tooltip.setHideDelay(Duration.seconds(0));
+        tooltip.setStyle("-fx-background-color: "+palette.getBackground().toHexString()+"e2; -fx-text-fill: "+palette.getContent().toHexString()+"; -fx-padding: 6;");
+        Tooltip.install(icon.getNode(), tooltip);
     }
     private void addSelectionEvents(List<BinaryInputDisplay> iconInput) {
         Consumer<DisplayElement> onSelected = (DisplayElement el) -> {iconGroup.pinElement(el); pane.updateNodes();};

@@ -26,6 +26,7 @@ import net.filmos.az.storage.StorableDict;
 import net.filmos.az.storage.Storage;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -78,7 +79,7 @@ public class EventsInterfaceSegment implements InterfaceSegment {
 
         eventsGroup.clearGroup();
         for(FutureEvent event : timeline.getOrderedEvents()) {
-            DE_Icon icon = new DE_Icon(event.getIcon(), 40, palette.getContent());
+            DE_EventIcon icon = new DE_EventIcon(event, 40);
             Tooltip tooltip = createTooltip(event.getTitle(), palette);
             Tooltip.install(icon.getNode(), tooltip);
             eventsGroup.addElement(icon);
@@ -90,10 +91,6 @@ public class EventsInterfaceSegment implements InterfaceSegment {
         tooltip.setStyle("-fx-background-color: "+palette.getBackground().toHexString()+"cc; -fx-text-fill: "+palette.getContentActive().toHexString()+"; -fx-padding: 6;");
         Tooltip.install(newEventIcon.getNode(), tooltip);
         eventsGroup.addElement(newEventIcon);
-        root.getChildren().add(newEventIcon.getNode());
-
-        DE_EventIcon testIcon = new DE_EventIcon("dashicons-heart", 40, palette.getContentActive());
-        root.getChildren().add(testIcon.getNode());
 
         eventsDisplay.updateNodes();
     }
