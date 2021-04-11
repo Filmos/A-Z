@@ -1,10 +1,12 @@
 package net.filmos.az.events;
 
+import javafx.util.Pair;
 import org.jetbrains.annotations.NotNull;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class EventTimeline {
     private final NavigableSet<LocalDateTime> timestamps = new TreeSet<>();
@@ -12,12 +14,6 @@ public class EventTimeline {
 
 
     public boolean addEvent(@NotNull FutureEvent event, @NotNull LocalDateTime time) {
-        try {
-            System.out.println(">"+findSpotAfter(event.getEstimatedTime(), time));
-            System.out.println("<"+findSpotBefore(event.getEstimatedTime(), time.plusSeconds(event.getEstimatedTimeSeconds())));
-        } catch (ZeroDurationEventException e) {
-            e.printStackTrace();
-        }
         if(!canAddEvent(event, time)) return false;
 
         timestamps.add(time);
@@ -80,6 +76,15 @@ public class EventTimeline {
     }
 
 
+    // TODO: improve timeline scoring
+    public Double getTimelineScore() {
+        double totalLoss = 0d;
+        for(Map.Entry<LocalDateTime, FutureEvent> timestamp : timestampedEvents.entrySet()) {
+            totalLoss += timestamp.getValue().getWeightedLoss(timestamp.getKey());
+        }
+        return totalLoss;
+    }
+
     private LocalDateTime getEventEnd(LocalDateTime timestamp) {
         if(timestamp == null) return LocalDateTime.now().minusDays(7);
         FutureEvent event = timestampedEvents.get(timestamp);
@@ -87,17 +92,42 @@ public class EventTimeline {
         return timestamp.plusSeconds(event.getEstimatedTimeSeconds());
     }
 
-    //TODO: add timeline logic
     public static EventTimeline fromEventList(List<FutureEvent> events) {
         EventTimeline timeline = new EventTimeline();
-        for(FutureEvent event : events) {
+        List<FutureEvent> orderedEvents = orderEventList(events);
+        for(FutureEvent event : orderedEvents) {
             try {
                 timeline.smartAddEvent(event);
             } catch (ZeroDurationEventException e) {
                 e.printStackTrace();
             }
         }
+        System.out.println(timeline.getTimelineScore());
         return timeline;
+    }
+    private static List<FutureEvent> orderEventList(List<FutureEvent> events) {return orderEventList(events, LocalDateTime.now());}
+    private static List<FutureEvent> orderEventList(List<FutureEvent> events, LocalDateTime startReferencePoint) {
+        if(events.size()<=1) return events;
+
+        Duration combinedEventDuration = Duration.ofSeconds(0);
+        for(FutureEvent event : events)
+            combinedEventDuration = combinedEventDuration.plus(event.getEstimatedTime());
+        LocalDateTime referencePoint = startReferencePoint.plus(combinedEventDuration.dividedBy(2));
+
+        List<Pair<Double, FutureEvent>> anchoredEvents = new ArrayList<>();
+        for(FutureEvent event : events)
+            anchoredEvents.add(new Pair<>(event.getWeightedLoss(referencePoint), event));
+        anchoredEvents.sort(Comparator.comparing(p -> -p.getKey()));
+        List<FutureEvent> orderedEvents = anchoredEvents.stream().map(Pair::getValue).collect(Collectors.toList());
+
+        List<FutureEvent> listStart = orderedEvents.subList(0, orderedEvents.size()/2);
+        List<FutureEvent> listEnd = orderedEvents.subList(orderedEvents.size()/2, orderedEvents.size());
+
+        listStart = orderEventList(listStart, startReferencePoint);
+        listEnd = orderEventList(listEnd, referencePoint);
+        listStart.addAll(listEnd);
+
+        return listStart;
     }
     public void smartAddEvent(FutureEvent event) throws ZeroDurationEventException {
         LocalDateTime spot = findSpotAfter(event.getEstimatedTime(), LocalDateTime.now());

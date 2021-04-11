@@ -48,25 +48,25 @@ public class Hub {
     }
 
     public void test() {
-
-        FutureEvent task1 = new HardDeadlineEvent(LocalDateTime.now().plusDays(7), Duration.ofHours(4), FutureEvent.Importance.POTENTIAL);
-        log("Too early: "+task1.getNormalizedLoss(LocalDateTime.now()));
-        log("Right before: "+task1.getNormalizedLoss(LocalDateTime.now().plusDays(2)));
-        log("Start decline: "+task1.getNormalizedLoss(LocalDateTime.now().plusDays(2).plusHours(6)));
-        log("Comfort buffer: "+task1.getNormalizedLoss(LocalDateTime.now().plusDays(7).minusHours(7)));
-        log("Last chance: "+task1.getNormalizedLoss(LocalDateTime.now().plusDays(7).minusHours(4)));
-        log("Too late: "+task1.getNormalizedLoss(LocalDateTime.now().plusDays(7).minusHours(2)));
-        log("Deadline: "+task1.getNormalizedLoss(LocalDateTime.now().plusDays(7)));
-        log("After deadline: "+task1.getNormalizedLoss(LocalDateTime.now().plusDays(7).plusHours(2)));
-
-        LocalDateTime start = LocalDateTime.now().withHour(0).withMinute(0).withSecond(0).withNano(0);
-        EventTimeline line = new EventTimeline();
-        logWarning(":"+line.addEvent(task1, start.plusHours(2)));
-        logWarning(":"+line.addEvent(task1, start.plusHours(4)));
-        logWarning(":"+line.addEvent(task1, start.plusHours(1)));
-        logWarning(":"+line.addEvent(task1, start.plusHours(6)));
-        logWarning(":"+line.addEvent(task1, start.plusHours(16)));
-        logWarning(":"+line.addEvent(task1, start.plusHours(8)));
-        logWarning(":"+line.addEvent(task1, start.plusHours(14)));
+//
+//        FutureEvent task1 = new HardDeadlineEvent(LocalDateTime.now().plusDays(7), Duration.ofHours(4), FutureEvent.Importance.POTENTIAL);
+//        log("Too early: "+task1.getNormalizedLoss(LocalDateTime.now()));
+//        log("Right before: "+task1.getNormalizedLoss(LocalDateTime.now().plusDays(2)));
+//        log("Start decline: "+task1.getNormalizedLoss(LocalDateTime.now().plusDays(2).plusHours(6)));
+//        log("Comfort buffer: "+task1.getNormalizedLoss(LocalDateTime.now().plusDays(7).minusHours(7)));
+//        log("Last chance: "+task1.getNormalizedLoss(LocalDateTime.now().plusDays(7).minusHours(4)));
+//        log("Too late: "+task1.getNormalizedLoss(LocalDateTime.now().plusDays(7).minusHours(2)));
+//        log("Deadline: "+task1.getNormalizedLoss(LocalDateTime.now().plusDays(7)));
+//        log("After deadline: "+task1.getNormalizedLoss(LocalDateTime.now().plusDays(7).plusHours(2)));
+//
+//        LocalDateTime start = LocalDateTime.now().withHour(0).withMinute(0).withSecond(0).withNano(0);
+//        EventTimeline line = new EventTimeline();
+//        logWarning(":"+line.addEvent(task1, start.plusHours(2)));
+//        logWarning(":"+line.addEvent(task1, start.plusHours(4)));
+//        logWarning(":"+line.addEvent(task1, start.plusHours(1)));
+//        logWarning(":"+line.addEvent(task1, start.plusHours(6)));
+//        logWarning(":"+line.addEvent(task1, start.plusHours(16)));
+//        logWarning(":"+line.addEvent(task1, start.plusHours(8)));
+//        logWarning(":"+line.addEvent(task1, start.plusHours(14)));
     }
 }
