@@ -21,6 +21,8 @@ public class DisplayElementGroup {
 
 
     public ArrayList<DisplayElement> getSubset(int startIndex, int length) {
+        if(length <= 0 || getLength() <= 0) return new ArrayList<>();
+
         ArrayList<DisplayElement> subset = new ArrayList<>();
         for(int i=0;i<Math.min(length,pinnedElements.size());i++)
             subset.add(pinnedElements.get(i));

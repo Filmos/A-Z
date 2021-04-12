@@ -33,6 +33,11 @@ public class Storage {
         return id;
     }
 
+    public static void resaveStorage(String storageName) throws IOException {
+        StorableDataset dataset = getFromStorage(storageName);
+        dataset.saveAsFile(storageName);
+    }
+
     public static void updateStorage(String storageName, String id, StorableDict data) throws IOException {
         StorableDataset dataset = getFromStorage(storageName);
         dataset.put(id, data);

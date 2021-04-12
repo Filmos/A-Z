@@ -31,6 +31,9 @@ public abstract class FutureEvent implements Storable {
         public String toString() {return getName();}
 
     }
+    public enum State {
+        FUTURE, FINISHED
+    }
 
 
     private Importance importance;
@@ -39,7 +42,10 @@ public abstract class FutureEvent implements Storable {
     private String description;
     private String icon;
     private LocalDateTime deadline;
+    private State state;
+
     private String storageId;
+
 
     public String getTitle() {return title;}
     public String getDescription() {return description;}
@@ -47,6 +53,8 @@ public abstract class FutureEvent implements Storable {
     public Importance getImportance() {return importance;}
     public Duration getEstimatedTime() {return estimatedTime;}
     public LocalDateTime getDeadline() {return deadline;}
+    public State getState() {return state;}
+    public String getStorageId() {return storageId;}
 
     public void setStorageId(String storageId) {this.storageId = storageId;}
 
@@ -54,6 +62,7 @@ public abstract class FutureEvent implements Storable {
         this.deadline = deadline;
         this.estimatedTime = estimatedTime;
         this.importance = importance;
+        this.state = State.FUTURE;
     }
 
     public void setDetails(String title, String description, String icon) {
@@ -61,6 +70,8 @@ public abstract class FutureEvent implements Storable {
         this.description = description;
         this.icon = icon;
     }
+
+    public void setState(State state) {this.state = state;}
 
 
     public long getEstimatedTimeSeconds() {
@@ -80,6 +91,7 @@ public abstract class FutureEvent implements Storable {
         storableDict.put("deadline", deadline.toString());
         storableDict.put("duration", estimatedTime.toString());
         storableDict.put("importance", importance.name());
+        storableDict.put("state", state.name());
         storableDict.put("title", title);
         storableDict.put("description", description);
         storableDict.put("icon", icon);
@@ -87,7 +99,7 @@ public abstract class FutureEvent implements Storable {
 
         return storableDict;
     }
-    public static FutureEvent fromStorableDict(StorableDict storableDict) throws InvalidStorableDictException {
+    public static FutureEvent fromStorableDict(StorableDict storableDict, String storageId) throws InvalidStorableDictException {
         if(storableDict.get("type") == null) throw new InvalidStorableDictException("Missing type");
 
         LocalDateTime deadline;
@@ -102,11 +114,17 @@ public abstract class FutureEvent implements Storable {
         try {importance = Importance.valueOf(storableDict.get("importance"));}
         catch (Exception e) {throw new InvalidStorableDictException("Invalid importance value");}
 
+        State state;
+        try {state = State.valueOf(storableDict.get("state"));}
+        catch (Exception e) {throw new InvalidStorableDictException("Invalid state value");}
+
         try {
             Class<?> c = Class.forName(storableDict.get("type"));
             Constructor<?> cons = c.getConstructor(LocalDateTime.class, Duration.class, Importance.class);
             FutureEvent event = (FutureEvent) cons.newInstance(deadline, duration, importance);
+            event.setState(state);
             event.setDetails(storableDict.get("title"), storableDict.get("description"), storableDict.get("icon"));
+            event.storageId = storageId;
             return event;
         } catch (Exception e) {
             throw new InvalidStorableDictException("Missing type");

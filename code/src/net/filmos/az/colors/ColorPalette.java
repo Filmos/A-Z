@@ -14,6 +14,9 @@ public class ColorPalette {
 
     public Color getContent() {return getContentGradient().getColor(0f);}
     public Color getContentActive() {return getContentGradient().getColor(1f);}
+    public Color getContentInactive() {return new Color(255, 247, 209);}
+    public Color getContentDisabled() {return new Color(144, 156, 249);}
+    public Color getContentDanger() {return new Color(248, 141, 109);}
 
     public Color getHeader() {return new Color(202, 144, 249);}
 }

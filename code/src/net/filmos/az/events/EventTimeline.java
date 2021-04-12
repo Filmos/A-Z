@@ -102,7 +102,6 @@ public class EventTimeline {
                 e.printStackTrace();
             }
         }
-        System.out.println(timeline.getTimelineScore());
         return timeline;
     }
     private static List<FutureEvent> orderEventList(List<FutureEvent> events) {return orderEventList(events, LocalDateTime.now());}

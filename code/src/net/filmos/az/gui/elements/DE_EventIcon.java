@@ -3,15 +3,20 @@ package net.filmos.az.gui.elements;
 import javafx.animation.RotateTransition;
 import javafx.animation.ScaleTransition;
 import javafx.scene.Node;
+import javafx.scene.control.Tooltip;
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 import javafx.util.Duration;
 import net.filmos.az.colors.Color;
+import net.filmos.az.colors.ColorPalette;
 import net.filmos.az.events.FutureEvent;
 import net.filmos.az.gui.base.DisplayElement;
 import org.kordamp.ikonli.javafx.FontIcon;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 public class DE_EventIcon extends DisplayElement {
     private final Pane root;
@@ -21,8 +26,25 @@ public class DE_EventIcon extends DisplayElement {
         this.event = event;
         root = new Pane();
 
-        addIcon(size);
-        if(event.getNormalizedLoss(LocalDateTime.now())>0.7) addBigRotationAnimation();
+        if(event.getState() == FutureEvent.State.FINISHED) {
+            createFinishedIcon(size);
+            addTooltip(10);
+        }
+        else {
+            createdFutureIcon(size);
+            addTooltip(15);
+        }
+
+    }
+
+    private void createFinishedIcon(int size) {
+        ColorPalette colorPalette = ColorPalette.defaultPalette();
+        DE_Icon icon = new DE_Icon(event.getIcon(), (int) (size*0.7), colorPalette.getContentDisabled());
+        root.getChildren().add(icon.getNode());
+    }
+    private void createdFutureIcon(int size) {
+        addIconHalves(size);
+        if (event.getNormalizedLoss(LocalDateTime.now()) > 0.7) addBigRotationAnimation();
         else {
             if (event.getNormalizedLoss(LocalDateTime.now().plusMinutes(45)) > 0.3) {
                 addSmallRotationAnimation();
@@ -30,7 +52,8 @@ public class DE_EventIcon extends DisplayElement {
             } else if (event.getNormalizedLoss(LocalDateTime.now().plusHours(6)) > 0.3) addScaleAnimation(0.25);
         }
     }
-    private void addIcon(int size) {
+
+    private void addIconHalves(int size) {
         FontIcon leftIcon = new FontIcon();
         leftIcon.setIconSize(size);
         leftIcon.setIconLiteral(event.getIcon());
@@ -52,6 +75,19 @@ public class DE_EventIcon extends DisplayElement {
         rightIcon.setClip(new Rectangle(size/2d, -size, size/1.95, size));
         root.getChildren().add(rightIcon);
     }
+
+    private void addTooltip(int fontSize) {
+        ColorPalette palette = ColorPalette.defaultPalette();
+        final Tooltip tooltip = new Tooltip();
+        tooltip.setText(event.getTitle()+"\n"+event.getDeadline().format(DateTimeFormatter.ofPattern("HH:mm dd.MM.yyyy")));
+        tooltip.setFont(Font.font("Verdana", FontWeight.BOLD,fontSize));
+        tooltip.setShowDelay(Duration.seconds(0));
+        tooltip.setHideDelay(Duration.seconds(0));
+        tooltip.setStyle("-fx-background-color: "+palette.getBackground().toHexString()+"cc; -fx-text-fill: "+palette.getHeader().toHexString()+"; -fx-padding: 6;");
+        Tooltip.install(root, tooltip);
+    }
+
+
     private void addSmallRotationAnimation() {
         RotateTransition rotateTransition = new RotateTransition();
 
@@ -94,4 +130,5 @@ public class DE_EventIcon extends DisplayElement {
     public Node getNode() {
         return root;
     }
+
 }

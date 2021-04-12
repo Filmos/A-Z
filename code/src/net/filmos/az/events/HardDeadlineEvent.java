@@ -2,6 +2,7 @@ package net.filmos.az.events;
 
 import net.filmos.az.colors.Color;
 import net.filmos.az.colors.ColorGradient;
+import net.filmos.az.colors.ColorPalette;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -38,7 +39,8 @@ public class HardDeadlineEvent extends FutureEvent {
 
     @Override
     public Map<Double, Color> getColorMarks() {
-        ColorGradient gradient = new ColorGradient(new Color(255, 247, 209), new Color(248, 141, 109));
+        ColorPalette palette = ColorPalette.defaultPalette();
+        ColorGradient gradient = new ColorGradient(palette.getContentInactive(), palette.getContentDanger());
         Map<Double, Color> colorMarks = new HashMap<>();
 
         colorMarks.put(0.25, gradient.getColor(getNormalizedLoss(LocalDateTime.now().plusMinutes(20))));
