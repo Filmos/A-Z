@@ -1,46 +1,27 @@
-class DescriptiveField {
-    readonly id: string;
-    readonly type: string;
-    importance: number;
-    private value: any;
-
-    constructor(id: string, type: string, importance?: number) {
-        this.id = id
-        this.type = type
-        this.importance = importance
-    }
-
-    get() : any {
-        return this.value
-    }
-    set(value: any) : void {
-        this.value = value
-    }
-}
 
 
 interface Displayable {
-  getDisplayFields(): DescriptiveField[];
+  getDisplayFields(): {[key: string]: DescriptiveField};
 }
 
 abstract class DynamicallyDescriptiveObject implements Displayable {
     private innerFields : {[key: string]: DescriptiveField} = {}
 
-    protected registerField(name: string, type: string, importance?: number) : void {
-        this.innerFields[name] = new DescriptiveField(name, type, importance);
+    protected registerField(name: string, field: DescriptiveField) : void {
+        this.innerFields[name] = field;
     }
 
     get(key: string) : any {
         if(!this.innerFields[key]) return null
-        return this.innerFields[key].get()
+        return this.innerFields[key].getValue()
     }
     set(key: string, value: any) : void {
         if(!this.innerFields[key]) return
-        this.innerFields[key].set(value)
+        this.innerFields[key].setValue(value)
     }
 
-    getDisplayFields() : DescriptiveField[] {
-        return Object.values(this.innerFields);
+    getDisplayFields() : {[key: string]: DescriptiveField} {
+        return this.innerFields;
     }
 
 }
