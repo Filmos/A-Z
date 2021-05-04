@@ -1,7 +1,5 @@
-
-
 interface Displayable {
-  getDisplayFields(): {[key: string]: DescriptiveField};
+  getDisplayFields(query : string[]): {[key: string]: DescriptiveField};
 }
 
 abstract class DynamicallyDescriptiveObject implements Displayable {
@@ -20,8 +18,12 @@ abstract class DynamicallyDescriptiveObject implements Displayable {
         this.innerFields[key].setValue(value)
     }
 
-    getDisplayFields() : {[key: string]: DescriptiveField} {
-        return this.innerFields;
+    getDisplayFields(query : string[]) : {[key: string]: DescriptiveField} {
+        let result : {[key: string]: DescriptiveField} = {}
+        for(let key of query)
+            result[key] = this.innerFields[key]
+
+        return result;
     }
 
 }
