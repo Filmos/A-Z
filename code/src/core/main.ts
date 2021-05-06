@@ -1,4 +1,4 @@
-class TimeBlock extends DynamicallyDescriptiveObject {
+class TimeBlock extends DescriptiveObject {
 
   constructor(name: string, timeslot: string) {
     super();
@@ -9,6 +9,20 @@ class TimeBlock extends DynamicallyDescriptiveObject {
 
 let block = new TimeBlock("Hello", "there")
 let block2 = new TimeBlock("fellow", "human")
-console.log(block.getDisplayFields(["name"])["name"].getRepresentations())
-console.log(block.getDisplayFields(["timeslot"])["timeslot"].getRepresentations())
-console.log(block.getDisplayFields(["name", "timeslot"]))
+
+// formDescriptiveUI(block.getDisplayFields(["name"]))
+// formDescriptiveUI(block2.getDisplayFields(["name","timeslot"]))
+
+console.log(block)
+console.log(block.getKeys()["name"])
+
+let filter = new DescriptiveFilter("field")
+filter.addKey("string")
+console.log(filter)
+
+console.log(block.getKeys()["name"].matchesFilter(filter))
+
+// let map = new DescriptiveMap("field")
+// map.addKey("string")
+// map.addKey("time_period")
+// console.log(map)
