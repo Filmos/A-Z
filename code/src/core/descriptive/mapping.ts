@@ -1,10 +1,5 @@
-class DescriptiveMap<KEY_TYPE> {
+class DescriptiveMap<KEY_TYPE> extends Clusterable {
     protected keys : {[key: string] : KEY_TYPE} = {}
-    protected cluster : string
-
-    constructor(cluster : string) {
-        this.cluster = cluster
-    }
 
     addKey(key : KEY_TYPE, name? : string) : string {
         if(!name) name = Object.keys(this.keys).length.toString()
@@ -14,15 +9,8 @@ class DescriptiveMap<KEY_TYPE> {
     getKeys() : {[key: string] : KEY_TYPE} {
         return this.keys
     }
-
-    getCluster() : string {
-        return this.cluster
-    }
 }
 
-class DescriptiveFilter extends DescriptiveMap<DescriptiveFilter | string>{
-
-}
 
 abstract class DescriptiveField extends DescriptiveMap<() => any> {
     protected constructor(...value : any) {
@@ -53,16 +41,6 @@ abstract class DescriptiveField extends DescriptiveMap<() => any> {
     as(representationName: string) : any {
         if(!this.keys[representationName]) return null
         return this.keys[representationName]()
-    }
-
-
-    matchesFilter(filter : DescriptiveFilter) : boolean {
-        if(filter.getCluster() != this.getCluster()) return false
-        let filterKeys : (string|DescriptiveFilter)[] = Object.values(filter.getKeys())
-
-        return filterKeys.length == 1
-            && typeof(filterKeys[0]) == "string"
-            && !!this.keys[filterKeys[0]]
     }
 }
 

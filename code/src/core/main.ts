@@ -10,19 +10,19 @@ class TimeBlock extends DescriptiveObject {
 let block = new TimeBlock("Hello", "there")
 let block2 = new TimeBlock("fellow", "human")
 
-// formDescriptiveUI(block.getDisplayFields(["name"]))
-// formDescriptiveUI(block2.getDisplayFields(["name","timeslot"]))
-
 console.log(block)
 console.log(block.getKeys()["name"])
+console.log(block.getKeys()["timeslot"])
 
-let filter = new DescriptiveFilter("field")
-filter.addKey("string")
-console.log(filter)
+let filter1 = FilterFactory.field("string")
+let filter2 = FilterFactory.field("linearSpace")
+let filter3 = FilterFactory.field("lies")
+let filter = new DescriptiveFilter("object")
+filter.addPattern(filter1, 1, 1)
+filter.addPattern(filter2, 0, 1)
 
-console.log(block.getKeys()["name"].matchesFilter(filter))
-
-// let map = new DescriptiveMap("field")
-// map.addKey("string")
-// map.addKey("time_period")
-// console.log(map)
+console.log(filter1.matches(block.getKeys()["name"]))
+console.log(filter2.matches(block.getKeys()["name"]))
+console.log(filter1.matches(block.getKeys()["timeslot"]))
+console.log(filter2.matches(block.getKeys()["timeslot"]))
+console.log(filter.matches(block))

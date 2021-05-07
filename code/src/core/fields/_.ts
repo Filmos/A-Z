@@ -25,4 +25,13 @@ fields["time_period"] = class time_period extends DescriptiveField {
     getValue(): string {
         return this.value
     }
+
+    $asString(): string {
+        console.log(this)
+        return "$"+this.value;
+    }
+    $asLinearSpace(): string {
+        console.log(this)
+        return "$"+this.value;
+    }
 }
