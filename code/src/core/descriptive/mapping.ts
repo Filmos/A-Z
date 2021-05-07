@@ -29,12 +29,15 @@ abstract class DescriptiveField extends DescriptiveMap<() => any> {
             Object.getOwnPropertyNames(obj).forEach((e, i, arr) => {
                 if (e!=arr[i+1] && e.indexOf("$as") != -1 && typeof obj[e] == 'function') {
                     let id : string = e.slice(3, 4).toLowerCase() + e.slice(4)
-                    this.addKey(obj[e], id)
+                    this.addRepresentation(id, obj[e])
                 }
             });
         } while (obj = Object.getPrototypeOf(obj));
     }
 
+    addRepresentation(name : string, representation : ()=>any) {
+        this.addKey(representation.bind(this), name)
+    }
     getRepresentations() : string[] {
         return Object.keys(this.keys)
     }
@@ -51,8 +54,9 @@ abstract class DescriptiveObject extends DescriptiveMap<DescriptiveField> {
         super("object");
     }
 
-    protected registerField(name: string, field: DescriptiveField) : void {
+    protected registerField(name: string, field: DescriptiveField, value? : any) : void {
         this.addKey(field, name)
+        if(value) this.set(name, value)
     }
 
     get(key: string) : any {

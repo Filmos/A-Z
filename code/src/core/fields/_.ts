@@ -12,7 +12,7 @@ fields["title"] = class title extends DescriptiveField {
 
     $asString(): string {
         console.log(this)
-        return "$"+this.value;
+        return this.value;
     }
 }
 
