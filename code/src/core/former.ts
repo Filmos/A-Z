@@ -64,7 +64,29 @@ DescriptiveUI.registerFormer(new DescriptiveFormMaker(
         return new DescriptiveFormer(0, (map) => {
             let div : HTMLElement = document.createElement('div')
             div.innerText = (<DescriptiveField>map).as("string")
-            div.style.color = "beige"
+            return div
+        })
+    }
+))
+DescriptiveUI.registerFormer(new DescriptiveFormMaker(
+    FilterFactory.object("string+"),
+    function(map) {
+        return new DescriptiveFormer(0, (map) => {
+            let div : HTMLElement = document.createElement('div')
+            div.classList.add("card")
+            div.classList.add("mx-3")
+            div.classList.add("my-1")
+
+            let innerDiv : HTMLElement = document.createElement('div')
+            innerDiv.classList.add("card-body")
+            div.appendChild(innerDiv)
+
+            let fields = map.getKeys()
+            for(let f in fields) {
+                let element : HTMLElement = DescriptiveUI.singleForm(fields[f])
+                if(element) innerDiv.appendChild(element)
+            }
+
             return div
         })
     }

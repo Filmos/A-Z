@@ -10,6 +10,4 @@ class TimeBlock extends DescriptiveObject {
 let block = new TimeBlock("Hello", "there")
 let block2 = new TimeBlock("fellow", "human")
 
-document.body.appendChild(DescriptiveUI.singleForm(block.getKeys()["name"]))
-document.body.appendChild(DescriptiveUI.singleForm(block2.getKeys()["name"]))
 document.body.appendChild(DescriptiveUI.singleForm(block))

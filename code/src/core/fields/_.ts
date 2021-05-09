@@ -11,7 +11,6 @@ fields["title"] = class title extends DescriptiveField {
     }
 
     $asString(): string {
-        console.log(this)
         return this.value;
     }
 }
@@ -27,11 +26,9 @@ fields["time_period"] = class time_period extends DescriptiveField {
     }
 
     $asString(): string {
-        console.log(this)
         return "$"+this.value;
     }
     $asLinearSpace(): string {
-        console.log(this)
         return "$"+this.value;
     }
 }

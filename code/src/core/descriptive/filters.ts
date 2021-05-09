@@ -84,4 +84,35 @@ class FilterFactory {
         filter.addPattern("*", 0, Infinity)
         return filter
     }
+    static object(type: string) : DescriptiveFilter {
+        let filter = new DescriptiveFilter("object")
+
+        let fieldQueries : string[] = type.split(",")
+        for(let query of fieldQueries) {
+            let min : number = 1
+            let max : number = 1
+
+            switch (query.slice(-1)) {
+                case "?":
+                    min = 0
+                    max = 1
+                    query = query.slice(0,-1)
+                    break
+                case "*":
+                    min = 0
+                    max = Infinity
+                    query = query.slice(0,-1)
+                    break
+                case "+":
+                    min = 1
+                    max = Infinity
+                    query = query.slice(0,-1)
+                    break
+            }
+
+            filter.addPattern(this.field(query), min, max)
+        }
+
+        return filter
+    }
 }
