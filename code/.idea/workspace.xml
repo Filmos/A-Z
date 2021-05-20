@@ -5,176 +5,7 @@
     <select />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="4d43658e-edbe-4f72-9f8d-213d873418e0" name="Default Changelist" comment="Added ability to mark events as finished">
-      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.name" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/codeStyles/Project.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/codeStyles/codeStyleConfig.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/kotlinc.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/KotlinJavaRuntime.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/com_fasterxml_jackson_core_jackson_core_2_7_4.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/com_fasterxml_jackson_core_jackson_databind_2_7_4.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/org_jfxtras_jfxtras_all_10_0_r1.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/org_kordamp_ikonli_ikonli_dashicons_pack_2_3_0.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/org_kordamp_ikonli_ikonli_javafx_2_3_0.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/org_mockito_mockito_core_2_2_2.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/org_testfx_testfx_junit_4_0_15_alpha.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/templateLanguages.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/uiDesigner.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/a-z.iml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/javafx-sdk-11.0.2/bin/api-ms-win-core-console-l1-1-0.dll" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/javafx-sdk-11.0.2/bin/api-ms-win-core-datetime-l1-1-0.dll" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/javafx-sdk-11.0.2/bin/api-ms-win-core-debug-l1-1-0.dll" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/javafx-sdk-11.0.2/bin/api-ms-win-core-errorhandling-l1-1-0.dll" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/javafx-sdk-11.0.2/bin/api-ms-win-core-file-l1-1-0.dll" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/javafx-sdk-11.0.2/bin/api-ms-win-core-file-l1-2-0.dll" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/javafx-sdk-11.0.2/bin/api-ms-win-core-file-l2-1-0.dll" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/javafx-sdk-11.0.2/bin/api-ms-win-core-handle-l1-1-0.dll" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/javafx-sdk-11.0.2/bin/api-ms-win-core-heap-l1-1-0.dll" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/javafx-sdk-11.0.2/bin/api-ms-win-core-interlocked-l1-1-0.dll" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/javafx-sdk-11.0.2/bin/api-ms-win-core-libraryloader-l1-1-0.dll" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/javafx-sdk-11.0.2/bin/api-ms-win-core-localization-l1-2-0.dll" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/javafx-sdk-11.0.2/bin/api-ms-win-core-memory-l1-1-0.dll" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/javafx-sdk-11.0.2/bin/api-ms-win-core-namedpipe-l1-1-0.dll" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/javafx-sdk-11.0.2/bin/api-ms-win-core-processenvironment-l1-1-0.dll" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/javafx-sdk-11.0.2/bin/api-ms-win-core-processthreads-l1-1-0.dll" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/javafx-sdk-11.0.2/bin/api-ms-win-core-processthreads-l1-1-1.dll" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/javafx-sdk-11.0.2/bin/api-ms-win-core-profile-l1-1-0.dll" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/javafx-sdk-11.0.2/bin/api-ms-win-core-rtlsupport-l1-1-0.dll" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/javafx-sdk-11.0.2/bin/api-ms-win-core-string-l1-1-0.dll" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/javafx-sdk-11.0.2/bin/api-ms-win-core-synch-l1-1-0.dll" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/javafx-sdk-11.0.2/bin/api-ms-win-core-synch-l1-2-0.dll" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/javafx-sdk-11.0.2/bin/api-ms-win-core-sysinfo-l1-1-0.dll" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/javafx-sdk-11.0.2/bin/api-ms-win-core-timezone-l1-1-0.dll" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/javafx-sdk-11.0.2/bin/api-ms-win-core-util-l1-1-0.dll" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/javafx-sdk-11.0.2/bin/api-ms-win-crt-conio-l1-1-0.dll" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/javafx-sdk-11.0.2/bin/api-ms-win-crt-convert-l1-1-0.dll" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/javafx-sdk-11.0.2/bin/api-ms-win-crt-environment-l1-1-0.dll" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/javafx-sdk-11.0.2/bin/api-ms-win-crt-filesystem-l1-1-0.dll" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/javafx-sdk-11.0.2/bin/api-ms-win-crt-heap-l1-1-0.dll" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/javafx-sdk-11.0.2/bin/api-ms-win-crt-locale-l1-1-0.dll" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/javafx-sdk-11.0.2/bin/api-ms-win-crt-math-l1-1-0.dll" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/javafx-sdk-11.0.2/bin/api-ms-win-crt-multibyte-l1-1-0.dll" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/javafx-sdk-11.0.2/bin/api-ms-win-crt-private-l1-1-0.dll" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/javafx-sdk-11.0.2/bin/api-ms-win-crt-process-l1-1-0.dll" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/javafx-sdk-11.0.2/bin/api-ms-win-crt-runtime-l1-1-0.dll" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/javafx-sdk-11.0.2/bin/api-ms-win-crt-stdio-l1-1-0.dll" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/javafx-sdk-11.0.2/bin/api-ms-win-crt-string-l1-1-0.dll" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/javafx-sdk-11.0.2/bin/api-ms-win-crt-time-l1-1-0.dll" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/javafx-sdk-11.0.2/bin/api-ms-win-crt-utility-l1-1-0.dll" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/javafx-sdk-11.0.2/bin/concrt140.dll" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/javafx-sdk-11.0.2/bin/decora_sse.dll" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/javafx-sdk-11.0.2/bin/fxplugins.dll" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/javafx-sdk-11.0.2/bin/glass.dll" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/javafx-sdk-11.0.2/bin/glib-lite.dll" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/javafx-sdk-11.0.2/bin/gstreamer-lite.dll" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/javafx-sdk-11.0.2/bin/javafx_font.dll" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/javafx-sdk-11.0.2/bin/javafx_iio.dll" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/javafx-sdk-11.0.2/bin/jfxmedia.dll" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/javafx-sdk-11.0.2/bin/jfxwebkit.dll" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/javafx-sdk-11.0.2/bin/msvcp140.dll" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/javafx-sdk-11.0.2/bin/prism_common.dll" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/javafx-sdk-11.0.2/bin/prism_d3d.dll" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/javafx-sdk-11.0.2/bin/prism_sw.dll" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/javafx-sdk-11.0.2/bin/ucrtbase.dll" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/javafx-sdk-11.0.2/bin/vcruntime140.dll" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/javafx-sdk-11.0.2/legal/javafx.base/ADDITIONAL_LICENSE_INFO" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/javafx-sdk-11.0.2/legal/javafx.base/ASSEMBLY_EXCEPTION" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/javafx-sdk-11.0.2/legal/javafx.base/LICENSE" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/javafx-sdk-11.0.2/legal/javafx.controls/ADDITIONAL_LICENSE_INFO" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/javafx-sdk-11.0.2/legal/javafx.controls/ASSEMBLY_EXCEPTION" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/javafx-sdk-11.0.2/legal/javafx.controls/LICENSE" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/javafx-sdk-11.0.2/legal/javafx.fxml/ADDITIONAL_LICENSE_INFO" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/javafx-sdk-11.0.2/legal/javafx.fxml/ASSEMBLY_EXCEPTION" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/javafx-sdk-11.0.2/legal/javafx.fxml/LICENSE" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/javafx-sdk-11.0.2/legal/javafx.graphics/ADDITIONAL_LICENSE_INFO" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/javafx-sdk-11.0.2/legal/javafx.graphics/ASSEMBLY_EXCEPTION" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/javafx-sdk-11.0.2/legal/javafx.graphics/LICENSE" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/javafx-sdk-11.0.2/legal/javafx.graphics/jpeg_fx.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/javafx-sdk-11.0.2/legal/javafx.media/ADDITIONAL_LICENSE_INFO" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/javafx-sdk-11.0.2/legal/javafx.media/ASSEMBLY_EXCEPTION" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/javafx-sdk-11.0.2/legal/javafx.media/LICENSE" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/javafx-sdk-11.0.2/legal/javafx.media/applecoreaudio.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/javafx-sdk-11.0.2/legal/javafx.media/glib.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/javafx-sdk-11.0.2/legal/javafx.media/gstreamer.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/javafx-sdk-11.0.2/legal/javafx.media/libffi.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/javafx-sdk-11.0.2/legal/javafx.swing/ADDITIONAL_LICENSE_INFO" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/javafx-sdk-11.0.2/legal/javafx.swing/ASSEMBLY_EXCEPTION" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/javafx-sdk-11.0.2/legal/javafx.swing/LICENSE" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/javafx-sdk-11.0.2/legal/javafx.web/ADDITIONAL_LICENSE_INFO" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/javafx-sdk-11.0.2/legal/javafx.web/ASSEMBLY_EXCEPTION" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/javafx-sdk-11.0.2/legal/javafx.web/LICENSE" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/javafx-sdk-11.0.2/legal/javafx.web/icu_web.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/javafx-sdk-11.0.2/legal/javafx.web/libxml2.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/javafx-sdk-11.0.2/legal/javafx.web/libxslt.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/javafx-sdk-11.0.2/legal/javafx.web/webkit.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/javafx-sdk-11.0.2/lib/javafx-swt.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/javafx-sdk-11.0.2/lib/javafx.base.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/javafx-sdk-11.0.2/lib/javafx.controls.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/javafx-sdk-11.0.2/lib/javafx.fxml.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/javafx-sdk-11.0.2/lib/javafx.graphics.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/javafx-sdk-11.0.2/lib/javafx.media.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/javafx-sdk-11.0.2/lib/javafx.properties" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/javafx-sdk-11.0.2/lib/javafx.swing.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/javafx-sdk-11.0.2/lib/javafx.web.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/javafx-sdk-11.0.2/lib/src.zip" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/net/filmos/az/Hub.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/net/filmos/az/Main.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/net/filmos/az/colors/Color.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/net/filmos/az/colors/ColorGradient.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/net/filmos/az/colors/ColorPalette.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/net/filmos/az/events/EventTimeline.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/net/filmos/az/events/EventsInterfaceSegment.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/net/filmos/az/events/FutureEvent.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/net/filmos/az/events/HardDeadlineEvent.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/net/filmos/az/events/ZeroDurationEventException.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/net/filmos/az/gui/base/ColorableDisplayElement.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/net/filmos/az/gui/base/DisplayElement.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/net/filmos/az/gui/base/DisplayElementGroup.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/net/filmos/az/gui/base/DisplayElementWrapper.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/net/filmos/az/gui/base/InterfaceSegment.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/net/filmos/az/gui/elements/DE_EventIcon.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/net/filmos/az/gui/elements/DE_Icon.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/net/filmos/az/gui/elements/DE_LinearDisplay.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/net/filmos/az/gui/elements/DE_RotatingDisplay.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/net/filmos/az/gui/elements/DE_Text.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/net/filmos/az/gui/elements/DateTimePicker.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/net/filmos/az/gui/input/BinaryInputDisplay.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/net/filmos/az/gui/input/BinaryInputDisplay_Color.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/net/filmos/az/gui/input/NodeSelector.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/net/filmos/az/gui/panels/PB_IconSelector.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/net/filmos/az/gui/panels/PanelBase.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/net/filmos/az/gui/panels/Panel_NewEvent.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/net/filmos/az/gui/windows/StageBuilder.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/net/filmos/az/gui/windows/StageFactory.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/net/filmos/az/gui/windows/StageNodePositioner.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/net/filmos/az/logs/LogChannel.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/net/filmos/az/logs/LogChannelConsole.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/net/filmos/az/logs/LogChannelDisplay.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/net/filmos/az/logs/LogDistributor.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/net/filmos/az/logs/LogInterfaceSegment.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/net/filmos/az/logs/LogMessage.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/net/filmos/az/storage/InvalidStorableDictException.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/net/filmos/az/storage/Storable.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/net/filmos/az/storage/StorableDataset.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/net/filmos/az/storage/StorableDict.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/net/filmos/az/storage/Storage.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/net/filmos/az/tests/TestHub.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/net/filmos/az/tests/colors/TestColor.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/net/filmos/az/tests/colors/TestColorGradient.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/net/filmos/az/tests/events/TestFutureEvent.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/net/filmos/az/tests/events/TestHardDeadlineEvent.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/net/filmos/az/tests/gui/TestElementText.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/net/filmos/az/tests/logs/TestLogChannel.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/net/filmos/az/tests/logs/TestLogDistributor.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/net/filmos/az/tests/logs/TestLogInterfaceSegment.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/net/filmos/az/tests/logs/TestLogMessage.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../doodles/Clock v3.kra" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../doodles/Event manager.kra" beforeDir="false" />
-    </list>
+    <list default="true" id="4d43658e-edbe-4f72-9f8d-213d873418e0" name="Default Changelist" comment="Added ability to mark events as finished" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -213,8 +44,13 @@
     <property name="Repository.Attach.JavaDocs" value="false" />
     <property name="Repository.Attach.Sources" value="false" />
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/.." />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="aspect.path.notification.shown" value="true" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/src" />
+    <property name="node.js.detected.package.eslint" value="true" />
+    <property name="node.js.selected.package.eslint" value="(autodetect)" />
     <property name="project.structure.last.edited" value="Libraries" />
     <property name="project.structure.proportion" value="0.15" />
     <property name="project.structure.side.proportion" value="0.30804598" />
@@ -331,6 +167,7 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1608112476744</updated>
+      <workItem from="1621198290702" duration="70000" />
     </task>
     <task id="LOCAL-00001" summary="Added basic log handling">
       <created>1608128258470</created>
@@ -545,6 +382,41 @@
     <option name="localTasksCounter" value="31" />
     <servers />
   </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+    <option name="exactExcludedFiles">
+      <list>
+        <option value="$PROJECT_DIR$/www/app/scheduler/time_block.js.map" />
+        <option value="$PROJECT_DIR$/www/app/scheduler/time_block.js" />
+        <option value="$PROJECT_DIR$/www/core/main.js.map" />
+        <option value="$PROJECT_DIR$/www/core/main.js" />
+        <option value="$PROJECT_DIR$/www/core/former.js.map" />
+        <option value="$PROJECT_DIR$/www/core/former.js" />
+        <option value="$PROJECT_DIR$/www/core/fields/_.js.map" />
+        <option value="$PROJECT_DIR$/www/core/fields/_.js" />
+        <option value="$PROJECT_DIR$/www/core/descriptive/core.js.map" />
+        <option value="$PROJECT_DIR$/www/core/descriptive/core.js" />
+        <option value="$PROJECT_DIR$/www/core/descriptive/mapping.js.map" />
+        <option value="$PROJECT_DIR$/www/core/descriptive/mapping.js" />
+        <option value="$PROJECT_DIR$/www/core/descriptive/filters.js.map" />
+        <option value="$PROJECT_DIR$/www/core/descriptive/filters.js" />
+        <option value="$PROJECT_DIR$/platforms/electron/www/app/scheduler/time_block.js.map" />
+        <option value="$PROJECT_DIR$/platforms/electron/www/app/scheduler/time_block.js" />
+        <option value="$PROJECT_DIR$/platforms/electron/www/core/main.js.map" />
+        <option value="$PROJECT_DIR$/platforms/electron/www/core/main.js" />
+        <option value="$PROJECT_DIR$/platforms/electron/www/core/former.js.map" />
+        <option value="$PROJECT_DIR$/platforms/electron/www/core/former.js" />
+        <option value="$PROJECT_DIR$/platforms/electron/www/core/fields/_.js.map" />
+        <option value="$PROJECT_DIR$/platforms/electron/www/core/fields/_.js" />
+        <option value="$PROJECT_DIR$/platforms/electron/www/core/descriptive/core.js.map" />
+        <option value="$PROJECT_DIR$/platforms/electron/www/core/descriptive/core.js" />
+        <option value="$PROJECT_DIR$/platforms/electron/www/core/descriptive/mapping.js.map" />
+        <option value="$PROJECT_DIR$/platforms/electron/www/core/descriptive/mapping.js" />
+        <option value="$PROJECT_DIR$/platforms/electron/www/core/descriptive/filters.js.map" />
+        <option value="$PROJECT_DIR$/platforms/electron/www/core/descriptive/filters.js" />
+      </list>
+    </option>
+  </component>
   <component name="Vcs.Log.Tabs.Properties">
     <option name="TAB_STATES">
       <map>
@@ -607,121 +479,6 @@
     <MESSAGE value="Added basic timeline arrangement algorithm" />
     <MESSAGE value="Added ability to mark events as finished" />
     <option name="LAST_COMMIT_MESSAGE" value="Added ability to mark events as finished" />
-  </component>
-  <component name="WindowStateProjectService">
-    <state x="735" y="355" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1614771317106">
-      <screen x="0" y="0" width="2560" height="1400" />
-    </state>
-    <state x="735" y="355" key="#com.intellij.execution.impl.EditConfigurationsDialog/-1920.371.1920.1040/2560.-401.1080.1880/0.0.2560.1400@0.0.2560.1400" timestamp="1614771317106" />
-    <state x="1085" y="416" key="#com.intellij.ide.util.MemberChooser" timestamp="1617873628801">
-      <screen x="0" y="0" width="2560" height="1400" />
-    </state>
-    <state x="1085" y="416" key="#com.intellij.ide.util.MemberChooser/-1920.346.1920.1040/2560.-426.1080.1880/0.0.2560.1400@0.0.2560.1400" timestamp="1613961840007" />
-    <state x="1085" y="416" key="#com.intellij.ide.util.MemberChooser/-1920.371.1920.1040/2560.-401.1080.1880/0.0.2560.1400@0.0.2560.1400" timestamp="1617873628801" />
-    <state x="1085" y="416" key="#com.intellij.ide.util.MemberChooser/2560.-426.1080.1880/-1920.346.1920.1040/0.0.2560.1400@0.0.2560.1400" timestamp="1613731997959" />
-    <state x="841" y="265" key="#com.intellij.refactoring.rename.AutomaticRenamingDialog" timestamp="1614960546822">
-      <screen x="0" y="0" width="2560" height="1400" />
-    </state>
-    <state x="841" y="265" key="#com.intellij.refactoring.rename.AutomaticRenamingDialog/-1920.371.1920.1040/2560.-401.1080.1880/0.0.2560.1400@0.0.2560.1400" timestamp="1614960546822" />
-    <state x="1035" y="403" key="#xdebugger.evaluate" timestamp="1617190503188">
-      <screen x="0" y="0" width="2560" height="1400" />
-    </state>
-    <state x="1035" y="403" key="#xdebugger.evaluate/-1920.371.1920.1040/2560.-401.1080.1880/0.0.2560.1400@0.0.2560.1400" timestamp="1617190503188" />
-    <state x="986" y="441" key="FileChooserDialogImpl" timestamp="1619961016234">
-      <screen x="0" y="0" width="2560" height="1400" />
-    </state>
-    <state x="986" y="441" key="FileChooserDialogImpl/-1920.346.1920.1040/2560.-426.1080.1880/0.0.2560.1400@0.0.2560.1400" timestamp="1613824681241" />
-    <state x="986" y="441" key="FileChooserDialogImpl/-1920.371.1920.1040/2560.-401.1080.1880/0.0.2560.1400@0.0.2560.1400" timestamp="1617576610318" />
-    <state x="986" y="441" key="FileChooserDialogImpl/0.0.2560.1400/-1920.360.1920.1040@0.0.2560.1400" timestamp="1619961016234" />
-    <state width="2517" height="334" key="GridCell.Tab.0.bottom" timestamp="1618948246294">
-      <screen x="0" y="0" width="2560" height="1400" />
-    </state>
-    <state width="2517" height="332" key="GridCell.Tab.0.bottom/-1920.346.1920.1040/2560.-426.1080.1880/0.0.2560.1400@0.0.2560.1400" timestamp="1613969091430" />
-    <state width="2517" height="334" key="GridCell.Tab.0.bottom/-1920.371.1920.1040/2560.-401.1080.1880/0.0.2560.1400@0.0.2560.1400" timestamp="1618745720392" />
-    <state width="2517" height="334" key="GridCell.Tab.0.bottom/-1920.433.1920.1040/2560.-401.1080.1880/0.0.2560.1400@0.0.2560.1400" timestamp="1618948246294" />
-    <state width="2517" height="332" key="GridCell.Tab.0.bottom/0.0.2560.1400/-1920.371.1920.1040/2560.-401.1080.1880@0.0.2560.1400" timestamp="1618213022218" />
-    <state width="2517" height="332" key="GridCell.Tab.0.bottom/2560.-426.1080.1880/-1920.346.1920.1040/0.0.2560.1400@0.0.2560.1400" timestamp="1613739997372" />
-    <state width="2517" height="334" key="GridCell.Tab.0.center" timestamp="1618948246294">
-      <screen x="0" y="0" width="2560" height="1400" />
-    </state>
-    <state width="2517" height="332" key="GridCell.Tab.0.center/-1920.346.1920.1040/2560.-426.1080.1880/0.0.2560.1400@0.0.2560.1400" timestamp="1613969091430" />
-    <state width="2517" height="334" key="GridCell.Tab.0.center/-1920.371.1920.1040/2560.-401.1080.1880/0.0.2560.1400@0.0.2560.1400" timestamp="1618745720392" />
-    <state width="2517" height="334" key="GridCell.Tab.0.center/-1920.433.1920.1040/2560.-401.1080.1880/0.0.2560.1400@0.0.2560.1400" timestamp="1618948246294" />
-    <state width="2517" height="332" key="GridCell.Tab.0.center/0.0.2560.1400/-1920.371.1920.1040/2560.-401.1080.1880@0.0.2560.1400" timestamp="1618213022218" />
-    <state width="2517" height="332" key="GridCell.Tab.0.center/2560.-426.1080.1880/-1920.346.1920.1040/0.0.2560.1400@0.0.2560.1400" timestamp="1613739997372" />
-    <state width="2517" height="334" key="GridCell.Tab.0.left" timestamp="1618948246294">
-      <screen x="0" y="0" width="2560" height="1400" />
-    </state>
-    <state width="2517" height="332" key="GridCell.Tab.0.left/-1920.346.1920.1040/2560.-426.1080.1880/0.0.2560.1400@0.0.2560.1400" timestamp="1613969091430" />
-    <state width="2517" height="334" key="GridCell.Tab.0.left/-1920.371.1920.1040/2560.-401.1080.1880/0.0.2560.1400@0.0.2560.1400" timestamp="1618745720392" />
-    <state width="2517" height="334" key="GridCell.Tab.0.left/-1920.433.1920.1040/2560.-401.1080.1880/0.0.2560.1400@0.0.2560.1400" timestamp="1618948246294" />
-    <state width="2517" height="332" key="GridCell.Tab.0.left/0.0.2560.1400/-1920.371.1920.1040/2560.-401.1080.1880@0.0.2560.1400" timestamp="1618213022211" />
-    <state width="2517" height="332" key="GridCell.Tab.0.left/2560.-426.1080.1880/-1920.346.1920.1040/0.0.2560.1400@0.0.2560.1400" timestamp="1613739997372" />
-    <state width="2517" height="334" key="GridCell.Tab.0.right" timestamp="1618948246294">
-      <screen x="0" y="0" width="2560" height="1400" />
-    </state>
-    <state width="2517" height="332" key="GridCell.Tab.0.right/-1920.346.1920.1040/2560.-426.1080.1880/0.0.2560.1400@0.0.2560.1400" timestamp="1613969091430" />
-    <state width="2517" height="334" key="GridCell.Tab.0.right/-1920.371.1920.1040/2560.-401.1080.1880/0.0.2560.1400@0.0.2560.1400" timestamp="1618745720392" />
-    <state width="2517" height="334" key="GridCell.Tab.0.right/-1920.433.1920.1040/2560.-401.1080.1880/0.0.2560.1400@0.0.2560.1400" timestamp="1618948246294" />
-    <state width="2517" height="332" key="GridCell.Tab.0.right/0.0.2560.1400/-1920.371.1920.1040/2560.-401.1080.1880@0.0.2560.1400" timestamp="1618213022218" />
-    <state width="2517" height="332" key="GridCell.Tab.0.right/2560.-426.1080.1880/-1920.346.1920.1040/0.0.2560.1400@0.0.2560.1400" timestamp="1613739997372" />
-    <state width="2517" height="492" key="GridCell.Tab.1.bottom" timestamp="1617668331384">
-      <screen x="0" y="0" width="2560" height="1400" />
-    </state>
-    <state width="2517" height="492" key="GridCell.Tab.1.bottom/-1920.346.1920.1040/2560.-426.1080.1880/0.0.2560.1400@0.0.2560.1400" timestamp="1613968043043" />
-    <state width="2517" height="492" key="GridCell.Tab.1.bottom/-1920.371.1920.1040/2560.-401.1080.1880/0.0.2560.1400@0.0.2560.1400" timestamp="1617668331384" />
-    <state width="2517" height="492" key="GridCell.Tab.1.center" timestamp="1617668331384">
-      <screen x="0" y="0" width="2560" height="1400" />
-    </state>
-    <state width="2517" height="492" key="GridCell.Tab.1.center/-1920.346.1920.1040/2560.-426.1080.1880/0.0.2560.1400@0.0.2560.1400" timestamp="1613968043043" />
-    <state width="2517" height="492" key="GridCell.Tab.1.center/-1920.371.1920.1040/2560.-401.1080.1880/0.0.2560.1400@0.0.2560.1400" timestamp="1617668331384" />
-    <state width="2517" height="492" key="GridCell.Tab.1.left" timestamp="1617668331384">
-      <screen x="0" y="0" width="2560" height="1400" />
-    </state>
-    <state width="2517" height="492" key="GridCell.Tab.1.left/-1920.346.1920.1040/2560.-426.1080.1880/0.0.2560.1400@0.0.2560.1400" timestamp="1613968043043" />
-    <state width="2517" height="492" key="GridCell.Tab.1.left/-1920.371.1920.1040/2560.-401.1080.1880/0.0.2560.1400@0.0.2560.1400" timestamp="1617668331384" />
-    <state width="2517" height="492" key="GridCell.Tab.1.right" timestamp="1617668331384">
-      <screen x="0" y="0" width="2560" height="1400" />
-    </state>
-    <state width="2517" height="492" key="GridCell.Tab.1.right/-1920.346.1920.1040/2560.-426.1080.1880/0.0.2560.1400@0.0.2560.1400" timestamp="1613968043043" />
-    <state width="2517" height="492" key="GridCell.Tab.1.right/-1920.371.1920.1040/2560.-401.1080.1880/0.0.2560.1400@0.0.2560.1400" timestamp="1617668331384" />
-    <state x="760" y="274" width="1098" height="851" key="SettingsEditor" timestamp="1619961007159">
-      <screen x="0" y="0" width="2560" height="1400" />
-    </state>
-    <state x="760" y="274" key="SettingsEditor/-1920.346.1920.1040/2560.-426.1080.1880/0.0.2560.1400@0.0.2560.1400" timestamp="1613824533557" />
-    <state x="760" y="274" key="SettingsEditor/-1920.371.1920.1040/2560.-401.1080.1880/0.0.2560.1400@0.0.2560.1400" timestamp="1617577100794" />
-    <state x="760" y="274" key="SettingsEditor/0.0.2560.1400/-1920.360.1920.1040@0.0.2560.1400" timestamp="1619961007159" />
-    <state x="480" y="85" key="SettingsEditor/2560.-426.1080.1880/-1920.346.1920.1040/0.0.2560.1400@0.0.2560.1400" timestamp="1613727877763" />
-    <state x="1466" y="271" key="Vcs.Push.Dialog.v2" timestamp="1619960232303">
-      <screen x="0" y="0" width="2560" height="1400" />
-    </state>
-    <state x="1466" y="271" key="Vcs.Push.Dialog.v2/-1920.346.1920.1040/2560.-426.1080.1880/0.0.2560.1400@0.0.2560.1400" timestamp="1613409648022" />
-    <state x="1466" y="271" key="Vcs.Push.Dialog.v2/-1920.371.1920.1040/2560.-401.1080.1880/0.0.2560.1400@0.0.2560.1400" timestamp="1617927075019" />
-    <state x="1466" y="271" key="Vcs.Push.Dialog.v2/0.0.2560.1400/-1920.360.1920.1040@0.0.2560.1400" timestamp="1619960232303" />
-    <state x="1466" y="271" key="Vcs.Push.Dialog.v2/2560.-426.1080.1880/-1920.346.1920.1040/0.0.2560.1400@0.0.2560.1400" timestamp="1613738318152" />
-    <state x="984" y="592" key="com.intellij.jarRepository.RepositoryAttachDialog-DOWNLOAD" timestamp="1617577085068">
-      <screen x="0" y="0" width="2560" height="1400" />
-    </state>
-    <state x="984" y="592" key="com.intellij.jarRepository.RepositoryAttachDialog-DOWNLOAD/-1920.371.1920.1040/2560.-401.1080.1880/0.0.2560.1400@0.0.2560.1400" timestamp="1617577085068" />
-    <state x="1097" y="614" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2" timestamp="1617580658194">
-      <screen x="0" y="0" width="2560" height="1400" />
-    </state>
-    <state x="1097" y="614" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2/-1920.371.1920.1040/2560.-401.1080.1880/0.0.2560.1400@0.0.2560.1400" timestamp="1617580658194" />
-    <state x="987" y="256" width="585" height="888" key="find.popup" timestamp="1618195601109">
-      <screen x="0" y="0" width="2560" height="1400" />
-    </state>
-    <state x="987" y="256" width="585" height="888" key="find.popup/-1920.371.1920.1040/2560.-401.1080.1880/0.0.2560.1400@0.0.2560.1400" timestamp="1618169837353" />
-    <state x="987" y="256" width="585" height="888" key="find.popup/0.0.2560.1400/-1920.371.1920.1040/2560.-401.1080.1880@0.0.2560.1400" timestamp="1618195601109" />
-    <state x="987" y="256" width="585" height="888" key="find.popup/2560.-426.1080.1880/-1920.346.1920.1040/0.0.2560.1400@0.0.2560.1400" timestamp="1613729060110" />
-    <state x="936" y="330" key="run.anything.popup" timestamp="1617461425907">
-      <screen x="0" y="0" width="2560" height="1400" />
-    </state>
-    <state x="936" y="330" key="run.anything.popup/-1920.371.1920.1040/2560.-401.1080.1880/0.0.2560.1400@0.0.2560.1400" timestamp="1617461425907" />
-    <state x="936" y="330" key="run.anything.popup/2560.-426.1080.1880/-1920.346.1920.1040/0.0.2560.1400@0.0.2560.1400" timestamp="1613729486577" />
-    <state x="943" y="315" width="672" height="678" key="search.everywhere.popup" timestamp="1617873362748">
-      <screen x="0" y="0" width="2560" height="1400" />
-    </state>
-    <state x="943" y="315" width="672" height="678" key="search.everywhere.popup/-1920.371.1920.1040/2560.-401.1080.1880/0.0.2560.1400@0.0.2560.1400" timestamp="1617873362748" />
   </component>
   <component name="XDebuggerManager">
     <pin-to-top-manager>
