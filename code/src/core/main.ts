@@ -1,4 +1,6 @@
-class TimeBlock extends DescriptiveObject {
+interface justATest {}
+
+class TimeBlock extends DescriptiveObject implements justATest{
 
   @_() private _firstName: string;
   @_() private _int: number;
