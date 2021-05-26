@@ -68,3 +68,18 @@ abstract class DescriptiveObject extends DescriptiveMap<DescriptiveField> {
         this.keys[key].setValue(value)
     }
 }
+
+function descriptive() {
+    return function (target: any, propertyKey: string) {
+        // @ts-ignore
+        let R = Reflect.getMetadata("design:returntype", target, propertyKey)
+        // @ts-ignore
+        if(!R) R = Reflect.getMetadata("design:type", target, propertyKey)
+        target[propertyKey] = 13
+        console.log(propertyKey, R.prototype)
+    };
+}
+
+function desc(target: any, propertyKey: string) {
+    return descriptive()(target, propertyKey)
+}

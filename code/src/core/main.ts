@@ -1,32 +1,31 @@
-interface justATest {}
-
-class TimeBlock extends DescriptiveObject implements justATest{
-
-  @_() private _firstName: string;
-  @_() private _int: number;
-  @_() private _circle: TimeBlock;
-  @_() private _class: DescriptiveField;
+class TimeBlock {
+  @desc private title: string;
+  @desc private timeslot: string;
 
   constructor(name: string, timeslot: string) {
-    super();
-    this.registerField("name", new fields["title"](name), name)
-    this.registerField("timeslot", new fields["time_period"](timeslot), timeslot)
+    this.title = name
+    this.timeslot = timeslot
   }
-}
 
-function _() {
-  return function (target: any, propertyKey: string) {
-    // @ts-ignore
-    let R = Reflect.getMetadata("design:type", target, propertyKey)
-    target[propertyKey] = 13
-    console.log(propertyKey, R.prototype)
-  };
+  @desc private realTitle(): string {
+    return "#"+this.title
+  }
 }
 
 let block = new TimeBlock("Hello", "there")
 let block2 = new TimeBlock("fellow", "human")
 
-document.body.appendChild(DescriptiveUI.singleForm(block))
+// document.body.appendChild(DescriptiveUI.singleForm(block))
 
 console.log(TimeBlock.prototype)
 console.log(block)
+
+type rawClass = { new (...args: any[]): {} }
+type RawIntention = {path: string, type: ("Display" | "Compare")}
+class Intention {
+  constructor(source: rawClass, intentions: RawIntention[]) {
+
+  }
+}
+
+new Intention(TimeBlock, [{path: "realTitle", type: "Display"}])
