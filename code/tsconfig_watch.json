@@ -12,7 +12,9 @@
       "*": ["node_modules/*"]
     },
     "experimentalDecorators": true,
-    "emitDecoratorMetadata": true
+    "plugins": [
+        { "transform": "./transformers/mapping.ts"}
+    ]
   },
   "include": [
     "src/**/*"

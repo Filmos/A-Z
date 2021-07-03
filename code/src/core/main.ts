@@ -9,12 +9,11 @@ EV.addTask("Prepare for stream", 10, "07.02.2021", 45)
 
 EV.display()
 
-type rawClass = { new (...args: any[]): {} }
+type rawClass = { new (...args: any[]): {}, _descriptiveMap?: any }
 class Intention {
   constructor(source: rawClass, intentions: string[]) {
-    let descMap : DescriptiveMap = source.prototype["_descriptiveMap"]
-    console.log(descMap)
+    console.log(source._descriptiveMap)
   }
 }
 
-new Intention(TaskList, ["tasks/currentPriority"])
+new Intention(TaskEvent, ["tasks/currentPriority"])

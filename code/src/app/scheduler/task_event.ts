@@ -1,8 +1,8 @@
 class TaskEvent {
-    @descId public readonly title: string;
-    @desc public readonly importance: number;
-    @desc public deadline: Date;
-    @desc public estimatedCompletionTime: number;
+    @D public readonly title: string; // Identifier
+    @D public readonly importance: number;
+    @D public deadline: Date;
+    @D public estimatedCompletionTime: number;
 
     constructor(title: string, importance: number) {
         this.title = title
@@ -13,14 +13,13 @@ class TaskEvent {
         this.estimatedCompletionTime = estimatedCompletionTime
     }
 
-    @desc public currentPriority(dateNow: number = Date.now()): number {
+    @D public currentPriority(dateNow: number = Date.now()): number {
         let urgencyStart = this.deadline.valueOf()-this.estimatedCompletionTime*2.5*1000*60-3*1000*60*60*24
         let urgencyFactor = 1+(urgencyStart-dateNow)/(urgencyStart-this.deadline.valueOf()-this.estimatedCompletionTime*1000*60)
         urgencyFactor = Math.min(2, Math.max(1, urgencyFactor))
         return Math.log2(this.importance)**urgencyFactor/this.estimatedCompletionTime**(2/3)
     }
 }
-
 
 class TaskList {
     private _tasks: TaskEvent[] = [];
