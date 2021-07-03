@@ -1,31 +1,20 @@
-class TimeBlock {
-  @desc private title: string;
-  @desc private timeslot: string;
+let EV = new TaskList()
+EV.addTask("Clean up bathroom", 2,"07.04.2021", 45)
+EV.addTask("Clean up room", 8,"07.01.2021", 120)
+EV.addTask("Rework website", 30, "09.01.2021", 60*8*4)
+EV.addTask("Finish the bermuda project", 40, "07.02.2021", 120)
+EV.addTask("Rework prototype", 20, "07.14.2021", 60*6)
+EV.addTask("Record next devlog", 20, "07.29.2021", 60*4)
+EV.addTask("Prepare for stream", 10, "07.02.2021", 45)
 
-  constructor(name: string, timeslot: string) {
-    this.title = name
-    this.timeslot = timeslot
-  }
-
-  @desc private realTitle(): string {
-    return "#"+this.title
-  }
-}
-
-let block = new TimeBlock("Hello", "there")
-let block2 = new TimeBlock("fellow", "human")
-
-// document.body.appendChild(DescriptiveUI.singleForm(block))
-
-console.log(TimeBlock.prototype)
-console.log(block)
+EV.display()
 
 type rawClass = { new (...args: any[]): {} }
-type RawIntention = {path: string, type: ("Display" | "Compare")}
 class Intention {
-  constructor(source: rawClass, intentions: RawIntention[]) {
-
+  constructor(source: rawClass, intentions: string[]) {
+    let descMap : DescriptiveMap = source.prototype["_descriptiveMap"]
+    console.log(descMap)
   }
 }
 
-new Intention(TimeBlock, [{path: "realTitle", type: "Display"}])
+new Intention(TaskList, ["tasks/currentPriority"])
