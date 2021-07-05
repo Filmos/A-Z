@@ -1,12 +1,13 @@
-//TODO add subtype comments
 import * as ts from 'typescript';
 let factory = ts.factory
+
+const mapVariableName = "_descriptiveMap"
+const descriptiveDecoratorName = "D"
 
 export default function(program: ts.Program, pluginOptions: any) {
     return (ctx: ts.TransformationContext) => {
         return (sourceFile: ts.SourceFile) => {
             function visitor(node: ts.Node): ts.Node {
-                let mapVariableName = "_descriptiveMap"
                 let mapValues = []
                 let membersCopy = []
                 // Enter class level
@@ -20,22 +21,26 @@ export default function(program: ts.Program, pluginOptions: any) {
                         }
 
                         let isDescriptive : boolean = false
+                        let descriptiveTags = []
                         let nonDescriptiveDecorators = []
                         if(subnode.decorators) {
-                            for(let decorator of subnode.decorators) {
-                                // @ts-ignore
-                                if(decorator.expression.escapedText == "D") isDescriptive = true
+                            for(let decorator of subnode.decorators) { // @ts-ignore
+                                if(decorator.expression.escapedText == descriptiveDecoratorName) isDescriptive = true // @ts-ignore
+                                else if(decorator.expression.expression && decorator.expression.expression.escapedText == descriptiveDecoratorName) {
+                                    isDescriptive = true // @ts-ignore
+                                    for(let arg of decorator.expression.arguments) {
+                                        descriptiveTags.push(arg.text)
+                                    }
+                                }
                                 else nonDescriptiveDecorators.push(decorator)
                             }
                         }
                         if(!isDescriptive) {membersCopy.push(subnode); continue}
 
                         mapValues.push(
-                            factory.createPropertyAssignment(
-                                // @ts-ignore
-                                subnode.name.escapedText,
-                                // @ts-ignore
-                                getTypeDefinition(subnode.type)
+                            factory.createPropertyAssignment( // @ts-ignore
+                                subnode.name.escapedText, // @ts-ignore
+                                getTypeDefinition(subnode.type, descriptiveTags)
                             )
                         )
                         membersCopy.push(replaceDecorators(subnode, nonDescriptiveDecorators))
@@ -54,22 +59,43 @@ export default function(program: ts.Program, pluginOptions: any) {
     };
 }
 
-function getTypeDefinition(type) {
+function getTypeDefinition(type, tags:string[] = []) {
     let tokenTranslation = {
         131: "booolean",
         144: "number",
         147: "string",
         178: "Array"
     }
+    let outputMap = []
+
     let propertyType = tokenTranslation[type.kind] || type.kind
     if(type.typeName) propertyType = type.typeName.escapedText
-    propertyType = [factory.createStringLiteral(""+propertyType)]
+    outputMap.push(factory.createPropertyAssignment(
+        factory.createStringLiteral("type"),
+        factory.createStringLiteral(""+propertyType)
+    ))
 
-    if(type.elementType) propertyType.push(getTypeDefinition(type.elementType))
+    let propertySubtype = []
+    if(type.elementType) propertySubtype.push(getTypeDefinition(type.elementType))
     if(type.typeArguments)
-        for(let arg of type.typeArguments) propertyType.push(getTypeDefinition(arg))
+        for(let arg of type.typeArguments) propertySubtype.push(getTypeDefinition(arg))
 
-    return factory.createArrayLiteralExpression(propertyType)
+    if(propertySubtype.length > 0)
+        outputMap.push(factory.createPropertyAssignment(
+            factory.createStringLiteral("subtype"),
+            factory.createArrayLiteralExpression(propertySubtype),
+        ))
+
+    if(tags.length > 0) {
+        let parsedTags = []
+        for(let t of tags) parsedTags.push(factory.createStringLiteral(t))
+        outputMap.push(factory.createPropertyAssignment(
+            factory.createStringLiteral("tags"),
+            factory.createArrayLiteralExpression(parsedTags),
+        ))
+    }
+
+    return factory.createObjectLiteralExpression(outputMap)
 }
 
 function replaceDecorators(node, newDecorators) {

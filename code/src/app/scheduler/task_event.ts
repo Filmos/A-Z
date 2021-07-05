@@ -23,7 +23,7 @@ class TaskEvent {
 
 class TaskList {
     private _tasks: TaskEvent[] = [];
-    @D get tasks(): TaskEvent[] {
+    @D("TopGradient") get tasks(): TaskEvent[] {
         return this._tasks.sort((a, b) => b.currentPriority()-a.currentPriority())
     }
 
