@@ -5,4 +5,4 @@ echo } >> www/metaStorage.js
 
 @RD /S /Q www
 xcopy /s /i src www
-CALL npx ttsc -p .
+CALL npx ttsc -p . --outFile www/script.js
