@@ -12,6 +12,7 @@
       "*": ["node_modules/*"]
     },
     "experimentalDecorators": true,
+    "suppressImplicitAnyIndexErrors": true,
     "plugins": [
         { "transform": "./transformers/mapping.ts"},
     ]

@@ -1,5 +1,5 @@
 class TaskEvent {
-    @D public readonly title: string; // Identifier
+    @D("Identifier") public readonly title: string;
     @D public readonly importance: number;
     @D public deadline: Date;
     @D public estimatedCompletionTime: number;
@@ -23,8 +23,11 @@ class TaskEvent {
 
 class TaskList {
     private _tasks: TaskEvent[] = [];
-    @D("TopGradient") get tasks(): TaskEvent[] {
+    @D("TopGradient") public get tasks(): TaskEvent[] {
         return this._tasks.sort((a, b) => b.currentPriority()-a.currentPriority())
+    }
+    @D public get topTask(): TaskEvent {
+        return this.tasks[0]
     }
 
     addTask(title: string, importance: number, deadline: string, estimatedCompletionTime: number): void {
