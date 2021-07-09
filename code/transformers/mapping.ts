@@ -47,9 +47,10 @@ export default function(program: ts.Program, pluginOptions: any) {
                     }
 
                     if(mapValues) {
-                        let mapProperty = factory.createPropertyDeclaration(undefined, [ts.createModifier(ts.SyntaxKind.StaticKeyword)], mapVariableName, undefined, undefined, factory.createObjectLiteralExpression(mapValues))
+                        let mapFunctionBody = factory.createBlock([factory.createReturnStatement(factory.createObjectLiteralExpression(mapValues))])
+                        let mapFunction = factory.createMethodDeclaration(undefined, [ts.createModifier(ts.SyntaxKind.StaticKeyword)], undefined, mapVariableName, undefined, [], [], undefined, mapFunctionBody)
                         // @ts-ignore
-                        return factory.updateClassDeclaration(node, node.decorators, node.modifiers, node.name.escapedText, node.typeParameters, node.heritageClauses, [mapProperty, ...membersCopy])
+                        return factory.updateClassDeclaration(node, node.decorators, node.modifiers, node.name.escapedText, node.typeParameters, node.heritageClauses, [mapFunction, ...membersCopy])
                     }
                 }
                 return ts.visitEachChild(node, visitor, ctx);
