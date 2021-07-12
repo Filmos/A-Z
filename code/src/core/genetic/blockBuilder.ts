@@ -1,11 +1,12 @@
 type blockParams = {[param: string]: {type: string, [data: string]: any}}
+type blockResults = {css?: string}
 class GraphicalBlock {
     public static list: GraphicalBlock[] = []
     private readonly name: string
     private readonly params: blockParams
-    public readonly func: (params: any)=>string
+    public readonly func: (params: any)=>blockResults
 
-    constructor(name: string, params: blockParams, func: (params: any)=>string) {
+    constructor(name: string, params: blockParams, func: (params: any)=>blockResults) {
         this.name = name
         this.func = func
         this.params = params
@@ -29,7 +30,7 @@ class GraphicalBlockInstance {
         this.params = params
     }
 
-    public apply(): string {
+    public apply(): blockResults {
         return this.origin.func(this.params)
     }
 }

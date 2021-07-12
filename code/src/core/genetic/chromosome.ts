@@ -6,20 +6,21 @@ class GraphicalGene {
         this.path = path
     }
 
-    public build(children: HTMLElement[], element: any): HTMLElement {
+    public buildHTML(children: HTMLElement[], element: any): HTMLElement {
         let outer = document.createElement('div')
         outer.className = this.path
-
-        outer.setAttribute("style", this.getCombinedStyle())
 
         for(let child of children) outer.appendChild(child);
         if(children.length == 0) outer.innerText = ""+element
 
         return outer
     }
-    private getCombinedStyle(): string {
-        return this.blocks.map(block => block.apply()).join("; ")
+    public buildCSS(): string {
+        let innerCSS = this.blocks.map(block => block.apply().css).filter(c => c)
+        if(innerCSS.length==0) return ""
+        return "."+CSS.escape(this.path)+" {"+innerCSS.join("; ")+"}"
     }
+
 
     public static generateRandom(path: string): GraphicalGene {
         let gene = new GraphicalGene(path)
@@ -34,6 +35,8 @@ class GraphicalGene {
         this.blocks.push(block)
     }
 }
+
+type prebuiltElement = {css?: string, html?: HTMLElement}
 class GraphicalChromosome {
     private readonly map: IntentionMap
     private genes: {[path: string]: GraphicalGene} = {}
@@ -51,26 +54,39 @@ class GraphicalChromosome {
         }
     }
 
-    public build(target: any): HTMLElement {
-        return this.innerBuild({type: "body", inner: this.map}, target, "")
+    public build(target: any): prebuiltElement {
+        return {
+            html: this.buildHTML({type: "body", inner: this.map}, target, ""),
+            css: this.buildCSS()
+        }
     }
-    private innerBuild(map: TypeMap & {inner?: DescriptiveMap}, target: any, path: string): HTMLElement {
+
+    private buildHTML(map: TypeMap & {inner?: DescriptiveMap}, target: any, path: string): HTMLElement {
         if(!target) return null
 
         let children = []
         for(let subpath in map.inner) if(map.inner.hasOwnProperty(subpath)) {
             let subtargets = this.getByAccessor(target, subpath, path)
             for(let subtarget of subtargets)
-                children.push(this.innerBuild(map.inner[subpath], subtarget, mergePath(path, subpath)))
+                children.push(this.buildHTML(map.inner[subpath], subtarget, mergePath(path, subpath)))
         }
 
-        return this.genes[path].build(children.filter(a => a), target)
+        return this.genes[path].buildHTML(children.filter(a => a), target)
     }
-
     private getByAccessor(target: any, subpath: string, path: string): any[] {
         let accessor = this.accessors[mergePath(path, subpath)]
         if(accessor) return accessor(target)
         return [safeSubpathTraversal(target, subpath)]
+    }
+
+
+    private buildCSS(): string {
+        let fullCSS = []
+        for(let path in this.genes) {
+            if(path == "") continue
+            fullCSS.push(this.genes[path].buildCSS())
+        }
+        return fullCSS.filter(c=>c).join("\n")
     }
 }
 function isFunction(functionToCheck: any) {

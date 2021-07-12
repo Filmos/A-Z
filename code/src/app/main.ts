@@ -11,8 +11,9 @@ let EVE = EV.tasks[0]
 
 let mapMulti = new IntentionMap(["tasks/*/currentPriority"], TaskList)
 let chromMulti = new GraphicalChromosome(mapMulti)
-document.querySelector("body").appendChild(chromMulti.build(EV))
+let builtElement = chromMulti.build(EV)
+document.querySelector("body").appendChild(builtElement.html)
 
-console.log(GraphicalBlock.list)
-for(let g of GraphicalBlock.list)
-    console.log(g.randomInstance().apply())
+let styleElement = document.createElement("style")
+styleElement.innerText = builtElement.css
+document.querySelector("body").appendChild(styleElement)
