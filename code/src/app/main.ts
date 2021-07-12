@@ -12,3 +12,7 @@ let EVE = EV.tasks[0]
 let mapMulti = new IntentionMap(["tasks/*/currentPriority"], TaskList)
 let chromMulti = new GraphicalChromosome(mapMulti)
 document.querySelector("body").appendChild(chromMulti.build(EV))
+
+console.log(GraphicalBlock.list)
+for(let g of GraphicalBlock.list)
+    console.log(g.randomInstance().apply())

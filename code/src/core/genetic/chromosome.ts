@@ -1,5 +1,6 @@
 class GraphicalGene {
     private readonly path: string
+    private blocks: GraphicalBlockInstance[] = []
 
     constructor(path: string) {
         this.path = path
@@ -9,10 +10,28 @@ class GraphicalGene {
         let outer = document.createElement('div')
         outer.className = this.path
 
+        outer.setAttribute("style", this.getCombinedStyle())
+
         for(let child of children) outer.appendChild(child);
         if(children.length == 0) outer.innerText = ""+element
 
         return outer
+    }
+    private getCombinedStyle(): string {
+        return this.blocks.map(block => block.apply()).join("; ")
+    }
+
+    public static generateRandom(path: string): GraphicalGene {
+        let gene = new GraphicalGene(path)
+        for(let block of shuffle(GraphicalBlock.list)) {
+            if(Math.random()>0.5) break
+            gene.addBlock(block.randomInstance())
+        }
+
+        return gene
+    }
+    public addBlock(block: GraphicalBlockInstance) {
+        this.blocks.push(block)
     }
 }
 class GraphicalChromosome {
@@ -24,10 +43,10 @@ class GraphicalChromosome {
         this.map = map
 
         let flatMap = IntentionMap.flatten(map)
-        this.genes[""] = new GraphicalGene("")
+        this.genes[""] = GraphicalGene.generateRandom("")
 
         for(let path in flatMap) if(flatMap.hasOwnProperty(path)) {
-            this.genes[path] = new GraphicalGene(path)
+            this.genes[path] = GraphicalGene.generateRandom(path)
             if(flatMap[path].accessor) this.accessors[path] = flatMap[path].accessor
         }
     }
@@ -65,4 +84,22 @@ function safeSubpathTraversal(target: any, subpath: string): any {
 }
 function mergePath(path: string, subpath: string): string {
     return path+(path==""?"":"/")+subpath
+}
+function shuffle<T>(array: T[]): T[] {
+    let arrayCopy = [...array]
+    var currentIndex = arrayCopy.length,  randomIndex;
+
+    // While there remain elements to shuffle...
+    while (0 !== currentIndex) {
+
+        // Pick a remaining element...
+        randomIndex = Math.floor(Math.random() * currentIndex);
+        currentIndex--;
+
+        // And swap it with the current element.
+        [arrayCopy[currentIndex], arrayCopy[randomIndex]] = [
+            arrayCopy[randomIndex], arrayCopy[currentIndex]];
+    }
+
+    return arrayCopy;
 }
