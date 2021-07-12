@@ -8,7 +8,7 @@ class GraphicalGene {
 
     public buildHTML(children: HTMLElement[], element: any): HTMLElement {
         let outer = document.createElement('div')
-        outer.className = this.path
+        outer.className = this.path || "_"
 
         for(let child of children) outer.appendChild(child);
         if(children.length == 0) outer.innerText = ""+element

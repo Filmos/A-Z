@@ -7,6 +7,6 @@ new GraphicalBlock("fontWeight",
     (params) => {return {css: "font-weight: "+(300+params.weight*100)}}
 )
 new GraphicalBlock("fontItalic",
-    {},
-    () => {return {css: "font-style: italic"}}
+    {angle: {type: "int", range: [0, 2]}},
+    (params) => {return {css: `transform: skew(${params.angle*(-10)}deg, 0deg) translate(${params.angle}px, 0px)`}}
 )
