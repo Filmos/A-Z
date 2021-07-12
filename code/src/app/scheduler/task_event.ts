@@ -35,14 +35,4 @@ class TaskList {
         event.setTimes(new Date(deadline), estimatedCompletionTime)
         this.tasks.push(event)
     }
-
-    display(): void {
-        let list = document.createElement('ul')
-        for(let task of this.tasks) {
-            let listItem = document.createElement('li');
-            listItem.innerHTML = task.title+" ["+Math.round(task.currentPriority()*10)/10+"]";
-            list.appendChild(listItem);
-        }
-        document.querySelector("body").appendChild(list)
-    }
 }

@@ -32,7 +32,7 @@ class Intention {
 }
 
 class IntentionMap {
-    [property: string]: TypeMap & { inner?: IntentionMap }
+    [property: string]: TypeMap & { inner?: IntentionMap, accessor?: (target: any)=>any }
 
     constructor(intention: Intention | string[], source: rawClass, subtype?: TypeMap[]) {
         if(!(intention instanceof Intention)) intention = new Intention(intention)
@@ -43,8 +43,8 @@ class IntentionMap {
     }
 
 
-    static flatten(map: DescriptiveMap, prefix:string=""): DescriptiveMap {
-        let flatMap : DescriptiveMap = {}
+    static flatten(map: IntentionMap, prefix:string=""): IntentionMap {
+        let flatMap : IntentionMap = {}
         for(let path in map) if(map.hasOwnProperty(path)) {
             flatMap[prefix+path] = {...map[path]}
             if(map[path].inner)

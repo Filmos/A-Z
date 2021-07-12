@@ -6,7 +6,7 @@ type rawClass = { new (...args: any[]): {}, _descriptiveMap?: (subtype?: TypeMap
 
 
 let overloadedDescriptiveMaps = {
-    Array: (subtype: TypeMap[]) => {return {"*": subtype[0]}}
+    Array: (subtype: TypeMap[]) => {return {"*": {...subtype[0], accessor: (target:any)=>target}}}
 }
 
 
