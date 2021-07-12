@@ -11,5 +11,10 @@ EV.display()
 
 let EVE = EV.tasks[0]
 
-new IntentionMap(["topTask/currentPriority"], TaskList)
-new IntentionMap(["tasks/*/currentPriority"], TaskList)
+let mapSingle = new IntentionMap(["currentPriority"], TaskEvent)
+let mapMulti = new IntentionMap(["tasks/*/currentPriority"], TaskList)
+
+let chromSingle = new GraphicalChromosome(mapSingle)
+let chromMulti = new GraphicalChromosome(mapMulti)
+document.querySelector("body").appendChild(chromSingle.build(EVE))
+document.querySelector("body").appendChild(chromMulti.build(EV))

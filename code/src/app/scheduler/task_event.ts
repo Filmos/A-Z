@@ -17,7 +17,7 @@ class TaskEvent {
         let urgencyStart = this.deadline.valueOf()-this.estimatedCompletionTime*2.5*1000*60-3*1000*60*60*24
         let urgencyFactor = 1+(urgencyStart-dateNow)/(urgencyStart-this.deadline.valueOf()-this.estimatedCompletionTime*1000*60)
         urgencyFactor = Math.min(2, Math.max(1, urgencyFactor))
-        return Math.log2(this.importance)**urgencyFactor/this.estimatedCompletionTime**(2/3)
+        return Math.log2(this.importance)**urgencyFactor/this.estimatedCompletionTime**(2/3)*100
     }
 }
 
@@ -40,7 +40,7 @@ class TaskList {
         let list = document.createElement('ul')
         for(let task of this.tasks) {
             let listItem = document.createElement('li');
-            listItem.innerHTML = task.title+" ["+Math.round(task.currentPriority()*1000)/10+"]";
+            listItem.innerHTML = task.title+" ["+Math.round(task.currentPriority()*10)/10+"]";
             list.appendChild(listItem);
         }
         document.querySelector("body").appendChild(list)

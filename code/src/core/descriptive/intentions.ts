@@ -19,7 +19,7 @@ class Intention {
         let prunedMap: DescriptiveMap = {}
         let topLevelDict = this.topLevelDict()
 
-        for(let prop in fullMap) {
+        for(let prop in fullMap) if(fullMap.hasOwnProperty(prop)) {
             if(topLevelDict[prop] || fullMap[prop].tags?.includes("Identifier")) {
                 prunedMap[prop] = fullMap[prop]
                 let leftoverIntention = new Intention(topLevelDict[prop]?.filter(a => a!=".") || [])
@@ -32,8 +32,25 @@ class Intention {
 }
 
 class IntentionMap {
+    [property: string]: TypeMap & { inner?: IntentionMap }
+
     constructor(intention: Intention | string[], source: rawClass, subtype?: TypeMap[]) {
         if(!(intention instanceof Intention)) intention = new Intention(intention)
-        console.log(intention.shapeToIntention(getDescriptiveMap(source, subtype)))
+
+        let properMap = intention.shapeToIntention(getDescriptiveMap(source, subtype))
+        for(let key in properMap) if(properMap.hasOwnProperty(key))
+            this[key] = properMap[key]
+    }
+
+
+    static flatten(map: DescriptiveMap, prefix:string=""): DescriptiveMap {
+        let flatMap : DescriptiveMap = {}
+        for(let path in map) if(map.hasOwnProperty(path)) {
+            flatMap[prefix+path] = {...map[path]}
+            if(map[path].inner)
+                flatMap = {...flatMap, ...IntentionMap.flatten(map[path].inner, prefix+path+"/")}
+            delete flatMap[prefix+path].inner
+        }
+        return flatMap
     }
 }
