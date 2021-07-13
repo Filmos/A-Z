@@ -22,10 +22,17 @@ class GraphicalGene {
     }
 
 
-    public static generateRandom(path: string): GraphicalGene {
+    public static generateRandom(path: string, tags: string[]): GraphicalGene {
+        let list : GraphicalBlock[] = []
+        for(let cat in GraphicalBlock.list) {
+            if(cat.split(",").filter(c => c).every(elem => tags.includes(elem)))
+                list = list.concat(GraphicalBlock.list[cat])
+        }
+
+        let breakPoint = 0.4+0.04*list.length
         let gene = new GraphicalGene(path)
-        for(let block of shuffle(GraphicalBlock.list)) {
-            if(Math.random()>0.5) break
+        for(let block of shuffle(list)) {
+            if(Math.random()>breakPoint) break
             gene.addBlock(block.randomInstance())
         }
 
@@ -46,10 +53,13 @@ class GraphicalChromosome {
         this.map = map
 
         let flatMap = IntentionMap.flatten(map)
-        this.genes[""] = GraphicalGene.generateRandom("")
+        this.genes[""] = GraphicalGene.generateRandom("", [])
 
         for(let path in flatMap) if(flatMap.hasOwnProperty(path)) {
-            this.genes[path] = GraphicalGene.generateRandom(path)
+            let tags = []
+            if(flatMap[path].innerKeys?.length > 0) tags.push("parent")
+            else tags.push("leaf")
+            this.genes[path] = GraphicalGene.generateRandom(path, tags)
             if(flatMap[path].accessor) this.accessors[path] = flatMap[path].accessor
         }
     }

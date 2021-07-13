@@ -1,16 +1,18 @@
 type blockParams = {[param: string]: {type: string, [data: string]: any}}
 type blockResults = {css?: string}
 class GraphicalBlock {
-    public static list: GraphicalBlock[] = []
+    public static list: {[category: string]: GraphicalBlock[]} = {}
     private readonly name: string
     private readonly params: blockParams
     public readonly func: (params: any)=>blockResults
 
-    constructor(name: string, params: blockParams, func: (params: any)=>blockResults) {
+    constructor(name: string, params: blockParams, func: (params: any)=>blockResults, category: string="") {
         this.name = name
         this.func = func
         this.params = params
-        GraphicalBlock.list.push(this)
+
+        if(!GraphicalBlock.list[category]) GraphicalBlock.list[category] = []
+        GraphicalBlock.list[category].push(this)
     }
 
     public randomInstance(): GraphicalBlockInstance {

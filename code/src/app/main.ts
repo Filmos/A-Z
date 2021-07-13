@@ -18,7 +18,7 @@ function generateGUI() {
 
     let styleElement = document.createElement("style")
     styleElement.id = "dynamicStyle"
-    styleElement.innerHTML = "* {transition: all}\n"+builtElement.css
+    styleElement.innerHTML = builtElement.css
     document.querySelector("body").appendChild(styleElement)
 }
 
@@ -26,11 +26,11 @@ function transformGUI() {
     let chromMulti = new GraphicalChromosome(mapMulti)
     let builtElement = chromMulti.build(EV)
 
-    document.querySelectorAll("body ._ *").forEach((el) => {if(el instanceof HTMLElement) el.style.transitionDuration = Math.floor(Math.random()*250+50)/100+"s"})
+    document.querySelectorAll("body ._ *").forEach((el) => {if(el instanceof HTMLElement) el.style.transitionDuration = Math.floor(Math.random()*70+30)/100+"s"})
 
     // @ts-ignore
     document.querySelector("#dynamicStyle").innerHTML = "* {transition: all}\n"+builtElement.css
 }
 
 generateGUI()
-setInterval(transformGUI, 30000)
+setInterval(transformGUI, 5000)

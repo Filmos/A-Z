@@ -32,7 +32,7 @@ class Intention {
 }
 
 class IntentionMap {
-    [property: string]: TypeMap & { inner?: IntentionMap, accessor?: (target: any)=>any }
+    [property: string]: TypeMap & { inner?: IntentionMap, innerKeys?: string[], accessor?: (target: any)=>any }
 
     constructor(intention: Intention | string[], source: rawClass, subtype?: TypeMap[]) {
         if(!(intention instanceof Intention)) intention = new Intention(intention)
@@ -47,9 +47,11 @@ class IntentionMap {
         let flatMap : IntentionMap = {}
         for(let path in map) if(map.hasOwnProperty(path)) {
             flatMap[prefix+path] = {...map[path]}
-            if(map[path].inner)
-                flatMap = {...flatMap, ...IntentionMap.flatten(map[path].inner, prefix+path+"/")}
-            delete flatMap[prefix+path].inner
+            if(map[path].inner) {
+                flatMap = {...flatMap, ...IntentionMap.flatten(map[path].inner, prefix + path + "/")}
+                flatMap[prefix + path].innerKeys = Object.keys(map[path].inner)
+                delete flatMap[prefix + path].inner
+            }
         }
         return flatMap
     }

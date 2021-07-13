@@ -7,6 +7,12 @@ new GraphicalBlock("fontWeight",
     (params) => {return {css: "font-weight: "+(300+params.weight*100)}}
 )
 new GraphicalBlock("fontItalic",
-    {angle: {type: "int", range: [0, 2]}},
-    (params) => {return {css: `transform: skew(${params.angle*(-10)}deg, 0deg) translate(${params.angle}px, 0px)`}}
+    {angle: {type: "int", range: [1, 2]}},
+    (params) => {return {css: `transform: skew(${params.angle*(-10)}deg, 0deg) translate(${params.angle}px, 0px); margin-right: ${params.angle}px`}},
+    "leaf"
+)
+new GraphicalBlock("fontOpacity",
+    {transparency: {type: "int", range: [2, 5]}},
+    (params) => {return {css: `opacity: ${1-params.transparency/10}`}},
+    "leaf"
 )
