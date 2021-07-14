@@ -2,7 +2,8 @@ type blockParams = {[param: string]: {type: string, [data: string]: any}}
 type blockResults = {css?: string}
 class GraphicalBlock {
     public static list: {[category: string]: GraphicalBlock[]} = {}
-    private readonly name: string
+    public static registry: {[name: string]: GraphicalBlock} = {}
+    public readonly name: string
     private readonly params: blockParams
     public readonly func: (params: any)=>blockResults
 
@@ -13,6 +14,7 @@ class GraphicalBlock {
 
         if(!GraphicalBlock.list[category]) GraphicalBlock.list[category] = []
         GraphicalBlock.list[category].push(this)
+        GraphicalBlock.registry[name] = this
     }
 
     public randomInstance(): GraphicalBlockInstance {
@@ -20,7 +22,10 @@ class GraphicalBlock {
         for(let p in this.params) if(this.params.hasOwnProperty(p))
             randomParams[p] = ParamTypes[this.params[p].type].random(this.params[p])
 
-        return new GraphicalBlockInstance(this, randomParams)
+        return this.instance(randomParams)
+    }
+    public instance(params: {[param: string]: any}): GraphicalBlockInstance {
+        return new GraphicalBlockInstance(this, params)
     }
 }
 class GraphicalBlockInstance {
@@ -34,5 +39,12 @@ class GraphicalBlockInstance {
 
     public apply(): blockResults {
         return this.origin.func(this.params)
+    }
+
+    public getName(): string {
+        return this.origin.name
+    }
+    public getParams(): {[param: string]: any} {
+        return this.params
     }
 }
