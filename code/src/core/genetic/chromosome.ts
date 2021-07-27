@@ -135,6 +135,11 @@ class GraphicalChromosome {
         for(let path in save) if(save.hasOwnProperty(path))
             this.genes[path].loadFromSave(save[path])
     }
+    public clone(): GraphicalChromosome {
+        let clone = new GraphicalChromosome(this.map)
+        clone.loadFromSave(this.getAsSaveable())
+        return clone
+    }
 }
 function isFunction(functionToCheck: any) {
     return functionToCheck && {}.toString.call(functionToCheck) === '[object Function]';
