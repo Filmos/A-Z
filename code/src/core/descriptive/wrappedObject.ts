@@ -7,22 +7,55 @@ class WrappedObject<T> {
         this.map = map
     }
 
-    public getPaths(path: string): string[] {
-        return WrappedObject.getPaths(this.object, this.map, path.split("/"))
+
+    public get(path: string): {[path: string]: any} {
+        return this.runOverPath(path,
+            (object, map, fullPath) => {let ret = {}; ret[fullPath] = object; return ret},
+            (a, b) => {return {...a, ...b}}
+        )
     }
-    private static getPaths(object: any, map: IntentionMap, path: string[]): string[] {
-        if(path.length == 0) return [""]
+    public getPaths(path: string): string[] {
+        return this.runOverPath(path,
+            (object, map, fullPath) => [fullPath],
+            (a, b) => a.concat(b)
+        )
+    }
+
+
+    private runOverPath(path: string, leafFunc: (object: any, map: IntentionMap, fullPath: string)=>any, joinFunc: (a: any, b: any)=>any): any {
+        return WrappedObject.runOverPath(this.object, this.map, path.split("/"),"", leafFunc, joinFunc)
+    }
+    private static runOverPath(object: any, map: IntentionMap, path: string[], fullPath: string,
+                       leafFunc: (object: any, map: IntentionMap, fullPath: string)=>any, joinFunc: (a: any, b: any)=>any): {[path: string]: any} {
+
+
+        if(path.length == 0) return leafFunc(object, map, fullPath)
         let subPath = path[0]
         path = path.slice(1)
 
+        let nextLevel = this.traverseSubpath(object, map, subPath)
+        if(!nextLevel) return null
 
-        let iterateOver = {}
-        iterateOver[subPath] = object[subPath]
+
+        let fullReturn = null
+        for(let obj in nextLevel.objects) {
+            let innerReturn = this.runOverPath(nextLevel.objects[obj], nextLevel.map, path, (fullPath ? fullPath + "/" : "") + obj, leafFunc, joinFunc)
+            if(!fullReturn) fullReturn = innerReturn
+            else if(innerReturn) fullReturn = joinFunc(fullReturn, innerReturn)
+        }
+
+        return fullReturn
+    }
+    private static traverseSubpath(object: any, map: IntentionMap, subPath: string): {objects: {[index: string]: any}, map: IntentionMap} {
+        if(!object) return null
+        let objectMap = {}
+        objectMap[subPath] = object[subPath]
+
 
         let subMap = map[subPath]
         if(subMap) {
             if(subMap.accessor)
-                iterateOver = subMap.accessor(object)
+                objectMap = subMap.accessor(object)
         } else {
             for(let potentialPath in map) if(map.hasOwnProperty(potentialPath)) {
                 if(map[potentialPath].accessor && map[potentialPath].accessor(object)[subPath]) {
@@ -31,16 +64,12 @@ class WrappedObject<T> {
                 }
             }
         }
-        if(!subMap) return []
+        if(!subMap) return null
 
 
-        let fullInnerReturn : string[] = []
-        for(let key in iterateOver) {
-            let innerReturn = this.getPaths(iterateOver[key], subMap.inner, path)
-            fullInnerReturn = fullInnerReturn.concat(innerReturn.map(p => (p ? key + "/" + p : key)))
-        }
+        for(let obj in objectMap)
+            if(isFunction(objectMap[obj])) objectMap[obj] = objectMap[obj].bind(object)()
 
-
-        return fullInnerReturn
+        return {objects: objectMap, map: subMap.inner}
     }
 }

@@ -7,6 +7,9 @@ class GeneticScorer {
         this.map = map
         this.example = example
 
+        console.warn(this.example.get("tasks/*/title"))
+        console.warn(this.example.get("tasks/0/currentPriority"))
+
         this.parseMetaIntention()
         console.log(this.intentionTarget)
     }
