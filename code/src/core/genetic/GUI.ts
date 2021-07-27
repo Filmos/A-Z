@@ -2,7 +2,8 @@ class GUI {
     private static initialized = false
 
     public static generate(map: IntentionMap, content: any) {
-        let chrom = GeneticScope.train(map, content)
+        let wrappedContent = new WrappedObject(content, map)
+        let chrom = GeneticScope.train(map, wrappedContent)
         let builtElement = chrom.build(content)
         this.insert(builtElement.html, builtElement.css)
     }

@@ -1,9 +1,9 @@
 class GeneticScope {
     private readonly map: IntentionMap
-    private readonly example: any
+    private readonly example: WrappedObject<any>
     private readonly scorer: GeneticScorer
 
-    constructor(map: IntentionMap, example: any) {
+    constructor(map: IntentionMap, example: WrappedObject<any>) {
         this.map = map
         this.example = example
         this.scorer = new GeneticScorer(map, example)

@@ -16,4 +16,4 @@ function nextGUI() {
 }
 
 nextGUI()
-setInterval(nextGUI, 6000)
+setInterval(nextGUI, 60000)
