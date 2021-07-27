@@ -15,7 +15,7 @@ class Intention {
         }
         return returnDict
     }
-    public shapeToIntention(fullMap: DescriptiveMap): DescriptiveMap {
+    public shapeToIntention(fullMap: DescriptiveMap): IntentionMap {
         let prunedMap: DescriptiveMap = {}
         let topLevelDict = this.topLevelDict()
 
@@ -31,8 +31,26 @@ class Intention {
     }
 }
 
+class MetaIntention {
+    connectivity?: {targets: string[], weight: number}[]
+
+    public isEmpty(): boolean {
+        if(this.connectivity && this.connectivity.length > 0) return false
+        return true
+    }
+
+    public addConnection(targets: string[], weight: number) {
+        if(!this.connectivity) this.connectivity = []
+        this.connectivity.push({targets: targets, weight: weight})
+    }
+}
 class IntentionMap {
-    [property: string]: TypeMap & { inner?: IntentionMap, innerKeys?: string[], accessor?: (target: any)=>any }
+    [property: string]: TypeMap & {
+        inner?: IntentionMap,
+        innerKeys?: string[],
+        accessor?: (target: any)=>any,
+        intention?: MetaIntention
+    }
 
     constructor(intention: Intention | string[], source: rawClass, subtype?: TypeMap[]) {
         if(!(intention instanceof Intention)) intention = new Intention(intention)
@@ -40,6 +58,30 @@ class IntentionMap {
         let properMap = intention.shapeToIntention(getDescriptiveMap(source, subtype))
         for(let key in properMap) if(properMap.hasOwnProperty(key))
             this[key] = properMap[key]
+
+        IntentionMap.getMetaIntentions(this)
+    }
+    private static getMetaIntentions(map: IntentionMap) {
+        let returnMeta = new MetaIntention()
+        for(let prop in map) if(map.hasOwnProperty(prop)) {
+            let innerMap = map[prop].inner
+            let innerIntention = this.getMetaIntentions(innerMap)
+
+            if(map[prop].accessor) {
+                innerIntention.addConnection(Object.keys(innerMap), 3)
+                returnMeta.addConnection([prop], 2)
+                for(let subProp in innerMap) if(innerMap.hasOwnProperty(subProp)) {
+                    let weight = 1
+                    if(innerMap[subProp].tags?.includes("Identifier"))
+                        weight = 1.3
+
+                    returnMeta.addConnection([prop+"/"+subProp], weight)
+                }
+            }
+
+            if(!innerIntention.isEmpty()) map[prop].intention = innerIntention
+        }
+        return returnMeta
     }
 
 
