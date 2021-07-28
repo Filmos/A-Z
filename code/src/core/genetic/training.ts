@@ -10,10 +10,21 @@ class GeneticScope {
     }
 
     public train(): GraphicalChromosome {
-        let chrom = new GraphicalChromosome(this.map)
-        chrom.randomize()
-        console.log(this.scorer.score(chrom))
-        return chrom
+        let bestChrom : GraphicalChromosome
+        let bestScore = 0
+
+        for(let i=0;i<20000;i++) {
+            let chrom = new GraphicalChromosome(this.map)
+            chrom.randomize()
+            let score = this.scorer.score(chrom)
+
+            if(score > bestScore) {
+                bestChrom = chrom
+                bestScore = score
+            }
+        }
+        console.log(bestScore)
+        return bestChrom
     }
     public static train(map: IntentionMap, example: any): GraphicalChromosome {
         let scope = new GeneticScope(map, example)

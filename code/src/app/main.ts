@@ -11,9 +11,10 @@ EV.addTask("Prepare for stream", 10, "07.02.2021", 45)
 
 let mapMulti = new IntentionMap(["tasks/*/currentPriority"], TaskList)
 
-function nextGUI() {
-    GUI.generate(mapMulti, EV)
-}
-
-nextGUI()
-setInterval(nextGUI, 60000)
+// function nextGUI() {
+//     GUI.generate(mapMulti, EV)
+// }
+//
+// nextGUI()
+// setInterval(nextGUI, 6000)
+GUI.generate(mapMulti, EV)

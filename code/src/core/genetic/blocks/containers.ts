@@ -9,7 +9,7 @@ new GraphicalBlock("containerBorder",
 )
 new GraphicalBlock("displayBlock",
     {},
-    () => {return {css: `display: inlineBlock`}}
+    () => {return {css: `display: inline-block`}}
 )
 new GraphicalBlock("displayFlex",
     {

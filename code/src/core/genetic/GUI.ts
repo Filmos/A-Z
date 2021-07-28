@@ -8,7 +8,7 @@ class GUI {
         this.insert(builtElement.html, builtElement.css)
     }
 
-    private static insert(html: HTMLElement, css: string) {
+    public static insert(html: HTMLElement, css: string) {
         if(this.initialized) return this.update(html, css)
 
         this.initialized = true
@@ -27,5 +27,10 @@ class GUI {
     private static update(html: HTMLElement, css: string) {
         document.querySelectorAll("body ._ *").forEach((el) => {if(el instanceof HTMLElement) el.style.transitionDuration = Math.floor(Math.random()*70+30)/100+"s"})
         document.querySelector("#dynamicStyle").innerHTML = "* {transition: all}\n"+css
+    }
+    public static clear() {
+        document.querySelector("#dynamicStyle").remove()
+        document.querySelector("._").remove()
+        this.initialized = false
     }
 }
