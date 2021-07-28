@@ -32,16 +32,16 @@ class Intention {
 }
 
 class MetaIntention {
-    connectivity?: {targets: string[], weight: number}[]
+    connectivity?: {targets: string[], weight: number, multiplier: number}[]
 
     public isEmpty(): boolean {
         if(this.connectivity && this.connectivity.length > 0) return false
         return true
     }
 
-    public addConnection(targets: string[], weight: number) {
+    public addConnection(targets: string[], weight: number, multiplier : number = 1) {
         if(!this.connectivity) this.connectivity = []
-        this.connectivity.push({targets: targets, weight: weight})
+        this.connectivity.push({targets: targets, weight: weight, multiplier: multiplier})
     }
 }
 class IntentionMap {

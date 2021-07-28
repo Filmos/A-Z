@@ -17,13 +17,13 @@ class GeneticScorer {
 
             for(let group of intention.connectivity) {
                 let parsedPaths = this.example.getPaths(path)
-                parsedPaths = shuffle(parsedPaths).slice(0,3)
+                parsedPaths = shuffle(parsedPaths).slice(0,4)
 
                 for(let subPath of parsedPaths) {
                     let parsedTargets = group.targets
                         .map(t => this.example.getPaths(subPath + "/" + t))
                         .reduce((a, b) => a.concat(b))
-                    this.intentionTarget.addConnection(shuffle(parsedTargets), group.weight)
+                    this.intentionTarget.addConnection(shuffle(parsedTargets), group.weight, 1/parsedPaths.length)
                 }
             }
 
@@ -105,12 +105,12 @@ class GeneticScorer {
                 }
                 if(missed >= group.targets.length*0.2 || size == 0) result[code] = 0
                 else result[code] = size/(max-min)*Math.max(0,(1-missed/(group.targets.length*0.2)))
-                if(result[code] > 1) result[code] = 1-(result[code]-1)*20
+                if(result[code] > 0.96) result[code] = 0.96-(result[code]-0.96)*10
             }
             totalScore += Math.abs(
                 (Math.max(result["XL"], result["XC"], result["XR"])+result["XL"]/4+result["XC"]/4+result["XR"]/4)
                 -(Math.max(result["YT"], result["YC"], result["YB"])+result["YT"]/4+result["YC"]/4+result["YB"]/4)
-            )*group.weight
+            )*group.weight*group.multiplier
         }
         return totalScore
     }
