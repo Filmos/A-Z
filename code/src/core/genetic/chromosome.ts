@@ -12,9 +12,10 @@ class GraphicalGene {
 
 
 
-    public buildHTML(children: HTMLElement[], element: any): HTMLElement {
+    public buildHTML(children: HTMLElement[], element: any, id: string): HTMLElement {
         let outer = document.createElement('div')
         outer.className = this.path || "_"
+        outer.id = id
 
         for(let child of children) outer.appendChild(child);
         if(children.length == 0) outer.innerText = ""+element
@@ -65,7 +66,6 @@ type prebuiltElement = {css?: string, html?: HTMLElement}
 class GraphicalChromosome {
     private readonly map: IntentionMap
     private genes: {[path: string]: GraphicalGene} = {}
-    private accessors: {[path: string]: (target: any)=>any} = {}
 
     constructor(map: IntentionMap) {
         this.map = map
@@ -78,7 +78,6 @@ class GraphicalChromosome {
             if(flatMap[path].innerKeys?.length > 0) tags.push("parent")
             else tags.push("leaf")
             this.genes[path] = new GraphicalGene(path, tags)
-            if(flatMap[path].accessor) this.accessors[path] = flatMap[path].accessor
         }
     }
     public randomize() {
@@ -90,27 +89,23 @@ class GraphicalChromosome {
 
     public build(target: any): prebuiltElement {
         return {
-            html: this.buildHTML({type: "body", inner: this.map}, target, ""),
+            html: this.buildHTML(target, "", ""),
             css: this.buildCSS()
         }
     }
 
-    private buildHTML(map: TypeMap & {inner?: DescriptiveMap}, target: any, path: string): HTMLElement {
+    private buildHTML(target: WrappedObject<any>, path: string, rawPath: string): HTMLElement {
         if(!target) return null
 
-        let children = []
-        for(let subpath in map.inner) if(map.inner.hasOwnProperty(subpath)) {
-            let subtargets = this.getByAccessor(target, subpath, path)
-            for(let subtarget of subtargets)
-                children.push(this.buildHTML(map.inner[subpath], subtarget, mergePath(path, subpath)))
+        let builtChildren = []
+        let children = target.getChildrenRawPaths() || []
+        for(let rawSubPath of children) {
+            let subTargets = target.getWrapped(rawSubPath)
+            for(let subPath in subTargets)
+                builtChildren.push(this.buildHTML(subTargets[subPath], mergePath(path, subPath), mergePath(rawPath, rawSubPath)))
         }
 
-        return this.genes[path].buildHTML(children.filter(a => a), target)
-    }
-    private getByAccessor(target: any, subpath: string, path: string): any[] {
-        let accessor = this.accessors[mergePath(path, subpath)]
-        if(accessor) return accessor(target)
-        return [safeSubpathTraversal(target, subpath)]
+        return this.genes[rawPath].buildHTML(builtChildren.filter(a => a), target.get()[""], path)
     }
 
     private buildCSS(): string {
@@ -141,17 +136,8 @@ class GraphicalChromosome {
         return clone
     }
 }
-function isFunction(functionToCheck: any) {
-    return functionToCheck && {}.toString.call(functionToCheck) === '[object Function]';
-}
-function safeSubpathTraversal(target: any, subpath: string): any {
-    if(!target) return null
-    let subtarget: any = target[subpath]
-    if(isFunction(subtarget)) return target[subpath]()
-    return subtarget
-}
 function mergePath(path: string, subpath: string): string {
-    return path+(path==""?"":"/")+subpath
+    return (path?path+"/":"")+subpath
 }
 function shuffle<T>(array: T[]): T[] {
     let arrayCopy = [...array]

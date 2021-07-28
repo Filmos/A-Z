@@ -8,22 +8,40 @@ class WrappedObject<T> {
     }
 
 
-    public get(path: string): {[path: string]: any} {
+    public get(path?: string): {[path: string]: any} {
         return this.runOverPath(path,
             (object, map, fullPath) => {let ret = {}; ret[fullPath] = object; return ret},
             (a, b) => {return {...a, ...b}}
         )
     }
-    public getPaths(path: string): string[] {
+    public getPaths(path?: string): string[] {
         return this.runOverPath(path,
             (object, map, fullPath) => [fullPath],
             (a, b) => a.concat(b)
         )
     }
+    public getChildrenPaths(path?: string): string[] {
+        return this.runOverPath(path,
+            (object, map, fullPath) => Object.keys(map).map(p => Object.keys(WrappedObject.traverseSubpath(object, map, p).objects)).reduce((a, b)=>a.concat(b)),
+            (a, b) => a.concat(b)
+        )
+    }
+    public getChildrenRawPaths(path?: string): string[] {
+        return this.runOverPath(path,
+            (object, map, fullPath) => Object.keys(map || {}),
+            (a, b) => a.concat(b)
+        )
+    }
+    public getWrapped(path?: string): {[path: string]: any} {
+        return this.runOverPath(path,
+            (object, map, fullPath) => {let ret = {}; ret[fullPath] = new WrappedObject(object, map); return ret},
+            (a, b) => {return {...a, ...b}}
+        )
+    }
 
 
     private runOverPath(path: string, leafFunc: (object: any, map: IntentionMap, fullPath: string)=>any, joinFunc: (a: any, b: any)=>any): any {
-        return WrappedObject.runOverPath(this.object, this.map, path.split("/"),"", leafFunc, joinFunc)
+        return WrappedObject.runOverPath(this.object, this.map, (path||"").split("/").filter(a => a),"", leafFunc, joinFunc)
     }
     private static runOverPath(object: any, map: IntentionMap, path: string[], fullPath: string,
                        leafFunc: (object: any, map: IntentionMap, fullPath: string)=>any, joinFunc: (a: any, b: any)=>any): {[path: string]: any} {
@@ -39,14 +57,14 @@ class WrappedObject<T> {
 
         let fullReturn = null
         for(let obj in nextLevel.objects) {
-            let innerReturn = this.runOverPath(nextLevel.objects[obj], nextLevel.map, path, (fullPath ? fullPath + "/" : "") + obj, leafFunc, joinFunc)
+            let innerReturn = this.runOverPath(nextLevel.objects[obj], nextLevel.map, path, mergePath(fullPath, obj), leafFunc, joinFunc)
             if(!fullReturn) fullReturn = innerReturn
             else if(innerReturn) fullReturn = joinFunc(fullReturn, innerReturn)
         }
 
         return fullReturn
     }
-    private static traverseSubpath(object: any, map: IntentionMap, subPath: string): {objects: {[index: string]: any}, map: IntentionMap} {
+    public static traverseSubpath(object: any, map: IntentionMap, subPath: string): {objects: {[index: string]: any}, map: IntentionMap} {
         if(!object) return null
         let objectMap = {}
         objectMap[subPath] = object[subPath]
@@ -72,4 +90,7 @@ class WrappedObject<T> {
 
         return {objects: objectMap, map: subMap.inner}
     }
+}
+function isFunction(functionToCheck: any) {
+    return functionToCheck && {}.toString.call(functionToCheck) === '[object Function]';
 }
