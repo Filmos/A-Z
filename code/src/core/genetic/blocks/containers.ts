@@ -4,7 +4,7 @@ new GraphicalBlock("containerBorder",
         borderRadius: {type: "int", range: [0, 3]},
         padding: {type: "int", range: [0, 5]}
     },
-    (params) => {return {css: `border: solid black ${params.borderWidth}px; border-radius: ${params.borderRadius*0.25}rem; padding: ${params.padding*0.1}rem; margin-top: -${params.borderWidth}px`}},
+    (params) => {return {css: `border: solid black ${params.borderWidth}px; border-radius: ${params.borderRadius*0.25}rem; padding: ${params.padding*0.1}rem`}},
     "parent"
 )
 new GraphicalBlock("displayBlock",

@@ -74,6 +74,7 @@ class GeneticScorer {
         })
 
         let totalScore = 0
+        let normalizationFactor = 0
         for(let group of this.intentionTarget.connectivity) {
             let result = {}
             for(let code in alignmentDef) {
@@ -111,8 +112,9 @@ class GeneticScorer {
                 (Math.max(result["XL"], result["XC"], result["XR"])+result["XL"]/4+result["XC"]/4+result["XR"]/4)
                 -(Math.max(result["YT"], result["YC"], result["YB"])+result["YT"]/4+result["YC"]/4+result["YB"]/4)
             )*group.weight*group.multiplier
+            normalizationFactor += group.weight*group.multiplier
         }
-        return totalScore
+        return totalScore/(0.95*1.75)/normalizationFactor*10
     }
     private static getBoundingBox(element: Element): DOMRect {
         let range = document.createRange()
