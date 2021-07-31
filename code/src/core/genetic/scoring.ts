@@ -33,6 +33,7 @@ class GeneticScorer {
     public score(chrom: GraphicalChromosome): number {
         let body = this.buildScoringEnvironment(chrom)
         let score = this.scoreConnectivity(body)
+                  + this.scoreSpace(body)
 
         GUI.clear()
         return score
@@ -139,5 +140,54 @@ class GeneticScorer {
         let range = document.createRange()
         range.selectNodeContents(element)
         return range.getBoundingClientRect()
+    }
+
+    private scoreSpace(body: HTMLElement): number {
+        let html = body.ownerDocument.documentElement
+        let bodyRect : DOMRect = {
+            left: 0, top: 0, x: 0, y: 0, toJSON: ()=>"",
+            right: Math.max(body.scrollWidth, body.offsetWidth, html.clientWidth, html.scrollWidth, html.offsetWidth),
+            bottom: Math.max(body.scrollHeight, body.offsetHeight, html.clientHeight, html.scrollHeight, html.offsetHeight),
+            width: -1, height: -1
+        }
+        bodyRect = {...bodyRect, width: bodyRect.right, height: bodyRect.bottom}
+        let bodyRealRect = GeneticScorer.getBoundingBox(body)
+
+        let multiplier = 1
+        if(bodyRealRect.left < -2) multiplier/=10
+        if(bodyRealRect.top < -2) multiplier/=10
+        if(bodyRealRect.width > bodyRect.width) multiplier *= 2/3*(bodyRect.width/bodyRealRect.width)**2
+        if(bodyRealRect.height > bodyRect.height) multiplier *= 0.9*(bodyRect.height/bodyRealRect.height)
+
+
+        let score = 0
+        let totalWeight = 0
+        function calcScore(innerRect: DOMRect, outerRect: DOMRect) {
+            let scoreY = 1, scoreX = 1
+
+            if(outerRect.height > 0) {
+                let topDiff = Math.abs(innerRect.top - outerRect.top) / outerRect.height; if(topDiff > 0.1) scoreY -= topDiff - 0.1
+                let bottomDiff = Math.abs(innerRect.bottom - outerRect.bottom) / outerRect.height; if(bottomDiff > 0.1) scoreY -= (bottomDiff - 0.1) / 2
+            }
+            if(outerRect.width > 0) {
+                let leftDiff = Math.abs(innerRect.left-outerRect.left)/outerRect.width; if(leftDiff > 0.1) scoreX -= (leftDiff-0.1)/2
+                let rightDiff = Math.abs(innerRect.right-outerRect.right)/outerRect.width; if(rightDiff > 0.1) scoreX -= (rightDiff-0.1)/2
+                scoreX -= Math.abs(leftDiff-rightDiff)/2
+            }
+
+            let weight = Math.sqrt(outerRect.height*outerRect.width)
+            score += scoreY*scoreX*weight
+            totalWeight += weight
+        }
+
+
+        calcScore(bodyRealRect, bodyRect)
+        body.querySelectorAll("._, ._ *").forEach(el => {
+            let childrenRect = GeneticScorer.getBoundingBox(el)
+            let ownRect = el.getBoundingClientRect()
+            calcScore(childrenRect, ownRect)
+        })
+
+        return score/totalWeight*multiplier*10
     }
 }
