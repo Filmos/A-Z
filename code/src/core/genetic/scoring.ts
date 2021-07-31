@@ -73,9 +73,14 @@ class GeneticScorer {
             }
         })
 
+        let lastOrderedWeight = -1
+        let lastOrderedMinimum = 1
+        let thisOrderedMinimum = 1
+        let orderedTargets = this.intentionTarget.connectivity.sort((a, b) => b.weight-a.weight)
+
         let totalScore = 0
         let normalizationFactor = 0
-        for(let group of this.intentionTarget.connectivity) {
+        for(let group of orderedTargets) {
             let result = {}
             for(let code in alignmentDef) {
                 let maxRep = 1
@@ -108,13 +113,27 @@ class GeneticScorer {
                 else result[code] = size/(max-min)*Math.max(0,(1-missed/(group.targets.length*0.2)))
                 if(result[code] > 0.96) result[code] = 0.96-(result[code]-0.96)*10
             }
-            totalScore += Math.abs(
+            let thisScore = Math.abs(
                 (Math.max(result["XL"], result["XC"], result["XR"])+result["XL"]/4+result["XC"]/4+result["XR"]/4)
                 -(Math.max(result["YT"], result["YC"], result["YB"])+result["YT"]/4+result["YC"]/4+result["YB"]/4)
-            )*group.weight*group.multiplier
+            )/(0.95*1.75)
+
+            if(group.weight != lastOrderedWeight) {
+                lastOrderedWeight = group.weight
+                lastOrderedMinimum = thisOrderedMinimum
+                thisOrderedMinimum = thisScore
+            }
+
+            if(thisScore > lastOrderedMinimum) {
+                let overflowRatio = (thisScore-lastOrderedMinimum)/(1.1-lastOrderedMinimum)
+                thisScore = (thisScore*(1-overflowRatio**3)+lastOrderedMinimum*(1-overflowRatio**2))/2
+            }
+
+            thisOrderedMinimum = Math.min(thisOrderedMinimum, thisScore)
+            totalScore += thisScore*group.weight*group.multiplier
             normalizationFactor += group.weight*group.multiplier
         }
-        return totalScore/(0.95*1.75)/normalizationFactor*10
+        return totalScore/normalizationFactor*10
     }
     private static getBoundingBox(element: Element): DOMRect {
         let range = document.createRange()
