@@ -13,7 +13,8 @@ class GeneticScope {
         let bestChrom : GraphicalChromosome
         let bestScore = 0
 
-        for(let i=0;i<2000;i++) {
+        console.time("Training")
+        for(let i=0;i<20000;i++) {
             let chrom = new GraphicalChromosome(this.map)
             chrom.randomize()
             let score = this.scorer.score(chrom)
@@ -23,6 +24,7 @@ class GeneticScope {
                 bestScore = score
             }
         }
+        console.timeEnd("Training")
         console.log(bestScore)
         return bestChrom
     }

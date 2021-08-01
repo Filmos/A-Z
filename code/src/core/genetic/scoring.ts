@@ -8,6 +8,7 @@ class GeneticScorer {
         this.example = example
 
         this.parseMetaIntention()
+        console.log(this.intentionTarget)
     }
     private parseMetaIntention() {
         let flatMap = IntentionMap.flatten(this.map)
@@ -17,7 +18,7 @@ class GeneticScorer {
 
             for(let group of intention.connectivity) {
                 let parsedPaths = this.example.getPaths(path)
-                parsedPaths = shuffle(parsedPaths).slice(0,4)
+                // parsedPaths = shuffle(parsedPaths).slice(0,4)
 
                 for(let subPath of parsedPaths) {
                     let parsedTargets = group.targets
@@ -27,6 +28,9 @@ class GeneticScorer {
                 }
             }
 
+            for(let target in intention.importance) if(intention.importance.hasOwnProperty(target)) {
+                this.intentionTarget.addImportance(path+"/"+target, intention.importance[target])
+            }
         }
     }
 
@@ -34,6 +38,7 @@ class GeneticScorer {
         let body = this.buildScoringEnvironment(chrom)
         let score = this.scoreConnectivity(body)
                   + this.scoreSpace(body)
+                  + this.scoreImportance(body)
 
         GUI.clear()
         return score
@@ -189,5 +194,44 @@ class GeneticScorer {
         })
 
         return score/totalWeight*multiplier*10
+    }
+
+    private scoreImportance(body: HTMLElement): number {
+        let combinedResults : {[index: number]: {sum: number, count: number}} = {}
+        for(let path in this.intentionTarget.importance) {
+            let importance = this.intentionTarget.importance[path]
+            if(!combinedResults[importance]) combinedResults[importance] = {sum: 0, count: 0}
+
+            Array.from(body.getElementsByClassName(path)).forEach((el) => {
+                let rect = GeneticScorer.getBoundingBox(el)
+                let score = Math.sqrt(rect.width*rect.height)
+
+                combinedResults[importance].sum += score
+                combinedResults[importance].count += 1
+            })
+        }
+
+
+        let totalScore = 0
+        let previousImp : number = null
+        let previousScore : number = null
+        for(let i of Object.keys(combinedResults).sort()) {
+            let imp = parseFloat(i)
+            let score = combinedResults[imp].sum/combinedResults[imp].count
+
+            if(previousImp) {
+                let wantedRatio = imp/previousImp
+                let actualRatio = score/previousScore
+
+                if(actualRatio > wantedRatio) totalScore += 1
+                else if(actualRatio > 1/wantedRatio)
+                    totalScore += (wantedRatio-actualRatio+2)*(wantedRatio*actualRatio-1)/2/(wantedRatio**2-1)
+            }
+
+            previousImp = imp
+            previousScore = score
+        }
+
+        return totalScore/(Object.keys(combinedResults).length-1)*10
     }
 }

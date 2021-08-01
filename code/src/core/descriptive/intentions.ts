@@ -33,15 +33,21 @@ class Intention {
 
 class MetaIntention {
     connectivity?: {targets: string[], weight: number, multiplier: number}[]
+    importance?: {[target: string]: number}
 
     public isEmpty(): boolean {
         if(this.connectivity && this.connectivity.length > 0) return false
+        if(this.importance && Object.keys(this.importance).length > 0) return false
         return true
     }
 
     public addConnection(targets: string[], weight: number, multiplier : number = 1) {
         if(!this.connectivity) this.connectivity = []
         this.connectivity.push({targets: targets, weight: weight, multiplier: multiplier})
+    }
+    public addImportance(target: string, weight: number) {
+        if(!this.importance) this.importance = {}
+        this.importance[target] = weight
     }
 }
 class IntentionMap {
@@ -73,9 +79,10 @@ class IntentionMap {
                 for(let subProp in innerMap) if(innerMap.hasOwnProperty(subProp)) {
                     let weight = 1
                     if(innerMap[subProp].tags?.includes("Identifier"))
-                        weight = 1.3
+                        weight = 1.2
 
                     returnMeta.addConnection([prop+"/"+subProp], weight)
+                    returnMeta.addImportance(prop+"/"+subProp, weight)
                 }
             }
 
