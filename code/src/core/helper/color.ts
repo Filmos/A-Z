@@ -387,14 +387,14 @@ class Color {
     };
 
     // Source: https://github.com/LeaVerou/contrast-ratio/blob/gh-pages/color.js
-    contrast(color: Color) {
+    contrast(innerColor: Color) {
         // Formula: http://www.w3.org/TR/2008/REC-WCAG20-20081211/#contrast-ratiodef
-        if (color.alpha() < 1) {
-            color = color.overlayOn(this);
+        if (innerColor.alpha() < 1) {
+            innerColor = innerColor.overlayOn(this);
         }
 
         let l1 = this.luminance() + .05,
-            l2 = color.luminance() + .05,
+            l2 = innerColor.luminance() + .05,
             ratio = l1/l2;
 
         if (l2 > l1) {

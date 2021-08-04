@@ -39,9 +39,10 @@ class GeneticScorer {
         let score = this.scoreConnectivity(body)
                   + this.scoreSpace(body)
                   + this.scoreImportance(body)
+                  + this.scoreBackgroundImmersion(body)/2
 
         GUI.clear()
-        return score
+        return score/35*100
     }
     private buildScoringEnvironment(chrom: GraphicalChromosome): HTMLElement {
         let builtElement = chrom.build(this.example)
@@ -225,5 +226,12 @@ class GeneticScorer {
         }
 
         return totalScore/(Object.keys(combinedResults).length-1)*10
+    }
+
+    private scoreBackgroundImmersion(body: Element): number {
+        let borderWeight = ManualEvaluator.evalBorders(body.getElementsByClassName("_")[0])
+
+        if(borderWeight < 0.1) return 5
+        return Math.max(0,2.5-borderWeight*0.3)
     }
 }

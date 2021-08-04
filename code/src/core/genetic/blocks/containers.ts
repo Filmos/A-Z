@@ -2,7 +2,7 @@ new GraphicalBlock("containerBorder",
     {
         borderWidth: {type: "int", range: [1, 3]},
         borderRadius: {type: "int", range: [0, 3]},
-        padding: {type: "int", range: [0, 5]}
+        padding: {type: "int", range: [1, 5]}
     },
     (params) => {return {css: `border: solid black ${params.borderWidth}px; border-radius: ${params.borderRadius*0.25}rem; padding: ${params.padding*0.1}rem`}},
     "parent"

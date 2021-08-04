@@ -12,6 +12,25 @@ class ManualEvaluator {
         return score
     }
 
+    public static evalBorders(element: Element): number {
+        let score = 0
+        let style = window.getComputedStyle(element)
+        let ownColor = this.getBackgroundColor(element)
+        let backgroundColor = this.getBackgroundColor(element.parentElement)
+
+        let fillScore = Math.min((backgroundColor.contrast(ownColor)-1)/7, 1)
+        score += fillScore*2
+
+        for(let side of ["Top", "Left", "Bottom", "Right"]) {
+            let width = Math.min(parseFloat(style["border"+side+"Width"])/4, 1)
+            let color = Color.parse(style["border"+side+"Color"])
+            let sideScore = Math.min((backgroundColor.contrast(color)-1)/7, 1)*width
+            score += Math.max(sideScore, fillScore)
+        }
+
+        return score/6*10
+    }
+
 
 
     public static getBoundingBox(element: Element): DOMRect {
