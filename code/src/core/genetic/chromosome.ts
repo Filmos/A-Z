@@ -70,7 +70,7 @@ class GraphicalChromosome {
     constructor(map: IntentionMap) {
         this.map = map
 
-        let flatMap = IntentionMap.flatten(map)
+        let flatMap = IntentionMap.flattenAndCollapse(map)
         this.genes[""] = new GraphicalGene("", [])
 
         for(let path in flatMap) if(flatMap.hasOwnProperty(path)) {
@@ -89,23 +89,24 @@ class GraphicalChromosome {
 
     public build(target: any): prebuiltElement {
         return {
-            html: this.buildHTML(target, "", ""),
+            html: this.buildHTML(target, "", "")[0],
             css: this.buildCSS()
         }
     }
 
-    private buildHTML(target: WrappedObject<any>, path: string, rawPath: string): HTMLElement {
+    private buildHTML(target: WrappedObject<any>, path: string, rawPath: string): HTMLElement[] {
         if(!target) return null
 
-        let builtChildren = []
+        let builtChildren: HTMLElement[] = []
         let children = target.getChildrenRawPaths() || []
         for(let rawSubPath of children) {
             let subTargets = target.getWrapped(rawSubPath)
             for(let subPath in subTargets)
-                builtChildren.push(this.buildHTML(subTargets[subPath], mergePath(path, subPath), mergePath(rawPath, rawSubPath)))
+                builtChildren = builtChildren.concat(this.buildHTML(subTargets[subPath], mergePath(path, subPath), mergePath(rawPath, rawSubPath)))
         }
 
-        return this.genes[rawPath].buildHTML(builtChildren.filter(a => a), target.get()[""], path)
+        if(!this.genes[rawPath]) return builtChildren
+        return [this.genes[rawPath].buildHTML(builtChildren.filter(a => a), target.get()[""], path)]
     }
 
     private buildCSS(): string {

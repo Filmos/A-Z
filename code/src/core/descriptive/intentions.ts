@@ -36,9 +36,10 @@ class MetaIntention {
     importance?: {[target: string]: number}
 
     public isEmpty(): boolean {
-        if(this.connectivity && this.connectivity.length > 0) return false
-        if(this.importance && Object.keys(this.importance).length > 0) return false
-        return true
+        return !(
+            (this.connectivity && this.connectivity.length > 0)
+         || (this.importance && Object.keys(this.importance).length > 0)
+        )
     }
 
     public addConnection(targets: string[], weight: number, multiplier : number = 1) {
@@ -100,6 +101,22 @@ class IntentionMap {
                 flatMap = {...flatMap, ...IntentionMap.flatten(map[path].inner, prefix + path + "/")}
                 flatMap[prefix + path].innerKeys = Object.keys(map[path].inner)
                 delete flatMap[prefix + path].inner
+            }
+        }
+        return flatMap
+    }
+    static flattenAndCollapse(map: IntentionMap, prefix:string=""): IntentionMap {
+        let flatMap : IntentionMap = {}
+        for(let path in map) if(map.hasOwnProperty(path)) {
+            let collapse = (map[path].inner && !map[path].accessor && Object.keys(map[path].inner).length == 1)
+            if(!collapse) flatMap[prefix+path] = {...map[path]}
+
+            if(map[path].inner) {
+                flatMap = {...flatMap, ...IntentionMap.flattenAndCollapse(map[path].inner, prefix + path + "/")}
+                if(!collapse) {
+                    flatMap[prefix + path].innerKeys = Object.keys(map[path].inner)
+                    delete flatMap[prefix + path].inner
+                }
             }
         }
         return flatMap

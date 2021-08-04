@@ -8,7 +8,6 @@ EV.addTask("Losbdv kewc cnnabf", 20, "07.29.2021", 60*4)
 EV.addTask("Eukhfar ewh kmbwfl", 10, "07.02.2021", 45)
 
 // EV.addTask("Clean up bathroom", 2,"07.04.2021", 45)
-// EV.addTask("Clean up room", 8,"07.01.2021", 120)
 // EV.addTask("Rework website", 30, "09.01.2021", 60*8*4)
 // EV.addTask("Ask about the bermuda project", 40, "07.02.2021", 120)
 
