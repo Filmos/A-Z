@@ -66,7 +66,7 @@ class GeneticScorer {
         }
 
         body.querySelectorAll("._ *").forEach(el => {
-            let rect = GeneticScorer.getBoundingBox(el)
+            let rect = ManualEvaluator.getBoundingBox(el)
 
             for(let code in alignmentDef) {
                 let value = alignmentDef[code](rect)
@@ -93,7 +93,7 @@ class GeneticScorer {
                 let min = Infinity, max = -Infinity, size = 0, missed = 0
                 for(let rep=0;rep<Math.min(maxRep, 3, group.targets.length);rep++) {
                     let el = body.ownerDocument.getElementById(group.targets[rep])
-                    let rect = GeneticScorer.getBoundingBox(el)
+                    let rect = ManualEvaluator.getBoundingBox(el)
                     let value = Math.floor(alignmentDef[code](rect)/10)
                     let groupPath = alignmentMap[code][value]
 
@@ -141,11 +141,6 @@ class GeneticScorer {
         }
         return totalScore/normalizationFactor*10
     }
-    private static getBoundingBox(element: Element): DOMRect {
-        let range = document.createRange()
-        range.selectNodeContents(element)
-        return range.getBoundingClientRect()
-    }
 
     private scoreSpace(body: HTMLElement): number {
         let html = body.ownerDocument.documentElement
@@ -156,7 +151,7 @@ class GeneticScorer {
             width: -1, height: -1
         }
         bodyRect = {...bodyRect, width: bodyRect.right, height: bodyRect.bottom}
-        let bodyRealRect = GeneticScorer.getBoundingBox(body)
+        let bodyRealRect = ManualEvaluator.getBoundingBox(body)
 
         let multiplier = 1
         if(bodyRealRect.left < -2) multiplier/=10
@@ -188,7 +183,7 @@ class GeneticScorer {
 
         calcScore(bodyRealRect, bodyRect)
         body.querySelectorAll("._, ._ *").forEach(el => {
-            let childrenRect = GeneticScorer.getBoundingBox(el)
+            let childrenRect = ManualEvaluator.getBoundingBox(el)
             let ownRect = el.getBoundingClientRect()
             calcScore(childrenRect, ownRect)
         })
@@ -203,10 +198,7 @@ class GeneticScorer {
             if(!combinedResults[importance]) combinedResults[importance] = {sum: 0, count: 0}
 
             Array.from(body.getElementsByClassName(path)).forEach((el) => {
-                let rect = GeneticScorer.getBoundingBox(el)
-                let score = Math.sqrt(rect.width*rect.height)
-
-                combinedResults[importance].sum += score
+                combinedResults[importance].sum += ManualEvaluator.evalImportance(el)
                 combinedResults[importance].count += 1
             })
         }
