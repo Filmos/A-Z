@@ -55,6 +55,7 @@ class IntentionMap {
     [property: string]: TypeMap & {
         inner?: IntentionMap,
         innerKeys?: string[],
+        collapsedFrom?: string[],
         accessor?: (target: any)=>any,
         intention?: MetaIntention
     }
@@ -105,14 +106,21 @@ class IntentionMap {
         }
         return flatMap
     }
-    static flattenAndCollapse(map: IntentionMap, prefix:string=""): IntentionMap {
+    static flattenAndCollapse(map: IntentionMap, prefix:string="", collapsedFrom:string[]=[]): IntentionMap {
         let flatMap : IntentionMap = {}
         for(let path in map) if(map.hasOwnProperty(path)) {
             let collapse = (map[path].inner && !map[path].accessor && Object.keys(map[path].inner).length == 1)
-            if(!collapse) flatMap[prefix+path] = {...map[path]}
+            if(!collapse) {
+                flatMap[prefix+path] = {...map[path]}
+                if(collapsedFrom.length > 0) flatMap[prefix + path].collapsedFrom = collapsedFrom
+            }
 
             if(map[path].inner) {
-                flatMap = {...flatMap, ...IntentionMap.flattenAndCollapse(map[path].inner, prefix + path + "/")}
+                let collapseList : string[] = []
+                if(collapse) collapseList = [...collapsedFrom, prefix + path]
+
+                flatMap = {...flatMap, ...IntentionMap.flattenAndCollapse(map[path].inner, prefix + path + "/", collapseList)}
+
                 if(!collapse) {
                     flatMap[prefix + path].innerKeys = Object.keys(map[path].inner)
                     delete flatMap[prefix + path].inner

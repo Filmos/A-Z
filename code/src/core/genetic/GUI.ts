@@ -1,6 +1,9 @@
 class GUI {
     private static initialized = false
 
+    public static gen(intention: Intention | string[], source: rawClass, content: any) {
+        return this.generate(new IntentionMap(intention, source), content)
+    }
     public static generate(map: IntentionMap, content: any) {
         let wrappedContent = new WrappedObject(content, map)
         let chrom = GeneticScope.train(map, wrappedContent)

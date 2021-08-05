@@ -1,38 +1,49 @@
-class TaskEvent {
+class Task {
     @D("Identifier") public readonly title: string;
-    @D public readonly importance: number;
-    @D public deadline: Date;
+    @D public readonly contractor: TaskContractor;
+    @D public readonly reward: number;
+
     @D public estimatedCompletionTime: number;
 
-    constructor(title: string, importance: number) {
+    @D public deadline: Date;
+
+    constructor(title: string, contractor: string, reward: number, estimatedCompletionTime: number) {
         this.title = title
-        this.importance = importance
-    }
-    setTimes(deadline: Date, estimatedCompletionTime: number): void {
-        this.deadline = deadline
+        this.contractor = TaskContractor.get(contractor)
+        this.reward = reward
         this.estimatedCompletionTime = estimatedCompletionTime
+        TaskBoard.registerTask(this)
     }
 
-    @D public currentPriority(dateNow: number = Date.now()): number {
-        let urgencyStart = this.deadline.valueOf()-this.estimatedCompletionTime*2.5*1000*60-3*1000*60*60*24
-        let urgencyFactor = 1+(urgencyStart-dateNow)/(urgencyStart-this.deadline.valueOf()-this.estimatedCompletionTime*1000*60)
-        urgencyFactor = Math.min(2, Math.max(1, urgencyFactor))
-        return Math.log2(this.importance)**urgencyFactor/this.estimatedCompletionTime**(2/3)*100
+    @D public currentPriority(): number {
+        return this.reward/this.estimatedCompletionTime
     }
 }
 
-class TaskList {
-    private _tasks: TaskEvent[] = [];
-    @D("TopGradient") public get tasks(): TaskEvent[] {
-        return this._tasks.sort((a, b) => b.currentPriority()-a.currentPriority())
-    }
-    @D public get topTask(): TaskEvent {
-        return this.tasks[0]
+class TaskContractor {
+    @D("Identifier") public readonly name: string
+    constructor(name: string) {
+        this.name = name
+        TaskContractor.entries[name] = this
     }
 
-    addTask(title: string, importance: number, deadline: string, estimatedCompletionTime: number): void {
-        let event = new TaskEvent(title, importance)
-        event.setTimes(new Date(deadline), estimatedCompletionTime)
-        this.tasks.push(event)
+    private static entries: {[name: string]: TaskContractor} = {}
+    static get(name: string): TaskContractor {
+        if(!this.entries[name]) return new TaskContractor(name)
+        return this.entries[name]
+    }
+}
+
+class TaskBoard {
+    private static allTasks: Task[] = [];
+    public static registerTask(task: Task) {
+        this.allTasks.push(task)
+    }
+
+    @D("TopGradient") public get tasks(): Task[] {
+        return TaskBoard.allTasks.sort((a, b) => b.currentPriority()-a.currentPriority())
+    }
+    @D public get topTask(): Task {
+        return this.tasks[0]
     }
 }

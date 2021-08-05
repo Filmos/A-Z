@@ -4,17 +4,19 @@ class GraphicalGene {
     private readonly path: string
     private blocks: {[type: string]: GraphicalBlockInstance} = {}
     private tags: string[] = []
+    private classes: string[] = []
 
-    constructor(path: string, tags: string[]) {
+    constructor(path: string, tags: string[], uncollapsedPaths: string[]=[]) {
         this.path = path
         this.tags = tags
+        this.classes = [(this.path || "_"), ...uncollapsedPaths]
     }
 
 
 
     public buildHTML(children: HTMLElement[], element: any, id: string): HTMLElement {
         let outer = document.createElement('div')
-        outer.className = this.path || "_"
+        outer.classList.add(...this.classes, id)
         outer.id = id
 
         for(let child of children) outer.appendChild(child);
@@ -77,7 +79,7 @@ class GraphicalChromosome {
             let tags = []
             if(flatMap[path].innerKeys?.length > 0) tags.push("parent")
             else tags.push("leaf")
-            this.genes[path] = new GraphicalGene(path, tags)
+            this.genes[path] = new GraphicalGene(path, tags, flatMap[path].collapsedFrom)
         }
     }
     public randomize() {
@@ -105,8 +107,11 @@ class GraphicalChromosome {
                 builtChildren = builtChildren.concat(this.buildHTML(subTargets[subPath], mergePath(path, subPath), mergePath(rawPath, rawSubPath)))
         }
 
-        if(!this.genes[rawPath]) return builtChildren
-        return [this.genes[rawPath].buildHTML(builtChildren.filter(a => a), target.get()[""], path)]
+        if(!this.genes[rawPath]) {
+            builtChildren.forEach((el) => {el.classList.add(path)})
+            return builtChildren
+        }
+        return [this.genes[rawPath].buildHTML(builtChildren.filter(a => a), target.get()[""], path||"_")]
     }
 
     private buildCSS(): string {
@@ -141,6 +146,7 @@ function mergePath(path: string, subpath: string): string {
     return (path?path+"/":"")+subpath
 }
 function shuffle<T>(array: T[]): T[] {
+    if(!array) return []
     let arrayCopy = [...array]
     var currentIndex = arrayCopy.length,  randomIndex;
 

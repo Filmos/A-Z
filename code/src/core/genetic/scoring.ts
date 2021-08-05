@@ -18,6 +18,7 @@ class GeneticScorer {
 
             for(let group of intention.connectivity) {
                 let parsedPaths = this.example.getPaths(path)
+                if(!parsedPaths) continue
                 // parsedPaths = shuffle(parsedPaths).slice(0,4)
 
                 for(let subPath of parsedPaths) {
@@ -93,7 +94,7 @@ class GeneticScorer {
                 let maxRep = 1
                 let min = Infinity, max = -Infinity, size = 0, missed = 0
                 for(let rep=0;rep<Math.min(maxRep, 3, group.targets.length);rep++) {
-                    let el = body.ownerDocument.getElementById(group.targets[rep])
+                    let el = body.getElementsByClassName(group.targets[rep])[0]
                     let rect = ManualEvaluator.getBoundingBox(el)
                     let value = Math.floor(alignmentDef[code](rect)/10)
                     let groupPath = alignmentMap[code][value]
