@@ -1,7 +1,7 @@
 class ManualEvaluator {
     public static evalImportance(element: Element): number {
         let rect = ManualEvaluator.getBoundingBox(element)
-        let score = Math.sqrt(rect.width*rect.height)
+        let score = rect.height
 
         let contrast = this.getBackgroundColor(element).contrast(this.getFontColor(element))
         score *= contrast**0.3

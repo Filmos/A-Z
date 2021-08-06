@@ -222,35 +222,33 @@ class GeneticScorer {
     }
 
     private scoreImportance(body: HTMLElement, debug: DebugCollector): number {
-        let combinedResults : {[index: number]: {sum: number, count: number}} = {}
+        let combinedResults : {value: number, imp: number}[] = []
         for(let path in this.intentionTarget.importance) {
             let importance = this.intentionTarget.importance[path]
-            if(!combinedResults[importance]) combinedResults[importance] = {sum: 0, count: 0}
-
             let pathScore = 0
             let pathElements = Array.from(body.getElementsByClassName(path))
+
             pathElements.forEach((el) => {
                 pathScore += ManualEvaluator.evalImportance(el)
             })
-            combinedResults[importance].sum += pathScore
-            combinedResults[importance].count += pathElements.length
+            combinedResults.push({value: pathScore/pathElements.length, imp: importance})
             if(debug) debug.add(path+" ("+importance+")", pathScore/pathElements.length, "prefixPath")
         }
-
+        combinedResults = combinedResults.sort((a, b) => a.imp==b.imp?a.value-b.value:a.imp-b.imp)
 
         let totalScore = 0
         let previousImp : number = null
         let previousScore : number = null
-        for(let i of Object.keys(combinedResults).sort()) {
-            let imp = parseFloat(i)
-            let score = combinedResults[imp].sum/combinedResults[imp].count
-            if(debug) debug.add("<"+i+">", score, "prefixPath")
+        for(let i of combinedResults) {
+            let imp = i.imp
+            let score = i.value
 
             if(previousImp) {
                 let wantedRatio = imp/previousImp
                 let actualRatio = score/previousScore
 
-                if(actualRatio > wantedRatio) totalScore += 1
+                if(wantedRatio == 1) totalScore += Math.max(0,1-(((actualRatio-1)*10)**4))
+                else if(actualRatio > wantedRatio) totalScore += 1
                 else if(actualRatio > 1/wantedRatio)
                     totalScore += (wantedRatio-actualRatio+2)*(wantedRatio*actualRatio-1)/2/(wantedRatio**2-1)
             }
@@ -259,7 +257,7 @@ class GeneticScorer {
             previousScore = score
         }
 
-        return totalScore/(Object.keys(combinedResults).length-1)*10
+        return totalScore/(combinedResults.length-1)*10
     }
 
     private scoreBackgroundImmersion(body: Element): number {
