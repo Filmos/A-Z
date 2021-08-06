@@ -265,7 +265,7 @@ class GeneticScorer {
     private scoreBackgroundImmersion(body: Element): number {
         let borderWeight = ManualEvaluator.evalBorders(body.getElementsByClassName("_")[0])
 
-        if(borderWeight < 0.1) return 5
-        return Math.max(0,2.5-borderWeight*0.3)
+        if(borderWeight < 0.1) return 10
+        return Math.max(0,5-borderWeight*0.6)
     }
 }
