@@ -19,7 +19,7 @@ class GeneticScorer {
             for(let group of intention.connectivity) {
                 let parsedPaths = this.example.getPaths(path)
                 if(!parsedPaths) continue
-                // parsedPaths = shuffle(parsedPaths).slice(0,4)
+                parsedPaths = shuffle(parsedPaths).slice(0,4)
 
                 for(let subPath of parsedPaths) {
                     let parsedTargets = group.targets
@@ -35,15 +35,41 @@ class GeneticScorer {
         }
     }
 
+    private static scoreFunctions = {
+        Connectivity: 10,
+        Space: 10,
+        Importance: 10,
+        BackgroundImmersion: 5
+    }
     public score(chrom: GraphicalChromosome): number {
         let body = this.buildScoringEnvironment(chrom)
-        let score = this.scoreConnectivity(body)
-                  + this.scoreSpace(body)
-                  + this.scoreImportance(body)
-                  + this.scoreBackgroundImmersion(body)/2
+        let score = 0
+        let maxScore = 0
+
+        for (let aspect in GeneticScorer.scoreFunctions) {
+            let mult = GeneticScorer.scoreFunctions[aspect]
+            score += this["score"+aspect](body)*(mult/10)
+            maxScore += mult
+        }
 
         GUI.clear()
-        return score/35*100
+        return score/maxScore*100
+    }
+    public detailedScore(chrom: GraphicalChromosome): DebugCollector {
+        let body = this.buildScoringEnvironment(chrom)
+        let totalScore = 0, maxScore = 0
+        let descScore = new DebugCollector()
+
+        for (let aspect in GeneticScorer.scoreFunctions) {
+            let mult = GeneticScorer.scoreFunctions[aspect]
+            let score = this["score"+aspect](body, descScore.getSub(["",aspect]))*(mult/10)
+            descScore.add(["",aspect], Math.round(score*100)/100+"/"+mult, "prefixPath")
+            totalScore += score
+            maxScore += mult
+        }
+
+        descScore.add("", "Total: "+totalScore/maxScore*100)
+        return descScore
     }
     private buildScoringEnvironment(chrom: GraphicalChromosome): HTMLElement {
         let builtElement = chrom.build(this.example)
@@ -52,7 +78,8 @@ class GeneticScorer {
         return document.querySelector("body")
     }
 
-    private scoreConnectivity(body: HTMLElement): number {
+
+    private scoreConnectivity(body: HTMLElement, debug?: DebugCollector): number {
         let alignmentMap = {}
         let alignmentDef = {
             "XL": ((rect: DOMRect) => rect.left),
@@ -125,6 +152,7 @@ class GeneticScorer {
                 (Math.max(result["XL"], result["XC"], result["XR"])+result["XL"]/4+result["XC"]/4+result["XR"]/4)
                 -(Math.max(result["YT"], result["YC"], result["YB"])+result["YT"]/4+result["YC"]/4+result["YB"]/4)
             )/(0.95*1.75)
+            if(debug) debug.add(group.targets.slice(0, 2).join(", ")+(group.targets.length>2?" (+"+(group.targets.length-2)+")":""), thisScore, "prefixPath")
 
             if(group.weight != lastOrderedWeight) {
                 lastOrderedWeight = group.weight
@@ -193,16 +221,20 @@ class GeneticScorer {
         return score/totalWeight*multiplier*10
     }
 
-    private scoreImportance(body: HTMLElement): number {
+    private scoreImportance(body: HTMLElement, debug: DebugCollector): number {
         let combinedResults : {[index: number]: {sum: number, count: number}} = {}
         for(let path in this.intentionTarget.importance) {
             let importance = this.intentionTarget.importance[path]
             if(!combinedResults[importance]) combinedResults[importance] = {sum: 0, count: 0}
 
-            Array.from(body.getElementsByClassName(path)).forEach((el) => {
-                combinedResults[importance].sum += ManualEvaluator.evalImportance(el)
-                combinedResults[importance].count += 1
+            let pathScore = 0
+            let pathElements = Array.from(body.getElementsByClassName(path))
+            pathElements.forEach((el) => {
+                pathScore += ManualEvaluator.evalImportance(el)
             })
+            combinedResults[importance].sum += pathScore
+            combinedResults[importance].count += pathElements.length
+            if(debug) debug.add(path+" ("+importance+")", pathScore/pathElements.length, "prefixPath")
         }
 
 
@@ -212,6 +244,7 @@ class GeneticScorer {
         for(let i of Object.keys(combinedResults).sort()) {
             let imp = parseFloat(i)
             let score = combinedResults[imp].sum/combinedResults[imp].count
+            if(debug) debug.add("<"+i+">", score, "prefixPath")
 
             if(previousImp) {
                 let wantedRatio = imp/previousImp
