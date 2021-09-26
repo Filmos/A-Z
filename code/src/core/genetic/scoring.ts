@@ -37,7 +37,7 @@ class GeneticScorer {
 
     private static scoreFunctions = {
         Connectivity: 10,
-        Space: 10,
+        Space: 8,
         Importance: 10,
         BackgroundImmersion: 5
     }
@@ -93,10 +93,14 @@ class GeneticScorer {
             "X": ((rect: DOMRect) => {return {min: rect.top, max: rect.bottom, size: rect.height}}),
             "Y": ((rect: DOMRect) => {return {min: rect.left, max: rect.right, size: rect.width}})
         }
+        let parsedFlag = {}
 
-        body.querySelectorAll("._ *").forEach(el => {
+        function calcAlignment(path: string) {
+            if(parsedFlag[path]) return
+            parsedFlag[path] = true
+            let el = body.getElementsByClassName(path)[0]
+
             let rect = ManualEvaluator.getBoundingBox(el)
-
             for(let code in alignmentDef) {
                 let value = alignmentDef[code](rect)
                 let roundValue = Math.floor(value/10)
@@ -104,9 +108,9 @@ class GeneticScorer {
                 if(!alignmentMap[code]) alignmentMap[code] = {}
                 if(!alignmentMap[code][roundValue]) alignmentMap[code][roundValue] = {}
 
-                alignmentMap[code][roundValue][el.id] = densityDef[code[0]](rect)
+                alignmentMap[code][roundValue][path] = densityDef[code[0]](rect)
             }
-        })
+        }
 
         let lastOrderedWeight = -1
         let lastOrderedMinimum = 1
@@ -121,7 +125,9 @@ class GeneticScorer {
                 let maxRep = 1
                 let min = Infinity, max = -Infinity, size = 0, missed = 0
                 for(let rep=0;rep<Math.min(maxRep, 3, group.targets.length);rep++) {
+                    calcAlignment(group.targets[rep])
                     let el = body.getElementsByClassName(group.targets[rep])[0]
+
                     let rect = ManualEvaluator.getBoundingBox(el)
                     let value = Math.floor(alignmentDef[code](rect)/10)
                     let groupPath = alignmentMap[code][value]
@@ -131,6 +137,7 @@ class GeneticScorer {
                     size = 0
                     missed = 0
                     for(let tar of group.targets) {
+                        calcAlignment(tar)
                         let val = groupPath[tar]
                         if(!val) {
                             missed++
@@ -145,13 +152,13 @@ class GeneticScorer {
                     }
                 }
                 if(missed >= group.targets.length*0.2 || size == 0) result[code] = 0
-                else result[code] = size/(max-min)*Math.max(0,(1-missed/(group.targets.length*0.2)))
-                if(result[code] > 0.96) result[code] = 0.96-(result[code]-0.96)*10
+                else result[code] = (0.5+size/(max-min)/2)*Math.max(0,(1-missed/(group.targets.length*0.2)))
+                if(result[code] > 0.98) result[code] = 0.98-(result[code]-0.98)*10
             }
             let thisScore = Math.abs(
                 (Math.max(result["XL"], result["XC"], result["XR"])+result["XL"]/4+result["XC"]/4+result["XR"]/4)
                 -(Math.max(result["YT"], result["YC"], result["YB"])+result["YT"]/4+result["YC"]/4+result["YB"]/4)
-            )/(0.95*1.75)
+            )/(0.98*1.75)
             if(debug) debug.add(group.targets.slice(0, 2).join(", ")+(group.targets.length>2?" (+"+(group.targets.length-2)+")":""), thisScore, "prefixPath")
 
             if(group.weight != lastOrderedWeight) {

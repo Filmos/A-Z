@@ -1,22 +1,36 @@
 class Task {
     @D("Identifier") public readonly title: string;
-    @D public readonly contractor: TaskContractor;
-    @D public readonly reward: number;
-
     @D public estimatedCompletionTime: number;
 
     @D public deadline: Date;
 
-    constructor(title: string, contractor: string, reward: number, estimatedCompletionTime: number) {
+    constructor(title: string, estimatedCompletionTime: number) {
         this.title = title
-        this.contractor = TaskContractor.get(contractor)
-        this.reward = reward
         this.estimatedCompletionTime = estimatedCompletionTime
+    }
+}
+
+class TaskGoal {
+    @D("Identifier") public readonly title: string;
+    @D public readonly contractor: TaskContractor;
+    @D public tasks: Task[] = [];
+
+    constructor(title: string, contractor: TaskContractor|string) {
+        this.title = title
+
+        if(typeof contractor == "string") contractor = TaskContractor.get(contractor)
+        this.contractor = contractor
+
         TaskBoard.registerTask(this)
     }
 
+    public addTask(task: Task): TaskGoal {
+        this.tasks.push(task)
+        return this
+    }
+
     @D public currentPriority(): number {
-        return this.reward/this.estimatedCompletionTime
+        return 0
     }
 }
 
@@ -35,15 +49,15 @@ class TaskContractor {
 }
 
 class TaskBoard {
-    private static allTasks: Task[] = [];
-    public static registerTask(task: Task) {
+    private static allTasks: TaskGoal[] = [];
+    public static registerTask(task: TaskGoal) {
         this.allTasks.push(task)
     }
 
-    @D("TopGradient") public get tasks(): Task[] {
+    @D("TopGradient") public get goals(): TaskGoal[] {
         return TaskBoard.allTasks.sort((a, b) => b.currentPriority()-a.currentPriority())
     }
-    @D public get topTask(): Task {
-        return this.tasks[0]
+    @D public get topGoals(): TaskGoal {
+        return this.goals[0]
     }
 }

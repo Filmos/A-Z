@@ -1,27 +1,45 @@
-new Task("Clean up bathroom", "Patryk", 1, 45)
-new Task("Rework website", "Filmos", 9, 60*4*4)
-new Task("Anti-void: Basic map generation and transformations", "Filmos", 3, 60*3*4)
-new Task("Anti-void: Base for modular item and attack system", "Filmos", 3, 60*3*4)
-new Task("Anti-void: Prepare concepts for enemy attack patterns", "Filmos", 1, 60*6)
-new Task("Prepare for statistics exams", "PW", 3, 60*3*14)
-new Task("A-Z: Permanent object storage", "Aurin", 1, 60*2)
-new Task("A-Z: Working timers, deadlines and scheduled reminders", "Aurin", 1, 60*3)
-new Task("A-Z: Chromosome storage, startup loading and auto-start on system launch", "Aurin", 1, 60*1.8)
-new Task("A-Z: Quick notes field, planned review time, and task generation from GUI", "Aurin", 1, 60*4)
-new Task("A-Z: Fully implement genetic algorithm", "Aurin", 1, 60*2.5)
-new Task("A-Z: Automatic background improvement training", "Aurin", 1, 60*3)
-new Task("A-Z: GUI generation for mobile devices", "Aurin", 2, 60*12)
-new Task("A-Z: GUI generation for smartwatches", "Aurin", 6, 60*12)
-new Task("A-Z: Contractor-variance priority system", "Aurin", 1, 60*4)
-new Task("A-Z: Tasks with minimum daily requirements", "Aurin", 0.5, 45)
-new Task("A-Z: Minimum daily work time, overtime tracker and rewards, current equipment counter", "Aurin", 0.5, 60*2)
-new Task("A-Z: Task preference marking", "Aurin", 0.5, 60*2)
-new Task("A-Z: Graphical representation of rewards", "Aurin", 0.5, 60*3)
+new TaskGoal("Rework website", "Filmos")
+    .addTask(new Task("Change to dual view (Anti-void and Deltarift)", 60*3))
+    .addTask(new Task("Update how subpages work", 60*2))
+    .addTask(new Task("Upgrade encounter download system", 60*2))
+    .addTask(new Task("Google presence", 45))
+
+new TaskGoal("Make A-Z an active desktop task planner", "Aurin")
+    .addTask(new Task("Auto-start on system launch and Wallpaper Engine connection", 60*1.4))
+    .addTask(new Task("Some sort of storage and input method", 60*3))
+    .addTask(new Task("Working timers, deadlines and scheduled reminders", 60*3))
+    .addTask(new Task("Quick notes field and planned review time", 60*2))
+
+new TaskGoal("Make A-Z a mobile task planner", "Aurin")
+    .addTask(new Task("GUI generation for mobile devices", 60*12))
+    .addTask(new Task("GUI generation for smartwatches", 60*12))
+
+new TaskGoal("Improve A-Z automatically generated interface", "Aurin")
+    .addTask(new Task("Change scoring to a tree traversal system", 60*7))
+    .addTask(new Task("Fully implement genetic algorithm", 60*2.5))
+    .addTask(new Task("Chromosome storage and loading", 60*1))
+    .addTask(new Task("Automatic on-start improvement attempt", 60*1.5))
+
+new TaskGoal("Implement task recommendation system for A-Z", "Aurin")
+    .addTask(new Task("Contractor-variance priority system", 60*4))
+    .addTask(new Task("Tasks with minimum daily requirements", 45))
+    .addTask(new Task("Minimum daily work time, overtime tracker and projected goal completion", 60*3))
+    .addTask(new Task("Task preference marking", 60*2))
+
+new TaskGoal("Anti-void: First checkpoint", "Filmos")
+    .addTask(new Task("Basic map generation and transformations", 60*3*4))
+    .addTask(new Task("Base for modular item and attack system", 60*3*4))
+    .addTask(new Task("Prepare concepts for enemy attack patterns", 60*6))
+
+new TaskGoal("Deltarift: chapter 2", "Filmos")
+    .addTask(new Task("Lore research on deltarune chapter 2", 60*7))
+    .addTask(new Task("Lore planning", 60*3*6))
+    .addTask(new Task("Coding", 60*6*6))
+    .addTask(new Task("Recording videos and publishing", 60*3))
 
 
 let EV = new TaskBoard()
 GUI.gen([
-        "tasks/*/contractor",
-        "tasks/*/reward",
-        "tasks/*/estimatedCompletionTime"
+        "goals/*/contractor",
+        "goals/*/tasks/*/estimatedCompletionTime"
     ], TaskBoard, EV)
