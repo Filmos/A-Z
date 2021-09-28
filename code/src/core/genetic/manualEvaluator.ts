@@ -1,15 +1,40 @@
 class ManualEvaluator {
-    public static evalImportance(element: Element): number {
-        let rect = ManualEvaluator.getBoundingBox(element)
-        let score = rect.height
+    public static evalVisibility(element: Element): number {
+        return this.weightedSum([
+            this.evalVisibilityText(element),
+            this.evalVisibilityBackground(element)
+        ])
+    }
 
-        let contrast = this.getBackgroundColor(element).contrast(this.getFontColor(element))
-        score *= contrast**0.3
+    private static evalVisibilityText(element: Element): number {
+        return Array.from(element.childNodes)
+            .filter(node => node.nodeType == Node.TEXT_NODE)
+            .map(node => {
+                let range = document.createRange()
+                range.selectNodeContents(node)
 
-        let weight = this.getFontVariation(element)["wght"]
-        if(weight) score *= weight/100*0.157+0.385
+                return Math.sqrt(range.getBoundingClientRect().height)
+                     * ((this.getFontVariation(element)["wght"]||400)/1000)
+                     * (this.getBackgroundColor(element).contrast(this.getFontColor(element))**0.3)
+            })
+            .reduce((a, b) => a+b, 0)
+    }
+    private static evalVisibilityBackground(element: Element): number {
+        return element.getBoundingClientRect().height
+             * this.evalBorders(element)
+    }
 
-        return score
+    private static weightedSum(terms: number[]) {
+        let max = 0
+        let sum = 0
+
+        for(let t of terms) {
+            if(isNaN(t)) {console.warn("NaN in weighted sum"); continue}
+            sum += t
+            max = Math.max(max, t)
+        }
+
+        return max*0.8+sum*0.2
     }
 
     public static evalBorders(element: Element): number {

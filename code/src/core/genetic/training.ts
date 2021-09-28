@@ -9,12 +9,12 @@ class GeneticScope {
         this.scorer = new GeneticScorer(map, example)
     }
 
-    public train(): GraphicalChromosome {
+    public train(noClear: boolean = false): GraphicalChromosome {
         let bestChrom : GraphicalChromosome
         let bestScore = 0
 
         console.time("Training")
-        for(let i=0;i<8000;i++) {
+        for(let i=0;i<1;i++) {
             let chrom = new GraphicalChromosome(this.map)
             chrom.randomize()
             let score = this.scorer.score(chrom)
@@ -26,11 +26,11 @@ class GeneticScope {
         }
         console.timeEnd("Training")
 
-        this.scorer.detailedScore(bestChrom).display()
+        this.scorer.score(bestChrom, true, noClear)
         return bestChrom
     }
-    public static train(map: IntentionMap, example: any): GraphicalChromosome {
+    public static train(map: IntentionMap, example: any, noClear: boolean = false): GraphicalChromosome {
         let scope = new GeneticScope(map, example)
-        return scope.train()
+        return scope.train(noClear)
     }
 }

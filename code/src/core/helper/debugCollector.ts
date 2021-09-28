@@ -25,7 +25,7 @@ class DebugCollector {
     private static styleMessage(path: string, value: any, style:string): string[] {
         switch(style) {
             case "prefixPath":
-                return ["%c"+path+": %c"+value, "font-weight: 900; color: #24383f; font-size: 0.8rem", "color: #34576d; font-size: 0.8rem; font-weight: 300"]
+                return ["%c"+path+":", "font-weight: 900; color: #24383f; font-size: 0.8rem", value]
             default:
                 return [value]
         }
@@ -45,4 +45,12 @@ class DebugCollector {
     public isEmpty(): boolean {
         return Object.keys(this.data).length == 0
     }
+}
+
+class NullDebugCollector extends DebugCollector {
+    public add() {}
+    public getSub(): DebugCollector {return undefined}
+    public display() {}
+    public isEmpty(): boolean {return true}
+
 }

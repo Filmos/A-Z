@@ -35,41 +35,16 @@ class GeneticScorer {
         }
     }
 
-    private static scoreFunctions = {
-        Connectivity: 10,
-        Space: 8,
-        Importance: 10,
-        BackgroundImmersion: 5
-    }
-    public score(chrom: GraphicalChromosome): number {
+    public score(chrom: GraphicalChromosome, withDebug: boolean = false, noClear: boolean = false): number {
+        let dataCollector = new DebugCollector()
+        if(!withDebug) dataCollector = new NullDebugCollector()
+
         let body = this.buildScoringEnvironment(chrom)
-        let score = 0
-        let maxScore = 0
+        let mostVisible = this.getMostVisible(body); dataCollector.add("Most visible",mostVisible, "prefixPath")
 
-        for (let aspect in GeneticScorer.scoreFunctions) {
-            let mult = GeneticScorer.scoreFunctions[aspect]
-            score += this["score"+aspect](body)*(mult/10)
-            maxScore += mult
-        }
-
-        GUI.clear()
-        return score/maxScore*100
-    }
-    public detailedScore(chrom: GraphicalChromosome): DebugCollector {
-        let body = this.buildScoringEnvironment(chrom)
-        let totalScore = 0, maxScore = 0
-        let descScore = new DebugCollector()
-
-        for (let aspect in GeneticScorer.scoreFunctions) {
-            let mult = GeneticScorer.scoreFunctions[aspect]
-            let score = this["score"+aspect](body, descScore.getSub(["",aspect]))*(mult/10)
-            descScore.add(["",aspect], Math.round(score*100)/100+"/"+mult, "prefixPath")
-            totalScore += score
-            maxScore += mult
-        }
-
-        descScore.add("", "Total: "+totalScore/maxScore*100)
-        return descScore
+        if(!noClear) GUI.clear()
+        dataCollector.display()
+        return 5
     }
     private buildScoringEnvironment(chrom: GraphicalChromosome): HTMLElement {
         let builtElement = chrom.build(this.example)
@@ -78,199 +53,23 @@ class GeneticScorer {
         return document.querySelector("body")
     }
 
+    private getMostVisible(body: HTMLElement): {top: {visibility: number, element: Element}, candidates: {visibility: number, element: Element}[]} {
+        let maxVisibility = -Infinity
+        let maxElement: {visibility: number, element: Element} = null
 
-    private scoreConnectivity(body: HTMLElement, debug?: DebugCollector): number {
-        let alignmentMap = {}
-        let alignmentDef = {
-            "XL": ((rect: DOMRect) => rect.left),
-            "XC": ((rect: DOMRect) => rect.left+rect.width/2),
-            "XR": ((rect: DOMRect) => rect.right),
-            "YT": ((rect: DOMRect) => rect.top),
-            "YC": ((rect: DOMRect) => rect.top+rect.height/2),
-            "YB": ((rect: DOMRect) => rect.bottom)
-        }
-        let densityDef = {
-            "X": ((rect: DOMRect) => {return {min: rect.top, max: rect.bottom, size: rect.height}}),
-            "Y": ((rect: DOMRect) => {return {min: rect.left, max: rect.right, size: rect.width}})
-        }
-        let parsedFlag = {}
-
-        function calcAlignment(path: string) {
-            if(parsedFlag[path]) return
-            parsedFlag[path] = true
-            let el = body.getElementsByClassName(path)[0]
-
-            let rect = ManualEvaluator.getBoundingBox(el)
-            for(let code in alignmentDef) {
-                let value = alignmentDef[code](rect)
-                let roundValue = Math.floor(value/10)
-
-                if(!alignmentMap[code]) alignmentMap[code] = {}
-                if(!alignmentMap[code][roundValue]) alignmentMap[code][roundValue] = {}
-
-                alignmentMap[code][roundValue][path] = densityDef[code[0]](rect)
-            }
-        }
-
-        let lastOrderedWeight = -1
-        let lastOrderedMinimum = 1
-        let thisOrderedMinimum = 1
-        let orderedTargets = this.intentionTarget.connectivity.sort((a, b) => b.weight-a.weight)
-
-        let totalScore = 0
-        let normalizationFactor = 0
-        for(let group of orderedTargets) {
-            let result = {}
-            for(let code in alignmentDef) {
-                let maxRep = 1
-                let min = Infinity, max = -Infinity, size = 0, missed = 0
-                for(let rep=0;rep<Math.min(maxRep, 3, group.targets.length);rep++) {
-                    calcAlignment(group.targets[rep])
-                    let el = body.getElementsByClassName(group.targets[rep])[0]
-
-                    let rect = ManualEvaluator.getBoundingBox(el)
-                    let value = Math.floor(alignmentDef[code](rect)/10)
-                    let groupPath = alignmentMap[code][value]
-
-                    min = Infinity
-                    max = -Infinity
-                    size = 0
-                    missed = 0
-                    for(let tar of group.targets) {
-                        calcAlignment(tar)
-                        let val = groupPath[tar]
-                        if(!val) {
-                            missed++
-                            if(missed < group.targets.length*0.2) continue
-                            maxRep++
-                            break
-                        }
-
-                        min = Math.min(min, val.min)
-                        max = Math.max(max, val.max)
-                        size += val.size
+        return {
+            candidates: Array.from(body.querySelectorAll("*"))
+                .map(element => {
+                    let visibility = ManualEvaluator.evalVisibility(element)
+                    if (visibility > maxVisibility) {
+                        maxVisibility = visibility
+                        maxElement = {visibility: visibility, element: element}
+                        console.log(maxElement)
                     }
-                }
-                if(missed >= group.targets.length*0.2 || size == 0) result[code] = 0
-                else result[code] = (0.5+size/(max-min)/2)*Math.max(0,(1-missed/(group.targets.length*0.2)))
-                if(result[code] > 0.98) result[code] = 0.98-(result[code]-0.98)*10
-            }
-            let thisScore = Math.abs(
-                (Math.max(result["XL"], result["XC"], result["XR"])+result["XL"]/4+result["XC"]/4+result["XR"]/4)
-                -(Math.max(result["YT"], result["YC"], result["YB"])+result["YT"]/4+result["YC"]/4+result["YB"]/4)
-            )/(0.98*1.75)
-            if(debug) debug.add(group.targets.slice(0, 2).join(", ")+(group.targets.length>2?" (+"+(group.targets.length-2)+")":""), thisScore, "prefixPath")
-
-            if(group.weight != lastOrderedWeight) {
-                lastOrderedWeight = group.weight
-                lastOrderedMinimum = thisOrderedMinimum
-                thisOrderedMinimum = thisScore
-            }
-
-            if(thisScore > lastOrderedMinimum) {
-                let overflowRatio = (thisScore-lastOrderedMinimum)/(1.1-lastOrderedMinimum)
-                thisScore = (thisScore*(1-overflowRatio**3)+lastOrderedMinimum*(1-overflowRatio**2))/2
-            }
-
-            thisOrderedMinimum = Math.min(thisOrderedMinimum, thisScore)
-            totalScore += thisScore*group.weight*group.multiplier
-            normalizationFactor += group.weight*group.multiplier
+                    return {visibility: visibility, element: element}
+                })
+                .filter(element => element.visibility >= 0.7 * maxVisibility && maxElement.element != element.element),
+            top: maxElement
         }
-        return totalScore/normalizationFactor*10
-    }
-
-    private scoreSpace(body: HTMLElement): number {
-        let html = body.ownerDocument.documentElement
-        let bodyRect : DOMRect = {
-            left: 0, top: 0, x: 0, y: 0, toJSON: ()=>"",
-            right: Math.max(body.scrollWidth, body.offsetWidth, html.clientWidth, html.scrollWidth, html.offsetWidth),
-            bottom: Math.max(body.scrollHeight, body.offsetHeight, html.clientHeight, html.scrollHeight, html.offsetHeight),
-            width: -1, height: -1
-        }
-        bodyRect = {...bodyRect, width: bodyRect.right, height: bodyRect.bottom}
-        let bodyRealRect = ManualEvaluator.getBoundingBox(body)
-
-        let multiplier = 1
-        if(bodyRealRect.left < -2) multiplier/=10
-        if(bodyRealRect.top < -2) multiplier/=10
-        if(bodyRealRect.width > bodyRect.width) multiplier *= 2/3*(bodyRect.width/bodyRealRect.width)**2
-        if(bodyRealRect.height > bodyRect.height) multiplier *= 0.9*(bodyRect.height/bodyRealRect.height)
-
-
-        let score = 0
-        let totalWeight = 0
-        function calcScore(innerRect: DOMRect, outerRect: DOMRect) {
-            let scoreY = 1, scoreX = 1
-
-            if(outerRect.height > 0) {
-                let topDiff = Math.abs(innerRect.top - outerRect.top) / outerRect.height; if(topDiff > 0.1) scoreY -= topDiff - 0.1
-                let bottomDiff = Math.abs(innerRect.bottom - outerRect.bottom) / outerRect.height; if(bottomDiff > 0.1) scoreY -= (bottomDiff - 0.1) / 2
-            }
-            if(outerRect.width > 0) {
-                let leftDiff = Math.abs(innerRect.left-outerRect.left)/outerRect.width; if(leftDiff > 0.1) scoreX -= (leftDiff-0.1)/2
-                let rightDiff = Math.abs(innerRect.right-outerRect.right)/outerRect.width; if(rightDiff > 0.1) scoreX -= (rightDiff-0.1)/2
-                scoreX -= Math.abs(leftDiff-rightDiff)/2
-            }
-
-            let weight = Math.sqrt(outerRect.height*outerRect.width)
-            score += scoreY*scoreX*weight
-            totalWeight += weight
-        }
-
-
-        calcScore(bodyRealRect, bodyRect)
-        body.querySelectorAll("._, ._ *").forEach(el => {
-            let childrenRect = ManualEvaluator.getBoundingBox(el)
-            let ownRect = el.getBoundingClientRect()
-            calcScore(childrenRect, ownRect)
-        })
-
-        return score/totalWeight*multiplier*10
-    }
-
-    private scoreImportance(body: HTMLElement, debug: DebugCollector): number {
-        let combinedResults : {value: number, imp: number}[] = []
-        for(let path in this.intentionTarget.importance) {
-            let importance = this.intentionTarget.importance[path]
-            let pathScore = 0
-            let pathElements = Array.from(body.getElementsByClassName(path))
-
-            pathElements.forEach((el) => {
-                pathScore += ManualEvaluator.evalImportance(el)
-            })
-            combinedResults.push({value: pathScore/pathElements.length, imp: importance})
-            if(debug) debug.add(path+" ("+importance+")", pathScore/pathElements.length, "prefixPath")
-        }
-        combinedResults = combinedResults.sort((a, b) => a.imp==b.imp?a.value-b.value:a.imp-b.imp)
-
-        let totalScore = 0
-        let previousImp : number = null
-        let previousScore : number = null
-        for(let i of combinedResults) {
-            let imp = i.imp
-            let score = i.value
-
-            if(previousImp) {
-                let wantedRatio = imp/previousImp
-                let actualRatio = score/previousScore
-
-                if(wantedRatio == 1) totalScore += Math.max(0,1-(((actualRatio-1)*10)**4))
-                else if(actualRatio > wantedRatio) totalScore += 1
-                else if(actualRatio > 1/wantedRatio)
-                    totalScore += (wantedRatio-actualRatio+2)*(wantedRatio*actualRatio-1)/2/(wantedRatio**2-1)
-            }
-
-            previousImp = imp
-            previousScore = score
-        }
-
-        return totalScore/(combinedResults.length-1)*10
-    }
-
-    private scoreBackgroundImmersion(body: Element): number {
-        let borderWeight = ManualEvaluator.evalBorders(body.getElementsByClassName("_")[0])
-
-        if(borderWeight < 0.1) return 10
-        return Math.max(0,5-borderWeight*0.6)
     }
 }
