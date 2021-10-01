@@ -40,7 +40,8 @@ class GeneticScorer {
         if(!withDebug) dataCollector = new NullDebugCollector()
 
         let body = this.buildScoringEnvironment(chrom)
-        let mostVisible = this.getMostVisible(body); dataCollector.add("Most visible",mostVisible, "prefixPath")
+        let mostVisible = this.getMostVisible(body); dataCollector.add("Most visible",mostVisible.top, "prefixPath")
+        let similar = mostVisible.candidates.filter(element => ManualEvaluator.compareElements(mostVisible.top, element)<1); dataCollector.add("Similar",similar, "prefixPath")
 
         if(!noClear) GUI.clear()
         dataCollector.display()
@@ -53,9 +54,9 @@ class GeneticScorer {
         return document.querySelector("body")
     }
 
-    private getMostVisible(body: HTMLElement): {top: {visibility: number, element: Element}, candidates: {visibility: number, element: Element}[]} {
+    private getMostVisible(body: HTMLElement): {top: Element, candidates: Element[]} {
         let maxVisibility = -Infinity
-        let maxElement: {visibility: number, element: Element} = null
+        let maxElement: Element = null
 
         return {
             candidates: Array.from(body.querySelectorAll("*"))
@@ -63,12 +64,12 @@ class GeneticScorer {
                     let visibility = ManualEvaluator.evalVisibility(element)
                     if (visibility > maxVisibility) {
                         maxVisibility = visibility
-                        maxElement = {visibility: visibility, element: element}
-                        console.log(maxElement)
+                        maxElement = element
                     }
                     return {visibility: visibility, element: element}
                 })
-                .filter(element => element.visibility >= 0.7 * maxVisibility && maxElement.element != element.element),
+                .filter(element => element.visibility >= 0.7 * maxVisibility && maxElement != element.element)
+                .map(element => element.element),
             top: maxElement
         }
     }
