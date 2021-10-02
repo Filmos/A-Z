@@ -27,3 +27,10 @@ new GraphicalBlock("backgroundColor",
     (params) => {return {css: `background-color: hsl(208deg, ${params.saturation*10}%, ${100-params.lightness*3}%)`}},
     "parent"
 )
+new GraphicalBlock("marginBorder",
+    {
+        size: {type: "int", range: [1, 4]},
+        direction: {type: "int", range: [-1, 1]}
+    },
+    (params) => {return {css: (params.direction>0?``:`margin-bottom: ${params.size*6}px;`)+(params.direction<0?``:`margin-right: ${params.size*6}px;`)}}
+)

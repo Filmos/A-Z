@@ -40,8 +40,18 @@ class GeneticScorer {
         if(!withDebug) dataCollector = new NullDebugCollector()
 
         let body = this.buildScoringEnvironment(chrom)
-        let mostVisible = this.getMostVisible(body); dataCollector.add("Most visible",mostVisible.top, "prefixPath")
-        let similar = mostVisible.candidates.filter(element => ManualEvaluator.compareElements(mostVisible.top, element)<1); dataCollector.add("Similar",similar, "prefixPath")
+        let ordered = this.orderElements(body)
+        let scopeCrawler = new BracketCrawler((element: HTMLElement, scopeData: any, crawler) => {
+            let rect = element.getBoundingClientRect()
+            if(scopeData) {
+                let scopeRect = scopeData.getBoundingClientRect()
+                if(rect.bottom - scopeRect.bottom > 4) {crawler.stopBracket(); return crawler.repeatElement()}
+                else if(rect.right - scopeRect.right > 4 || rect.left - scopeRect.left < -4) {return crawler.skipElement()}
+            }
+
+            crawler.startBracket(element)
+        }, element => element.id)
+        if(withDebug) scopeCrawler.parse(ordered).display()
 
         if(!noClear) GUI.clear()
         dataCollector.display()
@@ -51,7 +61,7 @@ class GeneticScorer {
         let builtElement = chrom.build(this.example)
         GUI.insert(builtElement.html, builtElement.css)
 
-        return document.querySelector("body")
+        return document.querySelector("#_")
     }
 
     private getMostVisible(body: HTMLElement): {top: Element, candidates: Element[]} {
@@ -72,5 +82,28 @@ class GeneticScorer {
                 .map(element => element.element),
             top: maxElement
         }
+    }
+
+    private orderElements(body: HTMLElement): HTMLElement[] {
+        return Array.from(body.querySelectorAll("*"))
+            .map((element: HTMLElement) => {
+                let el = element
+                let depth = 0
+                while(el = el.parentElement) depth++
+
+                let rect = element.getBoundingClientRect()
+                return {
+                    x: Math.round(rect.left/25),
+                    y: Math.round(rect.top/25),
+                    z: depth,
+                    e: element
+                }
+            })
+            .sort((a, b) => {
+                if(a.y!=b.y) return a.y-b.y
+                if(a.x!=b.x) return a.x-b.x
+                return a.z-b.z
+            })
+            .map(e => e.e)
     }
 }
