@@ -50,7 +50,7 @@ class GeneticScorer {
             }
 
             crawler.startBracket(element)
-        }, element => element.id)
+        })
         if(withDebug) scopeCrawler.parse(ordered).display()
 
         if(!noClear) GUI.clear()
