@@ -98,6 +98,7 @@ namespace LiveLine {
                     case "New task":
                         let task = new Task(par.Title.value, par.Duration.value)
                         if(par.Deadline) task.deadline = par.Deadline.value
+                        TaskBoard.save()
                         break
                 }
             }

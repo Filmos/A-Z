@@ -6,12 +6,13 @@ class FileStorage {
             let fileEntry = await this.prepFile(path)
             fileEntry.file(function (file: any) {
                 var reader = new FileReader();
-                reader.onloadend = function() {resolve(this.result)};
+                reader.onloadend = function() {resolve(JSON.parse(""+this.result))};
                 reader.readAsText(file);
             });
         });
     }
-    static async write(path: string, data: string) {
+    static async write(path: string, data: any) {
+        data = JSON.stringify(data)
         let fileEntry = await this.prepFile(path)
         fileEntry.createWriter(function (fileWriter: any) {
             fileWriter.onerror = function (e: any) {

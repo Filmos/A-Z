@@ -45,13 +45,12 @@
 //     ], TaskBoard, EV)
 
 document.addEventListener('deviceready',() => {
-    FileStorage.load("tasks").then((storedData) => {
-        //console.log(storedData)
-        let newVal = Math.floor(Math.random() * 100) + ""
-        //console.log("> " + newVal)
-        FileStorage.write("tasks", newVal)
-    })
-})
+    let liveline = new LiveLine()
+    document.body.append(liveline.buildGUI())
 
-let liveline = new LiveLine()
-document.body.append(liveline.buildGUI())
+    TaskBoard.load().then(() => {
+        let tasks = new TaskBoard()
+        document.body.append(tasks.buildGUI())
+    })
+
+})
