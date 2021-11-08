@@ -1,11 +1,6 @@
 class LiveLine {
     private currentInput: LiveLine.Input = null
 
-    public static runCommand(command: LiveLine.Input): boolean {
-        // command.display()
-        return false
-    }
-
     public buildGUI(): Element {
         let wrapper = document.createElement("div")
         wrapper.classList.add("liveline")
@@ -25,8 +20,12 @@ class LiveLine {
         })
         input.addEventListener("keypress", (e) => {
             if(this.currentInput == null || e.key != "Enter") return
-            LiveLine.runCommand(this.currentInput)
-            this.currentInput = null
+            this.currentInput.execute()
+            this.currentInput = null;
+
+            let inp = (e.target as HTMLInputElement)
+            inp.value = ""
+            inp.dispatchEvent(new Event('input'))
         })
 
         return wrapper
@@ -37,18 +36,71 @@ class LiveLine {
 
 namespace LiveLine {
     export class Input {
-        private readonly commands: { [c: string]: {[p: string]: string} }
+        private readonly commands: { [c: string]: {[p: string]: { value: any, display: string }} }
 
-        constructor(commands: { [c: string]: { [p: string]: string } }) {
+        constructor(commands: { [c: string]: { [p: string]: { value: any, display: string } } }) {
             this.commands = commands;
         }
         public static parse(input: string): LiveLine.Input {
+            if(!input) return new LiveLine.Input({})
+
             let commands = {}
-            commands[input[0]] = input.substr(1)
-                .split(";")
-                .map(p => p.trim())
-                .reduce((map, obj, ind) => {map[ind] = obj; return map}, {})
+            if(input[0] != "+") {
+                commands["New note"] = {"": {value: input, display: input}, "Warning": {display: "This doesn't do anything yet"}}
+                return new LiveLine.Input(commands)
+            }
+
+            let reg = input.substr(1).match(/^(.+?)[ ,.;]*(?:(\d*)(?::(\d\d)|h)?)?[ ,.;]*(?:(next )?(Mon|Tue|Wed|Thu|Fri|Sat|Sun).{0,5})?[ ,.;]*$/i)
+            if(!reg) return new LiveLine.Input({})
+
+            commands["New task"] = {
+                "Title": {value: reg[1].trim(), display: reg[1].trim()},
+                "Duration": {value: 120, display: "2:00 (default)"}
+            }
+            if(reg[2]) {
+                let dur = parseInt(reg[2])*60+(parseInt(reg[3])||0)
+                commands["New task"]["Duration"] = {
+                    value: dur,
+                    display: Math.floor(dur/60)+":"+("0"+dur%60).slice(-2)
+                }
+            }
+
+            if(reg[5]) {
+                let days = {
+                    "sun": 0,
+                    "mon": 1,
+                    "tue": 2,
+                    "wed": 3,
+                    "thu": 4,
+                    "fri": 5,
+                    "sat": 6
+                }
+                let time = (days[reg[5].toLowerCase()]-(new Date()).getDay()+7)%7
+                if(time == 0) time+=7
+                if(reg[4]) time += 7
+
+                let date = new Date()
+                date.setDate(date.getDate()+time)
+                date.setHours(12, 0, 0, 0)
+
+                commands["New task"]["Deadline"] = {
+                    value: date,
+                    display: (time==1?"Tomorrow":("In "+time+" days")) + " ("+date.getDate()+"."+(date.getMonth()+1)+")"
+                }
+            }
+
             return new LiveLine.Input(commands)
+        }
+        public execute(): void {
+            for(let c in this.commands) {
+                let par = this.commands[c]
+                switch (c) {
+                    case "New task":
+                        let task = new Task(par.Title.value, par.Duration.value)
+                        if(par.Deadline) task.deadline = par.Deadline.value
+                        break
+                }
+            }
         }
 
         public display(liveline: HTMLElement): void {
@@ -64,18 +116,23 @@ namespace LiveLine {
 
             liveline.append(preview)
         }
-        private static generateCommandPreview(commandName: string, parameters: { [p: string]: string }): HTMLElement {
+        private static generateCommandPreview(commandName: string, parameters: { [p: string]: { value: any, display: string } }): HTMLElement {
             let outer = document.createElement("li")
             let inner = document.createElement("ul")
             outer.innerText = commandName
             outer.append(inner)
 
-            for(let p in parameters) inner.append(this.generateParameterPreview(p, parameters[p]))
+            for(let p in parameters) inner.append(this.generateParameterPreview(p, parameters[p].display))
             return outer
         }
         private static generateParameterPreview(parameterName: string, parameterValue: string): HTMLElement {
             let el = document.createElement("li")
-            el.innerText = parameterName + " - " + parameterValue
+            if(parameterName) el.innerText = (parameterName + ": ")
+
+            let val = document.createElement("span")
+            val.innerText = parameterValue||"---"
+
+            el.append(val)
             return el
         }
     }

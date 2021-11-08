@@ -1,6 +1,6 @@
 class Task {
-    @D("Identifier") public readonly title: string;
-    @D public estimatedCompletionTime: number;
+    @D("Identifier") private readonly title: string;
+    @D private readonly estimatedCompletionTime: number;
 
     @D public deadline: Date;
 
@@ -33,6 +33,9 @@ class TaskBoard {
     private static allTasks: Task[] = [];
     public static registerTask(task: Task) {
         this.allTasks.push(task)
+        this.updateGUI()
     }
-
+    public static updateGUI() {
+        console.log(this.allTasks)
+    }
 }
