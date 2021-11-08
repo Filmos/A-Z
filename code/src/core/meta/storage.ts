@@ -6,7 +6,9 @@ class FileStorage {
             let fileEntry = await this.prepFile(path)
             fileEntry.file(function (file: any) {
                 var reader = new FileReader();
-                reader.onloadend = function() {resolve(JSON.parse(""+this.result))};
+                reader.onloadend = function() {
+                    resolve(JSON.parse(""+this.result))
+                };
                 reader.readAsText(file);
             });
         });
@@ -19,8 +21,13 @@ class FileStorage {
                 console.log("Failed file write: " + e.toString());
             };
 
-            let dataObj = new Blob([data], { type: 'text/plain' });
-            fileWriter.write(dataObj);
+            fileWriter.onwriteend = function() {
+                if (fileWriter.length === 0) {
+                    let dataObj = new Blob([data], { type: 'text/plain' });
+                    fileWriter.write(dataObj);
+                }
+            };
+            fileWriter.truncate(0);
         });
     }
 
