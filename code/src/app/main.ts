@@ -48,11 +48,15 @@ document.addEventListener('deviceready',() => {
     let frame = document.createElement("div")
     document.body.append(WallpaperFrame.generateFrame(frame))
 
+    let backlayer = document.createElement("div")
+    backlayer.classList.add("layer")
+    frame.append(backlayer)
+
     let liveline = new LiveLine()
     frame.append(liveline.buildGUI())
 
     TaskBoard.load().then(() => {
-        frame.append(TaskGUI.buildGUI())
+        backlayer.append(TaskGUI.buildGUI())
     })
 
 })
