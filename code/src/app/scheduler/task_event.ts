@@ -73,6 +73,7 @@ class TaskGUI {
         return svg
     }
     public static updateGUI() {
+        if(!this.GUI) return
         this.GUI.innerHTML = ""
         this.generateGUIHtml(this.GUI)
     }
@@ -118,6 +119,8 @@ class TaskGUI {
         })
     }
     private static generateTaskBricks(parent: SVGElement, tasks: Task[], transformer?: (group: SVGElement, task: Task)=>void) {
+        if(tasks.length == 0) return
+
         let top = 120
         let calcMargin = (task: Task) => {
             let base = 500

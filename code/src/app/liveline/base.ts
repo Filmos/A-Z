@@ -19,13 +19,17 @@ class LiveLine {
             this.currentInput.display((e.target as HTMLInputElement).parentElement.parentElement)
         })
         input.addEventListener("keypress", (e) => {
-            if(this.currentInput == null || e.key != "Enter") return
-            this.currentInput.execute()
-            this.currentInput = null;
+            try {
+                if (this.currentInput == null || e.key != "Enter") return
+                this.currentInput.execute()
+                this.currentInput = null;
 
-            let inp = (e.target as HTMLInputElement)
-            inp.value = ""
-            inp.dispatchEvent(new Event('input'))
+                let inp = (e.target as HTMLInputElement)
+                inp.value = ""
+                inp.dispatchEvent(new Event('input'))
+            } catch (e) {
+                alert(e)
+            }
         })
 
         return wrapper

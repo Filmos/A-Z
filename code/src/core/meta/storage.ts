@@ -3,31 +3,14 @@ class FileStorage {
 
     static load(path: string) {
         return new Promise(async (resolve) => {
-            let fileEntry = await this.prepFile(path)
-            fileEntry.file(function (file: any) {
-                var reader = new FileReader();
-                reader.onloadend = function() {
-                    resolve(JSON.parse(""+this.result))
-                };
-                reader.readAsText(file);
-            });
+            resolve(JSON.parse("" + window.localStorage.getItem(path)))
         });
     }
     static async write(path: string, data: any) {
         data = JSON.stringify(data)
-        let fileEntry = await this.prepFile(path)
-        fileEntry.createWriter(function (fileWriter: any) {
-            fileWriter.onerror = function (e: any) {
-                console.log("Failed file write: " + e.toString());
-            };
-
-            fileWriter.onwriteend = function() {
-                if (fileWriter.length === 0) {
-                    let dataObj = new Blob([data], { type: 'text/plain' });
-                    fileWriter.write(dataObj);
-                }
-            };
-            fileWriter.truncate(0);
+        return new Promise<void>(async (resolve) => {
+            window.localStorage.setItem(path, data)
+            resolve()
         });
     }
 
@@ -38,9 +21,10 @@ class FileStorage {
             // @ts-ignore
             window.requestFileSystem(window.PERSISTENT, 0, function (fs) {
                 fs.root.getFile(path+".txt", { create: true, exclusive: false }, function (fileEntry: any) {
+                    alert("<-->")
                     FileStorage.fileAccessor[path] = fileEntry
                     return resolve(fileEntry)
-                });
+                }, alert);
             });
         });
 
