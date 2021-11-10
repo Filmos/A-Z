@@ -49,8 +49,7 @@ document.addEventListener('deviceready',() => {
     document.body.append(liveline.buildGUI())
 
     TaskBoard.load().then(() => {
-        let tasks = new TaskBoard()
-        document.body.append(tasks.buildGUI())
+        document.body.append(TaskGUI.buildGUI())
     })
 
 })
