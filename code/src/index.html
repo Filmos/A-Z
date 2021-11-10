@@ -155,11 +155,11 @@
             }
 
             .task-monument {
-                bottom: 48px;
                 left: 8px;
                 width: calc(100% - 16px);
                 height: AUTO;
-                position: fixed;
+                position: relative;
+                margin-top: calc(100vh - 6.4rem  - min(120%, 75vh + 19px) - 35px);
                 max-height: 75vh;
             }
             .task-monument mask polygon {
@@ -178,6 +178,26 @@
                 opacity: 0.2;
             }
 
+
+            .top-shrinker {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100vw;
+                height: 16px;
+                fill: #0d1021;
+                opacity: 0;
+                transition: opacity 0.5s;
+            }
+            .top-shrinker:hover {
+                opacity: 0.8;
+            }
+            .top-shrinker polygon {
+                opacity: 0.5;
+            }
+            .top-shrinker polygon:hover {
+                opacity: 1;
+            }
         </style>
 <!--        <link rel="stylesheet" type="text/css" href="style.css">-->
         <title>A-Z</title>
