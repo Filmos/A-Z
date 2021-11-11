@@ -182,6 +182,32 @@
             }
 
 
+            @property --widthAnim {
+                syntax: '<number>';
+                initial-value: 0;
+                inherits: true;
+            }
+            @property --heightAnim {
+                syntax: '<number>';
+                initial-value: 0;
+                inherits: true;
+            }
+            .task-monument mask rect {
+                fill: white;
+                --widthAnim: 0;
+                --heightAnim: 0.05;
+                transform: scale3d(var(--widthAnim), var(--heightAnim), 1);
+                animation: monument-intro 0.4s 0.2s forwards;
+            }
+            @keyframes monument-intro {
+                0% {--widthAnim: 0;--heightAnim: 0.05;}
+                20% {--heightAnim: 0.05;}
+                50% {--widthAnim: 1;}
+                100% {--heightAnim: 1; --widthAnim: 1;}
+            }
+
+
+
             .top-shrinker {
                 position: fixed;
                 top: 0;

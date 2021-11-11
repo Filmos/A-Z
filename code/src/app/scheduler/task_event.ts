@@ -92,6 +92,9 @@ class TaskGUI {
 
         let defs = document.createElementNS("http://www.w3.org/2000/svg", "defs")
         svg.appendChild(defs)
+        let introAnim = document.createElementNS("http://www.w3.org/2000/svg", "mask")
+        introAnim.id = "monument-intro-anim"
+        defs.appendChild(introAnim)
         let mask = document.createElementNS("http://www.w3.org/2000/svg", "mask")
         mask.id = "monument-mask"
         defs.appendChild(mask)
@@ -154,17 +157,32 @@ class TaskGUI {
                 group.appendChild(this.generateTaskTitleElement(top - brickHeight / 2, tasks[t].title))
                 parent.appendChild(group)
                 if(transformer) transformer(group, tasks[t])
+
+                group.setAttributeNS(null, "mask", "url(#monument-intro-anim)")
+                let intro_mask = document.createElementNS("http://www.w3.org/2000/svg", "rect")
+                intro_mask.setAttributeNS(null, "width", 100-2*precalcMargin+"")
+                intro_mask.setAttributeNS(null, "height", brickHeight+"")
+                intro_mask.setAttributeNS(null, "y", top-brickHeight+"")
+                intro_mask.setAttributeNS(null, "x", precalcMargin+"")
+                intro_mask.style.transformOrigin = `50px ${textPos}px`
+
+                setTimeout(()=>{
+                    group.removeAttributeNS(null, "mask")
+                    intro_mask.remove()
+                }, 600)
+
+                parent.querySelector("#monument-intro-anim")?.appendChild(intro_mask)
             } else {
                 brick = group.querySelector("polygon")
                 if(!brick) continue
-                brick.innerHTML = '<animate attributeName="points" dur="1s" fill="freeze" values="'+brick.getAttributeNS(null, "points")+';'+brickPoints+'" restart="always" calcMode="spline" keySplines="0.37,0,0.17,1">'
+                brick.innerHTML = '<animate attributeName="points" dur="0.7s" fill="freeze" values="'+brick.getAttributeNS(null, "points")+';'+brickPoints+'" restart="always" calcMode="spline" keySplines="0.37,0,0.17,1">'
                 // @ts-ignore
                 brick.querySelector("animate")?.beginElement()
 
                 let text = group.querySelector("text")
                 if(text) {
                     text.style.transform = "rotate(0.03deg) translateY("+(textPos-parseFloat(text.getAttributeNS(null, "y")))+"px)"
-                    text.style.transition = "transform 1s cubic-bezier(.37,0,.17,1)"
+                    text.style.transition = "transform 0.7s cubic-bezier(.37,0,.17,1)"
                 }
 
                 setTimeout(()=>{
@@ -175,7 +193,7 @@ class TaskGUI {
                         text.style.transition = ""
                         text.style.transform = "rotate(0.03deg)"
                     }
-                }, 1100)
+                }, 700)
             }
             group.style.transform = "translateY(calc(-"+(t*(2.8/tasks.length-0.1)+0.3)+`px * var(--breath) - 0.3px))`
 
