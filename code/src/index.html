@@ -161,6 +161,7 @@
                 position: relative;
                 margin-top: calc(100vh - min(120%, 75vh + 19px) - 33px);
                 max-height: 75vh;
+                animation: 10s breath infinite cubic-bezier(.25,.01,.75,1)
             }
             .task-monument mask polygon {
                 fill: white;
@@ -170,6 +171,8 @@
                 fill: #262626;
                 font-weight: bolder;
                 font-family: sans-serif;
+                transform: rotate(0.03deg); /* Fixes animation stuttering because yes */
+                transform-origin: center
             }
             .task-monument > g  {
                 opacity: 0;
@@ -201,6 +204,16 @@
 
             .layer {
                 height: 0;
+            }
+
+            @property --breath {
+                syntax: '<number>';
+                initial-value: 0;
+                inherits: true;
+            }
+            @keyframes breath {
+                0%, 100% {--breath: -1}
+                50% {--breath: 1}
             }
         </style>
 <!--        <link rel="stylesheet" type="text/css" href="style.css">-->

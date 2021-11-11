@@ -141,6 +141,7 @@ class TaskGUI {
 
             brick.setAttributeNS(null, "points", `${precalcMargin},${top} ${topMargin},${top-brickHeight} ${100-topMargin},${top-brickHeight} ${100-precalcMargin},${top}`)
             group.appendChild(this.generateTaskTitleElement(top-brickHeight/2, tasks[t].title))
+            group.style.transform = "translateY(calc(-"+(t*(2.8/tasks.length-0.1)+0.3)+`px * var(--breath) - 0.3px))`
             if(transformer) transformer(group, tasks[t])
 
             top -= brickHeight+1.3
