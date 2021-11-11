@@ -63,22 +63,33 @@ class TaskBoard {
 
 class TaskGUI {
     private static GUI: SVGElement;
+    public static updateGUI() {
+        if(!this.GUI) return
+
+        let tasks = Object.values(TaskBoard.allTasks).sort((a, b)=> {
+            if(!a.deadline && !b.deadline) return b.estimatedCompletionTime-a.estimatedCompletionTime
+            if(!a.deadline) return 1
+            if(!b.deadline) return -1
+            if(a.deadline.getTime() != b.deadline.getTime()) return a.deadline.getTime()-b.deadline.getTime()
+            return b.estimatedCompletionTime-a.estimatedCompletionTime
+        })
+
+        let mask = this.GUI.querySelector("#monument-mask") as SVGElement
+        this.generateTaskBricks(mask, tasks)
+        this.generateTaskBricks(this.GUI, tasks, (group, task)=>{
+            group.children[group.children.length-1].remove()
+            group.addEventListener("click", () => {
+                TaskBoard.remove(task.uid)
+            })
+        })
+
+    }
+
     public static buildGUI(): SVGElement {
         let svg = document.createElementNS("http://www.w3.org/2000/svg", "svg")
         svg.setAttributeNS(null, "viewBox", "0 0 100 120")
         svg.classList.add("task-monument")
 
-        this.GUI = svg
-        this.generateGUIHtml(svg)
-        return svg
-    }
-    public static updateGUI() {
-        if(!this.GUI) return
-        this.GUI.innerHTML = ""
-        this.generateGUIHtml(this.GUI)
-    }
-
-    private static generateGUIHtml(svg: SVGElement): void {
         let defs = document.createElementNS("http://www.w3.org/2000/svg", "defs")
         svg.appendChild(defs)
         let mask = document.createElementNS("http://www.w3.org/2000/svg", "mask")
@@ -95,15 +106,6 @@ class TaskGUI {
             <stop offset="90%" stop-color="#3a415f"></stop>`
         defs.appendChild(fill)
 
-        let tasks = Object.values(TaskBoard.allTasks).sort((a, b)=> {
-            if(!a.deadline && !b.deadline) return b.estimatedCompletionTime-a.estimatedCompletionTime
-            if(!a.deadline) return 1
-            if(!b.deadline) return -1
-            if(a.deadline.getTime() != b.deadline.getTime()) return a.deadline.getTime()-b.deadline.getTime()
-            return b.estimatedCompletionTime-a.estimatedCompletionTime
-        })
-
-        this.generateTaskBricks(mask, tasks)
         let gradient = document.createElementNS("http://www.w3.org/2000/svg", "rect")
         gradient.setAttributeNS(null, "width", "100%")
         gradient.setAttributeNS(null, "height", "100%")
@@ -111,15 +113,19 @@ class TaskGUI {
         gradient.setAttributeNS(null, "fill", "url(#monument-gradient)")
         svg.appendChild(gradient)
 
-        this.generateTaskBricks(svg, tasks, (group, task)=>{
-            group.children[group.children.length-1].remove()
-            group.addEventListener("click", () => {
-                TaskBoard.remove(task.uid)
-            })
-        })
+        this.GUI = svg
+        this.updateGUI()
+        return svg
     }
     private static generateTaskBricks(parent: SVGElement, tasks: Task[], transformer?: (group: SVGElement, task: Task)=>void) {
         if(tasks.length == 0) return
+
+        let flags = {}
+        tasks.forEach(t => {flags[t.uid] = true})
+        parent.querySelectorAll(":scope > g").forEach((brick)=>{
+            let uid = brick.getAttributeNS(null,"uid")
+            if(!flags[uid.slice(1)]) brick.remove()
+        })
 
         let top = 120
         let calcMargin = (task: Task) => {
@@ -131,22 +137,50 @@ class TaskGUI {
         }
         let precalcMargin = calcMargin(tasks[0])
         for(let t = 0; t<tasks.length; t++) {
-            let group = document.createElementNS("http://www.w3.org/2000/svg", "g")
-            let brick = document.createElementNS("http://www.w3.org/2000/svg", "polygon")
-            group.appendChild(brick)
-
             let brickHeight = 4.5+tasks[t].estimatedCompletionTime/20
             let nextMargin = (t+1>=tasks.length?50:calcMargin(tasks[t+1]))
             let topMargin = (nextMargin>=50?50:Math.min(precalcMargin+brickHeight*(nextMargin-precalcMargin)/(brickHeight+1.3), precalcMargin+brickHeight*0.7))
+            let brickPoints = `${precalcMargin},${top} ${topMargin},${top-brickHeight} ${100-topMargin},${top-brickHeight} ${100-precalcMargin},${top}`
+            let textPos = (top - brickHeight / 2)
 
-            brick.setAttributeNS(null, "points", `${precalcMargin},${top} ${topMargin},${top-brickHeight} ${100-topMargin},${top-brickHeight} ${100-precalcMargin},${top}`)
-            group.appendChild(this.generateTaskTitleElement(top-brickHeight/2, tasks[t].title))
+            let group = parent.querySelector(":scope > g[uid=t"+tasks[t].uid+"]") as SVGElement
+            let brick : SVGElement
+            if(!group) {
+                group = document.createElementNS("http://www.w3.org/2000/svg", "g")
+                brick = document.createElementNS("http://www.w3.org/2000/svg", "polygon")
+                brick.setAttributeNS(null, "points", brickPoints)
+                group.setAttributeNS(null, "uid", "t"+tasks[t].uid)
+                group.appendChild(brick)
+                group.appendChild(this.generateTaskTitleElement(top - brickHeight / 2, tasks[t].title))
+                parent.appendChild(group)
+                if(transformer) transformer(group, tasks[t])
+            } else {
+                brick = group.querySelector("polygon")
+                if(!brick) continue
+                brick.innerHTML = '<animate attributeName="points" dur="1s" fill="freeze" values="'+brick.getAttributeNS(null, "points")+';'+brickPoints+'" restart="always" calcMode="spline" keySplines="0.37,0,0.17,1">'
+                // @ts-ignore
+                brick.querySelector("animate")?.beginElement()
+
+                let text = group.querySelector("text")
+                if(text) {
+                    text.style.transform = "rotate(0.03deg) translateY("+(textPos-parseFloat(text.getAttributeNS(null, "y")))+"px)"
+                    text.style.transition = "transform 1s cubic-bezier(.37,0,.17,1)"
+                }
+
+                setTimeout(()=>{
+                    brick.setAttributeNS(null, "points", brickPoints)
+                    brick.innerHTML = ""
+                    if(text) {
+                        text.setAttributeNS(null, "y", textPos + "")
+                        text.style.transition = ""
+                        text.style.transform = "rotate(0.03deg)"
+                    }
+                }, 1100)
+            }
             group.style.transform = "translateY(calc(-"+(t*(2.8/tasks.length-0.1)+0.3)+`px * var(--breath) - 0.3px))`
-            if(transformer) transformer(group, tasks[t])
 
             top -= brickHeight+1.3
             precalcMargin = nextMargin
-            parent.appendChild(group)
         }
     }
     private static generateTaskTitleElement(pozY: number, text: string): SVGTextElement {
