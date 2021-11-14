@@ -34,7 +34,7 @@ class Task {
 
 class TaskBoard {
     public static allTasks: { [uid: string]: Task } = {};
-    public static activeTask: string;
+    public static selectedTask: string;
 
     public static registerTask(task: Task) {
         this.allTasks[task.uid] = task
@@ -44,49 +44,62 @@ class TaskBoard {
         if (!this.allTasks[uid]) return
 
         delete this.allTasks[uid]
-        if(this.activeTask == uid) this.unselectTask()
+        if(this.selectedTask == uid) this.unselectTask()
         this.save()
     }
 
     public static toggleSelectTask(uid: string) {
-        if(this.activeTask == uid) this.unselectTask()
+        if(this.selectedTask == uid) this.unselectTask()
         else this.selectTask(uid)
     }
-    public static selectTask(uid: string) {
-        this.unselectTask()
+    public static selectTask(uid: string, start?: Date) {
+        this.unselectTask(true)
         let task = this.allTasks[uid]
         if(!task) return
-        this.activeTask = uid
+        this.selectedTask = uid
 
-        let date = new Date()
-        date.setSeconds(date.getSeconds() - task.timeSpent)
+        let date = start
+        if(!date) {
+            date = new Date()
+            date.setSeconds(date.getSeconds() - task.timeSpent)
+        }
         Clock.countdownFrom(date)
 
-        TaskGUI.updateGUI()
+        this.save()
     }
-    public static unselectTask() {
-        if(!this.activeTask) return
-        let task = this.allTasks[this.activeTask]
-        this.activeTask = ""
+    public static unselectTask(noSave?: boolean) {
+        if(!this.selectedTask) return
+        let task = this.allTasks[this.selectedTask]
+        this.selectedTask = ""
 
         if(task && Clock.getTime()>0) {
             task.timeSpent = Clock.getTime()
-            this.save()
+            if(!noSave) this.save()
         }
 
         Clock.stopCountdown()
     }
 
     public static save() {
-        FileStorage.write("tasks", Object.values(this.allTasks).map(t => t.toJson()))
+        let save : any = {tasks: Object.values(this.allTasks).map(t => t.toJson())}
+        if(this.selectedTask) {
+            save.selected = {uid: this.selectedTask, start: Clock.countdownStart.getTime()}
+        }
+
+        FileStorage.write("tasks", save)
         TaskGUI.updateGUI()
     }
     public static load() {
         return new Promise<void>((resolve) => {
             this.allTasks = {}
-            FileStorage.load("tasks").then((storedData: any[]) => {
-                if (storedData && storedData.forEach)
-                    storedData.forEach(t => Task.fromJson(t))
+            FileStorage.load("tasks").then((storedData: any) => {
+                if(!storedData) return resolve()
+                if(Array.isArray(storedData)) storedData = {tasks: storedData}
+
+                if(storedData.tasks?.forEach)
+                    storedData.tasks.forEach((t: any) => Task.fromJson(t))
+                if(storedData.selected?.uid && storedData.selected?.start)
+                    TaskBoard.selectTask(storedData.selected.uid, new Date(storedData.selected.start))
                 resolve()
             })
         });
@@ -231,7 +244,7 @@ class TaskGUI {
                 }, 700)
             }
 
-            if(TaskBoard.activeTask!=tasks[t].uid) group.classList.remove("selected-task")
+            if(TaskBoard.selectedTask!=tasks[t].uid) group.classList.remove("selected-task")
             else group.classList.add("selected-task")
             group.style.transform = "translateY(calc(-"+(t*(2.8/tasks.length-0.1)+0.3)+`px * var(--breath) - 0.3px))`
 

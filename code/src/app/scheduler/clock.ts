@@ -1,6 +1,6 @@
 class Clock {
     private static clocks : Clock[] = []
-    private static countdownStart : Date
+    public static countdownStart : Date
     private static interval: NodeJS.Timeout
 
     public static getTime(): number {
