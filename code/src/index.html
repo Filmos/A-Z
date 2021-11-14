@@ -163,6 +163,9 @@
                 max-height: 75vh;
                 animation: 10s breath infinite cubic-bezier(.25,.01,.75,1)
             }
+            .task-monument g {
+                cursor: pointer;
+            }
             .task-monument mask polygon {
                 fill: white;
             }
@@ -173,6 +176,7 @@
                 font-family: sans-serif;
                 transform: rotate(0.03deg); /* Fixes animation stuttering because yes */
                 transform-origin: center;
+                user-select: none;
             }
             .task-monument > g * {
                 opacity: 0;
@@ -263,6 +267,7 @@
                 font-family: 'LCD',monospace;
                 fill: #BFD2FF;
                 filter: url(#glow);
+                user-select: none;
             }
             .the-clock text:first-of-type {
                 fill: #15161e;
