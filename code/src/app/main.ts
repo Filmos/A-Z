@@ -59,7 +59,5 @@ document.addEventListener('deviceready',() => {
     frame.append(liveline.buildGUI())
 
     frame.append((new Clock()).buildGUI())
-    Clock.countdownFrom(new Date())
-
 
 })

@@ -166,7 +166,7 @@
             .task-monument mask polygon {
                 fill: white;
             }
-            .task-monument mask text {
+            .task-monument text {
                 font-size: 4px;
                 fill: #262626;
                 font-weight: bolder;
@@ -174,11 +174,16 @@
                 transform: rotate(0.03deg); /* Fixes animation stuttering because yes */
                 transform-origin: center;
             }
-            .task-monument > g  {
+            .task-monument > g * {
                 opacity: 0;
             }
-            .task-monument > g:hover  {
+            .task-monument > g:hover polygon {
                 opacity: 0.2;
+            }
+            .task-monument > g.selected-task text {
+                opacity: 1;
+                fill: #BFD2FF;
+                filter: url(#glow);
             }
 
 

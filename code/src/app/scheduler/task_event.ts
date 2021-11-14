@@ -2,8 +2,9 @@ class Task {
     @D("UID") public readonly uid: string;
     @D("Identifier") public readonly title: string;
     @D public readonly estimatedCompletionTime: number;
-
     @D public deadline: Date;
+
+    @D public timeSpent: number = 0;
 
     constructor(title: string, estimatedCompletionTime: number, uid?: string) {
         this.uid = uid||(""+Date.now())
@@ -16,6 +17,7 @@ class Task {
     public static fromJson(json: any): Task {
         let task = new Task(json.title, parseInt(json.estimatedCompletionTime), json.uid)
         if(json.deadline) task.deadline = new Date(parseInt(json.deadline))
+        task.timeSpent = json.timeSpent || 0
         return task
     }
     public toJson(): any {
@@ -23,7 +25,8 @@ class Task {
             uid: this.uid,
             title: this.title,
             estimatedCompletionTime: this.estimatedCompletionTime,
-            deadline: this.deadline?.getTime()
+            deadline: this.deadline?.getTime(),
+            timeSpent: this.timeSpent
         }
     }
 
@@ -31,16 +34,53 @@ class Task {
 
 class TaskBoard {
     public static allTasks: { [uid: string]: Task } = {};
+    public static activeTask: string;
 
     public static registerTask(task: Task) {
         this.allTasks[task.uid] = task
+    }
+
+    public static remove(uid: string) {
+        if (!this.allTasks[uid]) return
+
+        delete this.allTasks[uid]
+        if(this.activeTask == uid) this.unselectTask()
+        this.save()
+    }
+
+    public static toggleSelectTask(uid: string) {
+        if(this.activeTask == uid) this.unselectTask()
+        else this.selectTask(uid)
+    }
+    public static selectTask(uid: string) {
+        this.unselectTask()
+        let task = this.allTasks[uid]
+        if(!task) return
+        this.activeTask = uid
+
+        let date = new Date()
+        date.setSeconds(date.getSeconds() - task.timeSpent)
+        Clock.countdownFrom(date)
+
+        TaskGUI.updateGUI()
+    }
+    public static unselectTask() {
+        if(!this.activeTask) return
+        let task = this.allTasks[this.activeTask]
+        this.activeTask = ""
+
+        if(task && Clock.getTime()>0) {
+            task.timeSpent = Clock.getTime()
+            this.save()
+        }
+
+        Clock.stopCountdown()
     }
 
     public static save() {
         FileStorage.write("tasks", Object.values(this.allTasks).map(t => t.toJson()))
         TaskGUI.updateGUI()
     }
-
     public static load() {
         return new Promise<void>((resolve) => {
             this.allTasks = {}
@@ -50,14 +90,6 @@ class TaskBoard {
                 resolve()
             })
         });
-    }
-
-    public static remove(uid: string) {
-        if (!this.allTasks[uid]) return
-
-        delete this.allTasks[uid]
-        TaskGUI.updateGUI()
-        this.save()
     }
 }
 
@@ -77,8 +109,10 @@ class TaskGUI {
         let mask = this.GUI.querySelector("#monument-mask") as SVGElement
         this.generateTaskBricks(mask, tasks)
         this.generateTaskBricks(this.GUI, tasks, (group, task)=>{
-            group.children[group.children.length-1].remove()
             group.addEventListener("click", () => {
+                TaskBoard.toggleSelectTask(task.uid)
+            })
+            group.addEventListener("dblclick", () => {
                 TaskBoard.remove(task.uid)
             })
         })
@@ -89,6 +123,7 @@ class TaskGUI {
         let svg = document.createElementNS("http://www.w3.org/2000/svg", "svg")
         svg.setAttributeNS(null, "viewBox", "0 0 100 120")
         svg.classList.add("task-monument")
+        svg.innerHTML = SVGFilters.glowFilter()
 
         let defs = document.createElementNS("http://www.w3.org/2000/svg", "defs")
         svg.appendChild(defs)
@@ -195,6 +230,9 @@ class TaskGUI {
                     }
                 }, 700)
             }
+
+            if(TaskBoard.activeTask!=tasks[t].uid) group.classList.remove("selected-task")
+            else group.classList.add("selected-task")
             group.style.transform = "translateY(calc(-"+(t*(2.8/tasks.length-0.1)+0.3)+`px * var(--breath) - 0.3px))`
 
             top -= brickHeight+1.3

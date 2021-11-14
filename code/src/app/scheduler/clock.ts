@@ -3,12 +3,16 @@ class Clock {
     private static countdownStart : Date
     private static interval: NodeJS.Timeout
 
+    public static getTime(): number {
+        if(!this.countdownStart) return 0
+        return Math.floor((Date.now()-Clock.countdownStart.getTime())/1000)
+    }
     public static countdownFrom(start: Date) {
         this.stopCountdown()
         this.countdownStart = start
 
         let updateFunc = ()=>{
-            let time = Math.floor((Date.now()-Clock.countdownStart.getTime())/1000)
+            let time = Clock.getTime()
             let sec = time%60
             time = Math.floor(time/60)
             let min = time%60
@@ -38,13 +42,7 @@ class Clock {
         let svg = document.createElementNS("http://www.w3.org/2000/svg", "svg")
         svg.setAttributeNS(null, "viewBox", "0 0 80 16")
         svg.classList.add("the-clock")
-        svg.innerHTML = `<filter id="glow" filterUnits="userSpaceOnUse" x="-50%" y="-50%" width="200%" height="200%">
-          <feGaussianBlur in="SourceGraphic" stdDeviation="0.5" result="blur"></feGaussianBlur>
-          <feMerge>
-            <feMergeNode in="blur"></feMergeNode>
-            <feMergeNode in="SourceGraphic"></feMergeNode>
-          </feMerge>
-        </filter>`
+        svg.innerHTML = SVGFilters.glowFilter()
 
         let backdrop = document.createElementNS("http://www.w3.org/2000/svg", "text")
         backdrop.setAttributeNS(null, "dominant-baseline", "middle")
