@@ -241,6 +241,29 @@
                 0%, 100% {--breath: -1}
                 50% {--breath: 1}
             }
+
+            @font-face {
+                font-family: LCD;
+                src: url(LCD+.ttf);
+            }
+
+            .the-clock {
+                max-width: 62.5vh;
+                margin: auto;
+                display: block;
+                position: relative;
+                top: 1rem;
+            }
+            .the-clock text {
+                font-family: 'LCD',monospace;
+                fill: #BFD2FF;
+                filter: url(#glow);
+            }
+            .the-clock text:first-of-type {
+                fill: #15161e;
+                opacity: 0.38;
+                filter: none;
+            }
         </style>
 <!--        <link rel="stylesheet" type="text/css" href="style.css">-->
         <title>A-Z</title>

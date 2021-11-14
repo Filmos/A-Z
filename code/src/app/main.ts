@@ -51,12 +51,15 @@ document.addEventListener('deviceready',() => {
     let backlayer = document.createElement("div")
     backlayer.classList.add("layer")
     frame.append(backlayer)
+    TaskBoard.load().then(() => {
+        backlayer.append(TaskGUI.buildGUI())
+    })
 
     let liveline = new LiveLine()
     frame.append(liveline.buildGUI())
 
-    TaskBoard.load().then(() => {
-        backlayer.append(TaskGUI.buildGUI())
-    })
+    frame.append((new Clock()).buildGUI())
+    Clock.countdownFrom(new Date())
+
 
 })
