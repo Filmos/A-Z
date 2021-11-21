@@ -44,7 +44,7 @@ class TaskBoard {
         if (!this.allTasks[uid]) return
 
         delete this.allTasks[uid]
-        if(this.selectedTask == uid) this.unselectTask()
+        if(this.selectedTask == uid) this.unselectTask(true)
         this.save()
     }
 
@@ -122,11 +122,15 @@ class TaskGUI {
         let mask = this.GUI.querySelector("#monument-mask") as SVGElement
         this.generateTaskBricks(mask, tasks)
         this.generateTaskBricks(this.GUI, tasks, (group, task)=>{
+            let lastClick = Date.now()
             group.addEventListener("click", () => {
-                TaskBoard.toggleSelectTask(task.uid)
-            })
-            group.addEventListener("dblclick", () => {
-                TaskBoard.remove(task.uid)
+                if(Date.now()-lastClick > 400) {
+                    TaskBoard.toggleSelectTask(task.uid)
+                }
+                else
+                    TaskBoard.remove(task.uid)
+
+                lastClick = Date.now()
             })
         })
 
@@ -233,15 +237,19 @@ class TaskGUI {
                     text.style.transition = "transform 0.7s cubic-bezier(.37,0,.17,1)"
                 }
 
-                setTimeout(()=>{
+                if(brick.getAttributeNS(null, "timeId"))
+                    clearTimeout(parseInt(brick.getAttributeNS(null, "timeId")))
+                let timeId = setTimeout(()=>{
                     brick.setAttributeNS(null, "points", brickPoints)
                     brick.innerHTML = ""
+                    brick.removeAttributeNS(null, "timeId")
                     if(text) {
                         text.setAttributeNS(null, "y", textPos + "")
                         text.style.transition = ""
                         text.style.transform = "rotate(0.03deg)"
                     }
                 }, 700)
+                brick.setAttributeNS(null, "timeId", timeId+"")
             }
 
             if(TaskBoard.selectedTask!=tasks[t].uid) group.classList.remove("selected-task")
