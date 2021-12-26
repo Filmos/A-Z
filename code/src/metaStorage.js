@@ -1,3 +1,0 @@
-metaStorage = { 
-commits: 72
-} 
