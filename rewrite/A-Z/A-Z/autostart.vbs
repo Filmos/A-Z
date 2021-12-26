@@ -1,1 +1,0 @@
-CreateObject("Wscript.Shell").Run "npm run local",0,True

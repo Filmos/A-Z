@@ -1,24 +1,25 @@
-# a-z
-
 ## Project setup
 ```
 npm install
 ```
 
-### Compiles and hot-reloads for development
+### Compiles and hot-reloads for development (localhost:8090)
 ```
-npm run serve
-```
-
-### Compiles and minifies for production
-```
-npm run build
+npm run dev
 ```
 
-### Lints and fixes files
+### Runs locally for wallpaper engine (localhost:8000)
 ```
-npm run lint
+npm run local
 ```
 
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+### Pushes update to mobile device
+```
+npm run push
+```
+
+#### Configuring mobile device before installation
+ - Download SKDs with Android Studio
+ - Enter developer mode on your device
+ - Turn on USB debugging
+ - Enable USB installation
