@@ -1,4 +1,4 @@
-class LiveLine {
+export class LiveLine {
     private currentInput: LiveLine.Input = null
 
     public buildGUI(): Element {
@@ -38,7 +38,7 @@ class LiveLine {
 }
 
 
-namespace LiveLine {
+export namespace LiveLine {
     export class Input {
         private readonly commands: { [c: string]: {[p: string]: { value: any, display: string }} }
 
