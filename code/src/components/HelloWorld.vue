@@ -30,14 +30,28 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
+    import Vue from 'vue';
+    import { ref, set, onValue } from "firebase/database";
+    import db from '@/core/database';
 
-export default Vue.extend({
-  name: 'HelloWorld',
-  props: {
-    msg: String,
-  },
-});
+
+    const loc = ref(db, "temp")
+    onValue(loc, (snapshot) => {
+        const rand = Math.floor(Math.random() * 100)
+        const oldRand = snapshot.val();
+        console.log(`${oldRand} --> ${rand}`)
+        set(loc, rand)
+    }, {
+        onlyOnce: true
+    });
+
+
+    export default Vue.extend({
+      name: 'HelloWorld',
+      props: {
+        msg: String,
+      },
+    });
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
