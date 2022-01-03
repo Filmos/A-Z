@@ -20,7 +20,7 @@
     });
 </script>
 
-<style scoped>
+<style scoped lang="scss">
     .liveline {
         height: 2rem;
         background-color: green;
@@ -39,18 +39,12 @@
         fill: #0d1021;
         opacity: 0;
         transition: opacity 0.5s;
-    }
+        &:hover {opacity: 0.8;}
 
-    .top-shrinker:hover {
-        opacity: 0.8;
-    }
-
-    .top-shrinker polygon {
-        opacity: 0.5;
-    }
-
-    .top-shrinker polygon:hover {
-        opacity: 1;
+        polygon {
+            opacity: 0.5;
+            &:hover {opacity: 1;}
+        }
     }
 </style>
 <style>
