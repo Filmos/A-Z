@@ -3,7 +3,6 @@
         <svg class="top-shrinker">
             <polygon v-for="i in 100" :key="i" :points="`${i*30-7},0 ${i*30},12 ${i*30+7},0`" v-on:click="setWidth(i)"></polygon>
         </svg>
-        <div class="liveline" />
         <slot></slot>
     </div>
 </template>
@@ -21,11 +20,6 @@
 </script>
 
 <style scoped lang="scss">
-    .liveline {
-        height: 2rem;
-        background-color: green;
-    }
-
     .frame {
         padding: 12px;
     }

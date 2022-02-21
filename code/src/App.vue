@@ -1,17 +1,19 @@
 <template>
   <div id="app">
-    <Frame><div class="temp"/></Frame>
+    <Frame><Holder/></Frame>
   </div>
 </template>
 
 <script lang="ts">
     import Vue from 'vue';
     import Frame from './components/Frame.vue';
+    import Holder from './components/tasks/Holder.vue';
 
     export default Vue.extend({
       name: 'App',
       components: {
-        Frame
+        Frame,
+        Holder
       }
     });
 </script>
