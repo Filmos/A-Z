@@ -1,11 +1,8 @@
 <template>
     <div class="outer-holder">
-        <svg class="inner-holder" viewBox="0 0 100 100">
-            <path class="border" d="M 50 3 L 97 50 L 50 97 L 3 50 L 50 3" />
-            <Tile transform="scale(1.2)" />
-            <Tile transform="translate(0 44)" />
-            <Tile transform="translate(26.5 26.5) scale(0.8)" />
-            <Tile transform="translate(-26.5 26.5) scale(0.4)" />
+        <svg class="inner-holder" viewBox="0 0 100 100" ref="tiles">
+            <path class="border" d="M 50 3 L 97 50 L 50 97 L 3 50 L 50 3" v-on:dblclick="addNew()"/>
+            <Tile v-for="(tile, key) in tiles" :key="key" :title="tile.title" :priority="tile.priority"/>
         </svg>
     </div>
 </template>
@@ -13,14 +10,45 @@
 <script lang="ts">
     import Vue from 'vue';
     import Tile from './Tile.vue';
+    import db from '@/core/database.ts';
+    import { ref, onValue, push, set } from "firebase/database";
 
+    const dbRef = ref(db, 'tasks/');
 
     export default Vue.extend({
         name: 'Frame',
-        methods: {
-        },
         components: {
             Tile
+        },
+        data() {
+            return { tiles: null }
+        },
+        methods: {
+            addNew() {
+                set(push(dbRef), {
+                    title: String.fromCharCode(Math.floor(Math.random() * 25 + 65)) + String.fromCharCode(Math.floor(Math.random() * 25 + 97)) + String.fromCharCode(Math.floor(Math.random() * 25 + 97)) + String.fromCharCode(Math.floor(Math.random() * 25 + 97)),
+                    priority: Math.floor(Math.random()*10)
+                })
+            },
+            arrangeTiles() {
+                let tiles = [...(this.$refs["tiles"] as HTMLElement).querySelectorAll(".inner-holder > *:not(.border)")] as HTMLElement[]
+                tiles = tiles.sort((a: HTMLElement, b: HTMLElement) => (parseFloat(a.getAttribute("priority") || "0") - parseFloat(b.getAttribute("priority") || "0")))
+                setTimeout(() => {
+                    for(let t = 0; t < tiles.length; t++) {
+                        let trans = Math.round((1 - 1 / (2 ** t)) * 44 * 1000) / 1000
+                        tiles[t].style.transform = "translate(" + trans + "px, " + trans + "px) scale(" + 1 / (2 ** t) + ")"
+                        tiles[t].style.transitionDelay = Math.round(Math.random()*150)/1000+"s"
+                    }
+                }, 20)
+            }
+        },
+        mounted() {
+            onValue(dbRef, (snapshot) => {
+                this.tiles = snapshot.val();
+            })
+        },
+        updated() {
+            this.arrangeTiles()
         }
     });
 </script>
