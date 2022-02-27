@@ -1,7 +1,7 @@
 <template>
     <g transform-origin="50 6" :priority="priority">
         <path d="M 50 6 L 72 28 L 50 50 L 28 28 L 50 6" />
-        <text x="50" y="30" dominant-baseline="middle" text-anchor="middle">{{ title[0] }}</text>
+        <text x="50" y="30" dominant-baseline="middle" text-anchor="middle">{{ priority }}</text>
     </g>
 </template>
 
