@@ -2,16 +2,16 @@
     <div class="outer-holder">
         <svg class="inner-holder" viewBox="0 0 100 100" ref="tiles">
             <path class="border" d="M 50 3 L 97 50 L 50 97 L 3 50 L 50 3" v-on:dblclick="addNew()"/>
-            <Tile v-for="(tile, key) in tiles" :key="key" :title="tile.title" :priority="tile.priority"/>
+            <Tile v-for="(tile, key) in orderedTiles" :key="key" :title="tile.title" :priority="tile.priority"/>
         </svg>
     </div>
 </template>
 
 <script lang="ts">
     import Vue from 'vue';
-    import Tile from './Tile.vue';
-    import db from '@/core/database.ts';
     import { ref, onValue, push, set } from "firebase/database";
+    import Tile from './Tile.vue';
+    import db from '@/core/database';
 
     const dbRef = ref(db, 'tasks/');
 
@@ -22,6 +22,14 @@
         },
         data() {
             return { tiles: null }
+        },
+        computed: {
+            orderedTiles() {
+                return Object.fromEntries(Object.entries(this.tiles || {}).map(([k, t]: [string, Object]) => {
+                    let prior = Math.random()
+                    return [k, { ...t, priority: prior }]
+                }))
+            }
         },
         methods: {
             addNew() {
