@@ -1,7 +1,7 @@
 <template>
     <div class="outer-holder">
         <svg class="inner-holder" viewBox="0 0 100 100" ref="tiles">
-            <path class="border" d="M 50 3 L 97 50 L 50 97 L 3 50 L 50 3" v-on:dblclick="addNew()"/>
+            <path class="border" d="M 50 3 L 97 50 L 50 97 L 3 50 L 50 3" @dblclick="addNew()"/>
             <Tile v-for="(tile, key) in orderedTiles" :key="key" :title="tile.title" :priority="tile.priority"/>
         </svg>
     </div>
@@ -49,9 +49,9 @@
             let tiles = ([...(this.$refs["tiles"] as HTMLElement).querySelectorAll(".inner-holder > *:not(.border)")] as HTMLElement[])
                 .map(el => { return { element: el, priority: parseFloat(el.getAttribute("priority") || "0") } })
                 .sort((a, b) => (b["priority"] - a["priority"]))
-            console.log(tiles)
+
             setTimeout(() => {
-                const initialScale = 1.1
+                const initialScale = 1.243
                 let recentScale = initialScale/tiles[0].priority
                 let stack = [{ x: 0, y: 0, maxL: 2, maxR: 2, maxSize: initialScale}]
 
@@ -60,7 +60,6 @@
                     if (!thisStack) break
 
                     let thisSize = recentScale * tiles[t].priority
-                    console.log(thisSize, thisStack.maxSize, recentScale)
                     if (thisSize > thisStack.maxSize) {
                         thisSize = thisStack.maxSize
                         recentScale = thisStack.maxSize / tiles[t].priority

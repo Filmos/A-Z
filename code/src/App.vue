@@ -1,6 +1,9 @@
 <template>
   <div id="app">
-    <Frame><Holder/></Frame>
+    <Frame>
+        <Holder/>
+        <Liveline/>
+    </Frame>
   </div>
 </template>
 
@@ -8,12 +11,14 @@
     import Vue from 'vue';
     import Frame from './components/Frame.vue';
     import Holder from './components/tasks/Holder.vue';
+    import Liveline from './components/liveline/Liveline.vue';
 
     export default Vue.extend({
       name: 'App',
       components: {
         Frame,
-        Holder
+        Holder,
+        Liveline
       }
     });
 </script>

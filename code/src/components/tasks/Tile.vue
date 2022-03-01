@@ -9,7 +9,7 @@
     import Vue from 'vue';
 
     export default Vue.extend({
-        name: 'Frame',
+        name: 'Tile',
         props: ['title', 'priority'],
         methods: {
         },
