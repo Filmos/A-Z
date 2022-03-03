@@ -3,7 +3,7 @@
         <div class="task-title" ref="title"/>
         <svg class="inner-holder" viewBox="0 0 100 100" ref="tiles">
             <path class="border" d="M 50 3 L 97 50 L 50 97 L 3 50 L 50 3" />
-            <Tile v-for="(tile, key) in orderedTiles" :key="key" :dbKey="key" :title="tile.title" :priority="tile.priority" @displaytitle="displayTitle" @hidetitle="hideTitle"/>
+            <Tile v-for="(tile, key) in orderedTiles" :key="key" :dbKey="key" :full="tile" :title="tile.title" :priority="tile.priority" @displaytitle="displayTitle" @hidetitle="hideTitle"/>
         </svg>
     </div>
 </template>
@@ -29,7 +29,8 @@
             orderedTiles() {
                 return Object.fromEntries(Object.entries(this.tiles || {})
                     .filter(([, t]: [string, any]) => {
-                        if (!t.headsup) return true
+                        console.log(t)
+                        if (t.headsup === undefined) return true
                         return dateDifferenceInDays(t.deadline, new Date())<=t.headsup
                     })
                     .map(([k, t]: [string, any]) => {

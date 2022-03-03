@@ -7,21 +7,29 @@
 
 <script lang="ts">
     import Vue from 'vue';
-    import { ref, remove } from "firebase/database";
+    import { ref, remove, push, set } from "firebase/database";
     import db from '@/core/database';
     import { multiClick, randomColorFromString } from '@/core/helper';
 
     export default Vue.extend({
         name: 'Tile',
-        props: ['title', 'priority', 'dbKey'],
+        props: ['title', 'priority', 'dbKey', 'full'],
         data() {
             return {
                 mycolor: randomColorFromString(this.dbKey) + "44",
                 clickEvent: multiClick(300, (clicks) => {
                     if (clicks != 2) return
-                    const dbRef = ref(db, 'tasks/' + this.dbKey)
-                    remove(dbRef)
+                    const dbRemRef = ref(db, 'tasks/' + this.dbKey)
+                    remove(dbRemRef)
                     this.$emit('hidetitle', this.title)
+
+                    if (!this.full.repeats) return
+                    let newDate = new Date(this.full.deadline)
+                    newDate.setDate(newDate.getDate() + this.full.repeats)
+                    set(push(ref(db, 'tasks/')), {
+                        ...this.full,
+                        deadline: newDate.getTime()
+                    })
                 })
             }
         },

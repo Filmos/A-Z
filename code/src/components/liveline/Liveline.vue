@@ -19,17 +19,17 @@
         name: 'Liveline',
         methods: {
             properArg(arg: any) {
-                return !!arg.val
+                return arg.val !== undefined
             },
             displayArg(arg: any) {
-                if (!arg || !arg.raw) return "<missing>"
+                if (arg === undefined || arg.raw === undefined) return "<missing>"
                 let ret = arg.display(arg.val)
-                if (!ret) return "<invalid>"
+                if (ret === undefined) return "<invalid>"
                 return ret
             },
             update(command: string) {
                 function parseDate(val: string) {
-                    if (!val) return
+                    if (val === undefined) return
                     let reg = val.match(/^(next)? ?(?:(Su)|(M)|(Tu)|(W)|(Th)|(F)|(Sa))/i)
                     if (reg) {
                         let day = 0
@@ -55,7 +55,7 @@
                     }
                 }
                 function parseDuration(val: string) {
-                    if (!val) return
+                    if (val === undefined) return
                     let pat = val.match(/(?:(\d+) ?(?:w(?:e(?:e(?:k(?:s)?)?)?)?))? ?\+? ?(?:(\d+) ?(?:d(?:a(?:y(?:s)?)?)?)?)?/i)
                     if(!pat || (!pat[1] && !pat[2])) return
 
@@ -67,14 +67,14 @@
                 }
 
                 function displayDate(val: Date) {
-                    if (!val) return
+                    if (val === undefined) return
                     let time = dateDifferenceInDays(val, new Date())
                     let specialNames: {[k: string]: string} = {"-1": "Yesterday", "0": "Today", "1": "Tomorrow"}
                     return (specialNames[time+""] || ("In " + time + " days")) + " (" + (val.getDate()+"").padStart(2, "0") + "." + ((val.getMonth() + 1)+"").padStart(2, "0") + ")"
 
                 }
                 function displayDuration(val: number) {
-                    if(!val) return
+                    if(val === undefined) return
                     return val + " day" + (val>1?"s":"")
                 }
 
@@ -97,8 +97,8 @@
                     title: this.command["Task"].val,
                     deadline: this.command["Deadline"].val.getTime()
                 }
-                if (this.command["Heads-up"]?.val) newEntry.headsup = this.command["Heads-up"]?.val
-                if (this.command["Repeats"]?.val) newEntry.repeats = this.command["Repeats"]?.val
+                if (this.command["Heads-up"]?.val !== undefined) newEntry.headsup = this.command["Heads-up"]?.val
+                if (this.command["Repeats"]?.val !== undefined) newEntry.repeats = this.command["Repeats"]?.val
 
                 set(push(dbRef), newEntry)
                 this.command = {}
