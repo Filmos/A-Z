@@ -38,7 +38,7 @@
         },
         computed: {
             shortTitle() {
-                let reg = this.title.match(/(?:^|\s)([A-Z]{2,3})(?:^|\s)/)
+                let reg = this.title.match(/(?:^|\s)([A-Z]{2,3})(?:$|\s)/)
                 if (reg) return reg[1]
 
                 let phrase = this.title as string

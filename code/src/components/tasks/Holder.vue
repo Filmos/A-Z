@@ -114,5 +114,9 @@
         line-height: 2rem;
         font-weight: 700;
         min-height: 2rem;
+
+        cursor: default;
+        user-select: none;
+        pointer-events: none;
     }
 </style>
