@@ -1,6 +1,6 @@
 <template>
     <div class="liveline">
-        <input @input="(e) => update(e.target.value)" @change="(e) => execute(e.target)" type="text" name="text" autocomplete="off" :class="isValid?'':'invalid'">
+        <input @input="(e) => update(e.target.value)" @keyup.enter="(e) => execute(e.target)" type="text" name="text" autocomplete="off" :class="isValid?'':'invalid'">
         <div class="notes">
             <span v-for="(arg, argName) in command" :key="argName" :class="properArg(arg)?'':'invalid'"> {{ argName+": "+displayArg(arg) }} </span>
         </div>
