@@ -21,6 +21,7 @@
                     if (clicks != 2) return
                     const dbRef = ref(db, 'tasks/' + this.dbKey)
                     remove(dbRef)
+                    this.$emit('hidetitle', this.title)
                 })
             }
         },
