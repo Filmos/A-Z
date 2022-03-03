@@ -1,8 +1,9 @@
 <template>
     <div class="outer-holder">
+        <div class="task-title" ref="title"/>
         <svg class="inner-holder" viewBox="0 0 100 100" ref="tiles">
-            <path class="border" d="M 50 3 L 97 50 L 50 97 L 3 50 L 50 3"/>
-            <Tile v-for="(tile, key) in orderedTiles" :key="key" :dbKey="key" :title="tile.title" :priority="tile.priority"/>
+            <path class="border" d="M 50 3 L 97 50 L 50 97 L 3 50 L 50 3" />
+            <Tile v-for="(tile, key) in orderedTiles" :key="key" :dbKey="key" :title="tile.title" :priority="tile.priority" @displaytitle="displayTitle" @hidetitle="hideTitle"/>
         </svg>
     </div>
 </template>
@@ -71,6 +72,15 @@
                     stack.splice(indexL, 0, { x: thisStack.x - thisSize * 22, y: thisStack.y + thisSize * 22, maxL: nextLL, maxR: nextLR, maxSize: Math.min(nextLL, nextLR) })
                 }
             }, 20)
+        },
+        methods: {
+            displayTitle(title: string) {
+                (this.$refs["title"] as HTMLElement).innerText = title
+            },
+            hideTitle(title: string) {
+                if ((this.$refs["title"] as HTMLElement).innerText != title) return
+                (this.$refs["title"] as HTMLElement).innerText = ""
+            }
         }
     });
 </script>
@@ -89,5 +99,13 @@
             stroke-linecap: square;
             stroke-linejoin: miter;
         }
+    }
+
+    .task-title {
+        font-size: 1.75rem;
+        color: $base-color;
+        line-height: 2rem;
+        font-weight: 700;
+        min-height: 2rem;
     }
 </style>

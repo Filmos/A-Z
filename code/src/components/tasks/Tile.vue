@@ -1,5 +1,5 @@
 <template>
-    <g @click="clickEvent" transform-origin="50 6" :priority="priority">
+    <g @click="clickEvent" transform-origin="50 6" :priority="priority" @mouseover="$emit('displaytitle', title)" @mouseleave="$emit('hidetitle', title)">
         <path d="M 50 6 L 72 28 L 50 50 L 28 28 L 50 6" />
         <text x="50" y="30" dominant-baseline="middle" text-anchor="middle">{{ shortTitle }}</text>
     </g>
@@ -14,8 +14,6 @@
     export default Vue.extend({
         name: 'Tile',
         props: ['title', 'priority', 'dbKey'],
-        methods: {
-        },
         data() {
             return {
                 mycolor: randomColorFromString(this.dbKey) + "44",
@@ -55,6 +53,12 @@
 
         path {
             fill: rgba(255, 0, 0, 0.3);
+            transition: transform 0.5s, opacity 0.2s;
+            opacity: 0.6;
+
+            &:hover {
+                opacity: 1;
+            }
         }
 
         text {
