@@ -37,3 +37,13 @@ export function hashString(input: string): number {
 export function randomColorFromString(input: string): string {
     return "#" + (Math.abs(hashString(input)) % (256 ** 3)).toString(16)
 }
+
+export function dateDifferenceInDays(a: Date | number, b: Date | number): number {
+    if (typeof a === 'number') a = new Date(a)
+    if (typeof b === 'number') b = new Date(b)
+
+    const a_zeroed = new Date(a.getFullYear(), a.getMonth(), a.getDate())
+    const b_zeroed = new Date(b.getFullYear(), b.getMonth(), b.getDate())
+
+    return (a_zeroed.getTime()-b_zeroed.getTime())/1000/60/60/24
+}

@@ -13,7 +13,7 @@
     import { ref, onValue } from "firebase/database";
     import Tile from './Tile.vue';
     import db from '@/core/database';
-    import { sortedIndex } from '@/core/helper'
+    import { sortedIndex, dateDifferenceInDays } from '@/core/helper'
 
     const dbRef = ref(db, 'tasks/');
 
@@ -27,10 +27,16 @@
         },
         computed: {
             orderedTiles() {
-                return Object.fromEntries(Object.entries(this.tiles || {}).map(([k, t]: [string, any]) => {
-                    let prior = 1 / Math.max(Math.ceil((t.deadline - (new Date()).getTime()) / 1000 / 60 / 60 / 24)+1, 1)
-                    return [k, { ...t, priority: prior }]
-                }))
+                return Object.fromEntries(Object.entries(this.tiles || {})
+                    .filter(([, t]: [string, any]) => {
+                        if (!t.headsup) return true
+                        return dateDifferenceInDays(t.deadline, new Date())<=t.headsup
+                    })
+                    .map(([k, t]: [string, any]) => {
+                        let prior = 1 / Math.max(dateDifferenceInDays(t.deadline, new Date()), 1)
+                        return [k, { ...t, priority: prior }]
+                    })
+                )
             }
         },
         mounted() {

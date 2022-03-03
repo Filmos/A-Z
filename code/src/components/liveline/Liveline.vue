@@ -11,6 +11,7 @@
     import Vue from 'vue';
     import db from '@/core/database';
     import { ref, push, set } from "firebase/database";
+    import { dateDifferenceInDays } from '@/core/helper';
 
     const dbRef = ref(db, 'tasks/');
 
@@ -67,7 +68,7 @@
 
                 function displayDate(val: Date) {
                     if (!val) return
-                    let time = Math.ceil((val.getTime() - (new Date()).getTime()) / 1000 / 60 / 60 / 24)
+                    let time = dateDifferenceInDays(val, new Date())
                     let specialNames: {[k: string]: string} = {"-1": "Yesterday", "0": "Today", "1": "Tomorrow"}
                     return (specialNames[time+""] || ("In " + time + " days")) + " (" + (val.getDate()+"").padStart(2, "0") + "." + ((val.getMonth() + 1)+"").padStart(2, "0") + ")"
 
