@@ -1,15 +1,15 @@
 <template>
     <div class="outer-holder">
         <svg class="inner-holder" viewBox="0 0 100 100" ref="tiles">
-            <path class="border" d="M 50 3 L 97 50 L 50 97 L 3 50 L 50 3" @dblclick="addNew()"/>
-            <Tile v-for="(tile, key) in orderedTiles" :key="key" :title="tile.title" :priority="tile.priority"/>
+            <path class="border" d="M 50 3 L 97 50 L 50 97 L 3 50 L 50 3"/>
+            <Tile v-for="(tile, key) in orderedTiles" :key="key" :dbKey="key" :title="tile.title" :priority="tile.priority"/>
         </svg>
     </div>
 </template>
 
 <script lang="ts">
     import Vue from 'vue';
-    import { ref, onValue, push, set } from "firebase/database";
+    import { ref, onValue } from "firebase/database";
     import Tile from './Tile.vue';
     import db from '@/core/database';
     import { sortedIndex } from '@/core/helper'
@@ -27,17 +27,9 @@
         computed: {
             orderedTiles() {
                 return Object.fromEntries(Object.entries(this.tiles || {}).map(([k, t]: [string, any]) => {
-                    let prior = Math.floor(Math.random()*100)+1
+                    let prior = 1 / Math.max(Math.ceil((t.deadline - (new Date()).getTime()) / 1000 / 60 / 60 / 24)+1, 1)
                     return [k, { ...t, priority: prior }]
                 }))
-            }
-        },
-        methods: {
-            addNew() {
-                set(push(dbRef), {
-                    title: String.fromCharCode(Math.floor(Math.random() * 25 + 65)) + String.fromCharCode(Math.floor(Math.random() * 25 + 97)) + String.fromCharCode(Math.floor(Math.random() * 25 + 97)) + String.fromCharCode(Math.floor(Math.random() * 25 + 97)),
-                    priority: Math.floor(Math.random()*10)
-                })
             }
         },
         mounted() {
@@ -49,6 +41,7 @@
             let tiles = ([...(this.$refs["tiles"] as HTMLElement).querySelectorAll(".inner-holder > *:not(.border)")] as HTMLElement[])
                 .map(el => { return { element: el, priority: parseFloat(el.getAttribute("priority") || "0") } })
                 .sort((a, b) => (b["priority"] - a["priority"]))
+            if(tiles.length == 0) return
 
             setTimeout(() => {
                 const initialScale = 1.243

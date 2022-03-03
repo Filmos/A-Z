@@ -9,3 +9,17 @@ export function sortedIndex<ArrayType, ValueType>(array: ArrayType[], value: Val
     }
     return low;
 }
+
+export function multiClick(maxDelay: number, func: (clicks: number, ...args: any[])=>void) {
+    let lastClick = 0
+    let clickCount = 0
+
+    function ret(...passThrough: any[]) {
+        if ((new Date()).getTime() - lastClick > maxDelay) clickCount = 0
+        clickCount+=1
+        lastClick = (new Date()).getTime()
+
+        return func(clickCount, ...passThrough)
+    }
+    return ret
+}

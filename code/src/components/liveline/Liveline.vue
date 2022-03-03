@@ -1,6 +1,6 @@
 <template>
     <div class="liveline">
-        <input @input="(e) => update(e.target.value)" type="text" name="text" autocomplete="off" :class="Object.values(command).some(a=>!properArg(a))?'invalid':''">
+        <input @input="(e) => update(e.target.value)" @change="(e) => execute(e.target)" type="text" name="text" autocomplete="off" :class="isValid?'':'invalid'">
         <div class="notes">
             <span v-for="(arg, argName) in command" :key="argName" :class="properArg(arg)?'':'invalid'"> {{ argName+": "+displayArg(arg) }} </span>
         </div>
@@ -9,22 +9,25 @@
 
 <script lang="ts">
     import Vue from 'vue';
+    import db from '@/core/database';
+    import { ref, push, set } from "firebase/database";
+
+    const dbRef = ref(db, 'tasks/');
 
     export default Vue.extend({
         name: 'Liveline',
         methods: {
-            properArg(arg) {
+            properArg(arg: any) {
                 return !!arg.val
             },
-            displayArg(arg) {
-                console.log(arg)
-                if (!arg.raw) return "<missing>"
+            displayArg(arg: any) {
+                if (!arg || !arg.raw) return "<missing>"
                 let ret = arg.display(arg.val)
                 if (!ret) return "<invalid>"
                 return ret
             },
-            update(command) {
-                function parseDate(val) {
+            update(command: string) {
+                function parseDate(val: string) {
                     if (!val) return
                     let reg = val.match(/^(next)? ?(?:(Su)|(M)|(Tu)|(W)|(Th)|(F)|(Sa))/i)
                     if (reg) {
@@ -50,14 +53,14 @@
                         return date
                     }
                 }
-                function parseDuration(val) {
+                function parseDuration(val: string) {
                     if (!val) return
                     let pat = val.match(/(?:(\d+) ?(?:w(?:e(?:e(?:k(?:s)?)?)?)?))? ?\+? ?(?:(\d+) ?(?:d(?:a(?:y(?:s)?)?)?)?)?/i)
-                    if(!pat[1] && !pat[2]) return
+                    if(!pat || (!pat[1] && !pat[2])) return
 
                     let days = 0
-                    days += (pat[1] || 0) * 7
-                    days += (pat[2] || 0) * 1
+                    days += (parseInt(pat[1]) || 0) * 7
+                    days += (parseInt(pat[2]) || 0) * 1
 
                     return days
                 }
@@ -65,11 +68,11 @@
                 function displayDate(val: Date) {
                     if (!val) return
                     let time = Math.ceil((val.getTime() - (new Date()).getTime()) / 1000 / 60 / 60 / 24)
-                    let specialNames = {"-1": "Yesterday", "0": "Today", "1": "Tomorrow"}
+                    let specialNames: {[k: string]: string} = {"-1": "Yesterday", "0": "Today", "1": "Tomorrow"}
                     return (specialNames[time+""] || ("In " + time + " days")) + " (" + (val.getDate()+"").padStart(2, "0") + "." + ((val.getMonth() + 1)+"").padStart(2, "0") + ")"
 
                 }
-                function displayDuration(val) {
+                function displayDuration(val: number) {
                     if(!val) return
                     return val + " day" + (val>1?"s":"")
                 }
@@ -77,7 +80,7 @@
                 this.command = {}
                 if (!command) return
 
-                let args = command.split(";").map(s => s.trim())
+                let args = command.split(";").map((s: string) => s.trim())
                 this.command["Task"] = { raw: args[0], val: args[0], display: v=>v }
                 this.command["Deadline"] = { raw: args[1], val: parseDate(args[1]), display: displayDate }
 
@@ -86,13 +89,29 @@
 
                 if (args.length < 4) return
                 this.command["Repeats"] = { raw: args[3], val: parseDuration(args[3]), display: displayDuration }
+            },
+            execute(input: HTMLInputElement) {
+                if (!this.isValid) return
+                let newEntry : any = {
+                    title: this.command["Task"].val,
+                    deadline: this.command["Deadline"].val.getTime()
+                }
+                if (this.command["Heads-up"]?.val) newEntry.headsup = this.command["Heads-up"]?.val
+                if (this.command["Repeats"]?.val) newEntry.repeats = this.command["Repeats"]?.val
+
+                set(push(dbRef), newEntry)
+                this.command = {}
+                input.value = ""
+            }
+        },
+        computed: {
+            isValid() {
+                if(!this.command) return false
+                return !Object.values(this.command).some(a => !this.properArg(a))
             }
         },
         data() {
-            return { command: "" }
-        },
-        mounted() {
-            (this["$el"].children[0] as HTMLElement).style.fill = this.mycolor;
+            return { command: {} as any }
         }
     });
 </script>
