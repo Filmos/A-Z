@@ -10,12 +10,10 @@
 
 <script lang="ts">
     import Vue from 'vue';
-    import { ref, onValue } from "firebase/database";
+    import { child, onValue } from "firebase/database";
     import Tile from './Tile.vue';
     import db from '@/core/database';
     import { sortedIndex, dateDifferenceInDays } from '@/core/helper'
-
-    const dbRef = ref(db, 'tasks/');
 
     export default Vue.extend({
         name: 'Frame',
@@ -29,7 +27,6 @@
             orderedTiles() {
                 return Object.fromEntries(Object.entries(this.tiles || {})
                     .filter(([, t]: [string, any]) => {
-                        console.log(t)
                         if (t.headsup === undefined) return true
                         return dateDifferenceInDays(t.deadline, new Date())<=t.headsup
                     })
@@ -40,8 +37,8 @@
                 )
             }
         },
-        mounted() {
-            onValue(dbRef, (snapshot) => {
+        async mounted() {
+            onValue(child(await db, 'tasks/'), (snapshot) => {
                 this.tiles = snapshot.val();
             })
         },

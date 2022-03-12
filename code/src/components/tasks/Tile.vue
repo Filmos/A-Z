@@ -7,7 +7,7 @@
 
 <script lang="ts">
     import Vue from 'vue';
-    import { ref, remove, push, set } from "firebase/database";
+    import { child, remove, push, set } from "firebase/database";
     import db from '@/core/database';
     import { multiClick, randomColorFromString } from '@/core/helper';
 
@@ -17,16 +17,16 @@
         data() {
             return {
                 mycolor: randomColorFromString(this.dbKey) + "44",
-                clickEvent: multiClick(300, (clicks) => {
+                clickEvent: multiClick(300, async (clicks) => {
                     if (clicks != 2) return
-                    const dbRemRef = ref(db, 'tasks/' + this.dbKey)
+                    const dbRemRef = child(await db, 'tasks/' + this.dbKey)
                     remove(dbRemRef)
                     this.$emit('hidetitle', this.title)
 
                     if (!this.full.repeats) return
                     let newDate = new Date(this.full.deadline)
                     newDate.setDate(newDate.getDate() + this.full.repeats)
-                    set(push(ref(db, 'tasks/')), {
+                    set(push(child(await db, 'tasks/')), {
                         ...this.full,
                         deadline: newDate.getTime()
                     })

@@ -10,10 +10,8 @@
 <script lang="ts">
     import Vue from 'vue';
     import db from '@/core/database';
-    import { ref, push, set } from "firebase/database";
+    import { child, push, set } from "firebase/database";
     import { dateDifferenceInDays } from '@/core/helper';
-
-    const dbRef = ref(db, 'tasks/');
 
     export default Vue.extend({
         name: 'Liveline',
@@ -91,7 +89,7 @@
                 if (args.length < 4) return
                 this.command["Repeats"] = { raw: args[3], val: parseDuration(args[3]), display: displayDuration }
             },
-            execute(input: HTMLInputElement) {
+            async execute(input: HTMLInputElement) {
                 if (!this.isValid) return
                 let newEntry : any = {
                     title: this.command["Task"].val,
@@ -100,7 +98,7 @@
                 if (this.command["Heads-up"]?.val !== undefined) newEntry.headsup = this.command["Heads-up"]?.val
                 if (this.command["Repeats"]?.val !== undefined) newEntry.repeats = this.command["Repeats"]?.val
 
-                set(push(dbRef), newEntry)
+                set(push(child(await db, 'tasks/')), newEntry)
                 this.command = {}
                 input.value = ""
             }
