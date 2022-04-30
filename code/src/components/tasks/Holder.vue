@@ -8,7 +8,7 @@
     </div>
 </template>
 
-<script lang="ts">
+<script lang="js">
     import Vue from 'vue';
     import { child, onValue } from "firebase/database";
     import Tile from './Tile.vue';
@@ -26,11 +26,11 @@
         computed: {
             orderedTiles() {
                 return Object.fromEntries(Object.entries(this.tiles || {})
-                    .filter(([, t]: [string, any]) => {
+                    .filter(([, t]) => {
                         if (t.headsup === undefined) return true
                         return dateDifferenceInDays(t.deadline, new Date())<=t.headsup
                     })
-                    .map(([k, t]: [string, any]) => {
+                    .map(([k, t]) => {
                         let prior = 1 / Math.max(dateDifferenceInDays(t.deadline, new Date()), 1)
                         return [k, { ...t, priority: prior }]
                     })
@@ -43,7 +43,7 @@
             })
         },
         updated() {
-            let tiles = ([...(this.$refs["tiles"] as HTMLElement).querySelectorAll(".inner-holder > *:not(.border)")] as HTMLElement[])
+            let tiles = ([...(this.$refs["tiles"]).querySelectorAll(".inner-holder > *:not(.border)")])
                 .map(el => { return { element: el, priority: parseFloat(el.getAttribute("priority") || "0") } })
                 .sort((a, b) => (b["priority"] - a["priority"]))
             if(tiles.length == 0) return
@@ -68,22 +68,22 @@
 
                     let nextRL = thisSize
                     let nextRR = thisStack.maxR - thisSize
-                    let indexR = sortedIndex(stack, Math.min(nextRL, nextRR), (s: any) => s.maxSize)
+                    let indexR = sortedIndex(stack, Math.min(nextRL, nextRR), s => s.maxSize)
                     stack.splice(indexR, 0, { x: thisStack.x + thisSize * 22, y: thisStack.y + thisSize * 22, maxL: nextRL, maxR: nextRR, maxSize: Math.min(nextRL, nextRR) })
                     let nextLR = thisSize
                     let nextLL = thisStack.maxL - thisSize
-                    let indexL = sortedIndex(stack, Math.min(nextLL, nextLR), (s: any) => s.maxSize)
+                    let indexL = sortedIndex(stack, Math.min(nextLL, nextLR), s => s.maxSize)
                     stack.splice(indexL, 0, { x: thisStack.x - thisSize * 22, y: thisStack.y + thisSize * 22, maxL: nextLL, maxR: nextLR, maxSize: Math.min(nextLL, nextLR) })
                 }
             }, 20)
         },
         methods: {
-            displayTitle(title: string) {
-                (this.$refs["title"] as HTMLElement).innerText = title
+            displayTitle(title) {
+                this.$refs["title"].innerText = title
             },
-            hideTitle(title: string) {
-                if ((this.$refs["title"] as HTMLElement).innerText != title) return
-                (this.$refs["title"] as HTMLElement).innerText = ""
+            hideTitle(title) {
+                if (this.$refs["title"].innerText != title) return
+                this.$refs["title"].innerText = ""
             }
         }
     });

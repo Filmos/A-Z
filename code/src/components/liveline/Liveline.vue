@@ -7,7 +7,7 @@
     </div>
 </template>
 
-<script lang="ts">
+<script lang="js">
     import Vue from 'vue';
     import db from '@/core/database';
     import { child, push, set } from "firebase/database";
@@ -16,17 +16,17 @@
     export default Vue.extend({
         name: 'Liveline',
         methods: {
-            properArg(arg: any) {
+            properArg(arg) {
                 return arg.val !== undefined
             },
-            displayArg(arg: any) {
+            displayArg(arg) {
                 if (arg === undefined || arg.raw === undefined) return "<missing>"
                 let ret = arg.display(arg.val)
                 if (ret === undefined) return "<invalid>"
                 return ret
             },
-            update(command: string) {
-                function parseDate(val: string) {
+            update(command) {
+                function parseDate(val) {
                     if (val === undefined) return
                     let reg = val.match(/^(next)? ?(?:(Su)|(M)|(Tu)|(W)|(Th)|(F)|(Sa))/i)
                     if (reg) {
@@ -52,7 +52,7 @@
                         return date
                     }
                 }
-                function parseDuration(val: string) {
+                function parseDuration(val) {
                     if (val === undefined) return
                     let pat = val.match(/(?:(\d+) ?(?:w(?:e(?:e(?:k(?:s)?)?)?)?))? ?\+? ?(?:(\d+) ?(?:d(?:a(?:y(?:s)?)?)?)?)?/i)
                     if(!pat || (!pat[1] && !pat[2])) return
@@ -64,14 +64,14 @@
                     return days
                 }
 
-                function displayDate(val: Date) {
+                function displayDate(val) {
                     if (val === undefined) return
                     let time = dateDifferenceInDays(val, new Date())
-                    let specialNames: {[k: string]: string} = {"-1": "Yesterday", "0": "Today", "1": "Tomorrow"}
+                    let specialNames = {"-1": "Yesterday", "0": "Today", "1": "Tomorrow"}
                     return (specialNames[time+""] || ("In " + time + " days")) + " (" + (val.getDate()+"").padStart(2, "0") + "." + ((val.getMonth() + 1)+"").padStart(2, "0") + ")"
 
                 }
-                function displayDuration(val: number) {
+                function displayDuration(val) {
                     if(val === undefined) return
                     return val + " day" + (val>1?"s":"")
                 }
@@ -79,7 +79,7 @@
                 this.command = {}
                 if (!command) return
 
-                let args = command.split(";").map((s: string) => s.trim())
+                let args = command.split(";").map((s) => s.trim())
                 this.command["Task"] = { raw: args[0], val: args[0], display: v=>v }
                 this.command["Deadline"] = { raw: args[1], val: parseDate(args[1]), display: displayDate }
 
@@ -89,9 +89,9 @@
                 if (args.length < 4) return
                 this.command["Repeats"] = { raw: args[3], val: parseDuration(args[3]), display: displayDuration }
             },
-            async execute(input: HTMLInputElement) {
+            async execute(input) {
                 if (!this.isValid) return
-                let newEntry : any = {
+                let newEntry = {
                     title: this.command["Task"].val,
                     deadline: this.command["Deadline"].val.getTime()
                 }
@@ -110,7 +110,7 @@
             }
         },
         data() {
-            return { command: {} as any }
+            return { command: {} }
         }
     });
 </script>

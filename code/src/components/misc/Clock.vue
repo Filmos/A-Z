@@ -12,7 +12,7 @@
     </svg>
 </template>
 
-<script lang="ts">
+<script lang="js">
     import Vue from 'vue';
 
     export default Vue.extend({
@@ -20,7 +20,7 @@
         props: ['targetTime'],
         data() {
             return {
-                interval: null as unknown as number
+                interval: null
             }
         },
         mounted() {
@@ -41,7 +41,6 @@
                 let day = Math.floor(time / 24)
 
                 this.$refs.face.innerHTML = ("00" + day).slice(-3) + ":" + ("0" + hour).slice(-2) + ":" + ("0" + min).slice(-2) + ":" + ("0" + sec).slice(-2)
-                console.log(this.$refs.face)
             }
         }
     });

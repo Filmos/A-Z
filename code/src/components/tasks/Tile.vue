@@ -1,11 +1,11 @@
 <template>
     <g @click="clickEvent" transform-origin="50 6" :priority="priority" @mouseover="$emit('displaytitle', title)" @mouseleave="$emit('hidetitle', title)">
-        <path d="M 50 6 L 72 28 L 50 50 L 28 28 L 50 6" />
+        <path ref="path" d="M 50 6 L 72 28 L 50 50 L 28 28 L 50 6" />
         <text x="50" y="30" dominant-baseline="middle" text-anchor="middle">{{ shortTitle }}</text>
     </g>
 </template>
 
-<script lang="ts">
+<script lang="js">
     import Vue from 'vue';
     import { child, remove, push, set } from "firebase/database";
     import db from '@/core/database';
@@ -16,7 +16,6 @@
         props: ['title', 'priority', 'dbKey', 'full'],
         data() {
             return {
-                mycolor: randomColorFromString(this.dbKey) + "44",
                 clickEvent: multiClick(300, async (clicks) => {
                     if (clicks != 2) return
                     const dbRemRef = child(await db, 'tasks/' + this.dbKey)
@@ -34,15 +33,15 @@
             }
         },
         mounted() {
-            (this["$el"].children[0] as HTMLElement).style.fill = this.mycolor;
+            this.$refs.path.style.fill = randomColorFromString(this["dbKey"]) + "44";
         },
         computed: {
             shortTitle() {
                 let reg = this.title.match(/(?:^|\s)([A-Z]{2,3})(?:$|\s)/)
                 if (reg) return reg[1]
 
-                let phrase = this.title as string
-                reg = this.title.match(/(?:^|\s)(\w{4,})(?:$|\s)/i)
+                let phrase = this.title
+                reg = phrase.match(/(?:^|\s)(\w{4,})(?:$|\s)/i)
                 if (reg) phrase = reg[1]
 
                 if (phrase.replace(/[\W]/gi, '').length > 1) phrase = phrase.replace(/[\W]/gi, '')
