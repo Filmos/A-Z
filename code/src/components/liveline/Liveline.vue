@@ -11,7 +11,7 @@
     import Vue from 'vue';
     import db from '@/core/database';
     import { child, push, set } from "firebase/database";
-    import { dateDifferenceInDays } from '@/core/helper';
+    import { displayDate } from '@/core/helper';
 
     export default Vue.extend({
         name: 'Liveline',
@@ -64,13 +64,6 @@
                     return days
                 }
 
-                function displayDate(val) {
-                    if (val === undefined) return
-                    let time = dateDifferenceInDays(val, new Date())
-                    let specialNames = {"-1": "Yesterday", "0": "Today", "1": "Tomorrow"}
-                    return (specialNames[time+""] || ("In " + time + " days")) + " (" + (val.getDate()+"").padStart(2, "0") + "." + ((val.getMonth() + 1)+"").padStart(2, "0") + ")"
-
-                }
                 function displayDuration(val) {
                     if(val === undefined) return
                     return val + " day" + (val>1?"s":"")

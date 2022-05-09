@@ -47,3 +47,12 @@ export function dateDifferenceInDays(a: Date | number, b: Date | number): number
 
     return (a_zeroed.getTime()-b_zeroed.getTime())/1000/60/60/24
 }
+export function displayDate(date: Date | number) : string {
+    if (typeof date === 'number') date = new Date(date)
+    if (date === undefined) return ""
+
+    const time = dateDifferenceInDays(date, new Date())
+    const specialNames : { [name: number]: string } = {"-1": "Yesterday", "0": "Today", "1": "Tomorrow"}
+    return (specialNames[time] || (time < 0 ? `${time} days ago` : (`In ${time} days`))) + " (" + (date.getDate()+"").padStart(2, "0") + "." + ((date.getMonth() + 1)+"").padStart(2, "0") + ")"
+
+}

@@ -1,5 +1,5 @@
 <template>
-    <g @click="clickEvent" transform-origin="50 6" :priority="priority" @mouseover="$emit('displaytitle', title)" @mouseleave="$emit('hidetitle', title)">
+    <g @click="clickEvent" transform-origin="50 6" :priority="priority" @mouseover="$emit('displaytitle', expandedTitle)" @mouseleave="$emit('hidetitle', expandedTitle)">
         <path ref="path" d="M 50 6 L 72 28 L 50 50 L 28 28 L 50 6" />
         <text x="50" y="30" dominant-baseline="middle" text-anchor="middle">{{ shortTitle }}</text>
     </g>
@@ -9,7 +9,7 @@
     import Vue from 'vue';
     import { child, remove, push, set } from "firebase/database";
     import db from '@/core/database';
-    import { multiClick, randomColorFromString } from '@/core/helper';
+    import { multiClick, randomColorFromString, displayDate } from '@/core/helper';
 
     export default Vue.extend({
         name: 'Tile',
@@ -20,7 +20,7 @@
                     if (clicks != 2) return
                     const dbRemRef = child(await db, 'tasks/' + this.dbKey)
                     remove(dbRemRef)
-                    this.$emit('hidetitle', this.title)
+                    this.$emit('hidetitle', this.expandedTitle)
 
                     if (!this.full.repeats) return
                     let newDate = new Date(this.full.deadline)
@@ -49,6 +49,9 @@
                 if (phrase.length < 2) phrase += "--"
 
                 return phrase[0].toUpperCase()+phrase[1].toLowerCase()
+            },
+            expandedTitle() {
+                return `${this.title} [${displayDate(this.full.deadline)}]`
             }
         }
     });
