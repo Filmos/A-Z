@@ -1,8 +1,13 @@
 <template>
-    <g @click="clickEvent" transform-origin="50 6" :priority="priority" @mouseover="$emit('displaytitle', expandedTitle)" @mouseleave="$emit('hidetitle', expandedTitle)">
-        <path ref="path" d="M 50 6 L 72 28 L 50 50 L 28 28 L 50 6" />
-        <text x="50" y="30" dominant-baseline="middle" text-anchor="middle">{{ shortTitle }}</text>
-    </g>
+    <div class="tile">
+        <svg viewBox="0 0 100 100">
+            <g @click="clickEvent" transform-origin="50 6" @mouseover="$emit('displaytitle', expandedTitle)" @mouseleave="$emit('hidetitle', expandedTitle)">
+                <path ref="path" d="M 50 0 L 100 50 L 50 100 L 0 50 L 50 0" />
+                <text x="50" y="50" dominant-baseline="middle" text-anchor="middle">{{ shortTitle }}</text>
+            </g>
+        </svg>
+        <BackgroundFlare :color="color"></BackgroundFlare>
+    </div>
 </template>
 
 <script lang="js">
@@ -10,9 +15,13 @@
     import { child, remove, push, set } from "firebase/database";
     import db from '@/core/database';
     import { multiClick, randomColorFromString, displayDate } from '@/core/helper';
+    import BackgroundFlare from '@/components/background/flare.vue';
 
     export default Vue.extend({
         name: 'Tile',
+        components: {
+            BackgroundFlare
+        },
         props: ['title', 'priority', 'dbKey', 'full'],
         data() {
             return {
@@ -29,11 +38,9 @@
                         ...this.full,
                         deadline: newDate.getTime()
                     })
-                })
+                }),
+                color: randomColorFromString(this["dbKey"])
             }
-        },
-        mounted() {
-            this.$refs.path.style.fill = randomColorFromString(this["dbKey"]) + "44";
         },
         computed: {
             shortTitle() {
@@ -58,14 +65,18 @@
 </script>
 
 <style scoped lang="scss">
-    g {
-        transform: translate(0, 44px) scale(0);
-        transition: transform 0.5s;
+    .tile {
+        pointer-events: none;
+        transition: transform 0.5s, opacity 0.2s;
+        transform: translate(0%, 50%) scale(0);
+    }
 
+    g {
         path {
-            fill: rgba(255, 0, 0, 0.3);
+            fill: rgba(255, 255, 255, 0.3);
             transition: transform 0.5s, opacity 0.2s;
             opacity: 0.6;
+            pointer-events: all;
 
             &:hover {
                 opacity: 1;
@@ -76,6 +87,7 @@
             cursor: default;
             user-select: none;
             pointer-events: none;
+            font-size: 2em;
         }
     }
 </style>

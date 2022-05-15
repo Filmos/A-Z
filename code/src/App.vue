@@ -5,15 +5,17 @@
         <Holder/>
         <Liveline/>
     </Frame>
+    <FullBackground></FullBackground>
   </div>
 </template>
 
-<script lang="ts">
+<script lang="js">
     import Vue from 'vue';
-    import Frame from './components/Frame.vue';
-    import Holder from './components/tasks/Holder.vue';
-    import Liveline from './components/liveline/Liveline.vue';
-    import Clock from './components/misc/Clock.vue';
+    import Frame from '@/components/Frame.vue';
+    import Holder from '@/components/tasks/Holder.vue';
+    import Liveline from '@/components/liveline/Liveline.vue';
+    import Clock from '@/components/misc/Clock.vue';
+    import FullBackground from '@/components/background/full.vue';
 
     export default Vue.extend({
       name: 'App',
@@ -21,7 +23,8 @@
         Frame,
         Holder,
         Liveline,
-        Clock
+        Clock,
+        FullBackground
       }
     });
 </script>
