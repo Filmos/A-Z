@@ -127,7 +127,6 @@
             background-position: 0 0;
             background: linear-gradient(to right, #B294FF, #57E6E6, #FEFFB8, #57E6E6, #B294FF);
             background-size: 500vw 100vh;
-            animation: gradient 4s linear infinite;
         }
 
         &:before, &:after {
@@ -161,7 +160,6 @@
         div:after {
             right: 0;
             background-position: calc(2.8rem - 100vw) 0;
-            animation-name: gradient-right;
         }
 
 
