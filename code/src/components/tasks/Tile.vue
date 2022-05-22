@@ -11,13 +11,12 @@
 </template>
 
 <script lang="js">
-    import Vue from 'vue';
     import { child, remove, push, set } from "firebase/database";
     import db from '@/core/database';
     import { multiClick, randomColorFromString, displayDate } from '@/core/helper';
-    import BackgroundFlare from '@/components/background/flare.vue';
+    import BackgroundFlare from '@/components/background/Flare.vue';
 
-    export default Vue.extend({
+    export default {
         name: 'Tile',
         components: {
             BackgroundFlare
@@ -61,7 +60,7 @@
                 return `${this.title} [${displayDate(this.full.deadline)}]`
             }
         }
-    });
+    };
 </script>
 
 <style scoped lang="scss">

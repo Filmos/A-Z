@@ -13,9 +13,7 @@
 </template>
 
 <script lang="js">
-    import Vue from 'vue';
-
-    export default Vue.extend({
+    export default {
         name: 'Clock',
         props: ['targetTime'],
         data() {
@@ -43,7 +41,7 @@
                 this.$refs.face.innerHTML = ("00" + day).slice(-3) + ":" + ("0" + hour).slice(-2) + ":" + ("0" + min).slice(-2) + ":" + ("0" + sec).slice(-2)
             }
         }
-    });
+    };
 </script>
 
 <style scoped lang="scss">

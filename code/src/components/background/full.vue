@@ -6,11 +6,9 @@
 </template>
 
 <script lang="js">
-    import Vue from 'vue';
-
-    export default Vue.extend({
-        name: 'FullBackground',
-    });
+    export default {
+        name: 'FullBackground'
+    };
 </script>
 
 <style scoped lang="scss">

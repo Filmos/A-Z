@@ -3,9 +3,7 @@
 </template>
 
 <script lang="js">
-    import Vue from 'vue';
-
-    export default Vue.extend({
+    export default {
         name: 'BackgroundFlare',
         props: ['color'],
         computed: {
@@ -13,7 +11,7 @@
                 return `radial-gradient(${this.color}ff, ${this.color}8a 25%, ${this.color}47 42%, ${this.color}31 50%, ${this.color}10 62%, transparent 70%)`
             }
         }
-    });
+    };
 </script>
 
 <style scoped lang="scss">

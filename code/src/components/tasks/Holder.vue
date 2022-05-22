@@ -15,13 +15,12 @@
 </template>
 
 <script lang="js">
-    import Vue from 'vue';
     import { child, onValue } from "firebase/database";
     import Tile from './Tile.vue';
     import db from '@/core/database';
     import { sortedIndex, dateDifferenceInDays } from '@/core/helper'
 
-    export default Vue.extend({
+    export default {
         name: 'Frame',
         components: {
             Tile
@@ -93,7 +92,7 @@
                 this.$refs["title"].innerText = ""
             }
         }
-    });
+    };
 </script>
 
 <style scoped lang="scss">

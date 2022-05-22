@@ -8,12 +8,11 @@
 </template>
 
 <script lang="js">
-    import Vue from 'vue';
     import db from '@/core/database';
     import { child, push, set } from "firebase/database";
     import { displayDate } from '@/core/helper';
 
-    export default Vue.extend({
+    export default {
         name: 'Liveline',
         methods: {
             properArg(arg) {
@@ -105,7 +104,7 @@
         data() {
             return { command: {} }
         }
-    });
+    };
 </script>
 
 <style scoped lang="scss">

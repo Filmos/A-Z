@@ -10,14 +10,14 @@
 </template>
 
 <script lang="js">
-    import Vue from 'vue';
+    import { computed } from 'vue';
     import Frame from '@/components/Frame.vue';
     import Holder from '@/components/tasks/Holder.vue';
     import Liveline from '@/components/liveline/Liveline.vue';
     import Clock from '@/components/misc/Clock.vue';
     import FullBackground from '@/components/background/full.vue';
 
-    export default Vue.extend({
+    export default {
       name: 'App',
       components: {
         Frame,
@@ -26,7 +26,7 @@
         Clock,
         FullBackground
       }
-    });
+    };
 </script>
 
 <style>
