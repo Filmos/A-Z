@@ -5,7 +5,7 @@
         <Holder/>
         <Liveline/>
     </Frame>
-    <FullBackground></FullBackground>
+    <BackgroundController ref="background"></BackgroundController>
   </div>
 </template>
 
@@ -15,7 +15,7 @@
     import Holder from '@/components/tasks/Holder.vue';
     import Liveline from '@/components/liveline/Liveline.vue';
     import Clock from '@/components/misc/Clock.vue';
-    import FullBackground from '@/components/background/full.vue';
+    import BackgroundController from '@/components/background/Controller.vue';
 
     export default {
       name: 'App',
@@ -24,7 +24,12 @@
         Holder,
         Liveline,
         Clock,
-        FullBackground
+        BackgroundController
+      },
+      provide() {
+        return {
+          BackgroundController: computed(() => this.$refs['background'])
+        }
       }
     };
 </script>
