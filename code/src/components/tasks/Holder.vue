@@ -96,7 +96,7 @@
 </script>
 
 <style scoped lang="scss">
-    $base-color: #03010e;
+    $base-color: #000000;
 
     .inner-holder {
         width: min(80%, 55vh);

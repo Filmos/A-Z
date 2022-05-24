@@ -2,18 +2,20 @@
     <div class="tile">
         <svg viewBox="0 0 100 100">
             <g @click="clickEvent" transform-origin="50 6" @mouseover="$emit('displaytitle', expandedTitle)" @mouseleave="$emit('hidetitle', expandedTitle)">
-                <path ref="path" d="M 50 0 L 100 50 L 50 100 L 0 50 L 50 0" />
+                <path ref="path" d="M 50 0 L 100 50 L 50 100 L 0 50 L 50 0" :style="{fill: `hsl(${colorHue}deg 90% 60% / 60%)`}" />
                 <text x="50" y="50" dominant-baseline="middle" text-anchor="middle">{{ shortTitle }}</text>
             </g>
         </svg>
-        <BackgroundFlare :color="color"></BackgroundFlare>
+        <div class="flare-wrapper">
+            <BackgroundFlare :color="flareColor"></BackgroundFlare>
+        </div>
     </div>
 </template>
 
 <script lang="js">
     import { child, remove, push, set } from "firebase/database";
     import db from '@/core/database';
-    import { multiClick, randomColorFromString, displayDate } from '@/core/helper';
+    import { multiClick, hashString, displayDate, hslToHex } from '@/core/helper';
     import BackgroundFlare from '@/components/background/Flare.vue';
 
     export default {
@@ -38,7 +40,7 @@
                         deadline: newDate.getTime()
                     })
                 }),
-                color: randomColorFromString(this["dbKey"])
+                colorHue: Math.floor(Math.abs(hashString(this["dbKey"]))%360)
             }
         },
         computed: {
@@ -58,6 +60,10 @@
             },
             expandedTitle() {
                 return `${this.title} [${displayDate(this.full.deadline)}]`
+            },
+            flareColor() {
+                console.log(hslToHex(this.colorHue, 89, 38), this.colorHue)
+                return hslToHex(this.colorHue, 89, 38)
             }
         }
     };
@@ -68,13 +74,13 @@
         pointer-events: none;
         transition: transform 0.5s, opacity 0.2s;
         transform: translate(0%, 50%) scale(0);
+        mix-blend-mode: soft-light;
     }
 
     g {
         path {
-            fill: rgba(255, 255, 255, 0.3);
             transition: transform 0.5s, opacity 0.2s;
-            opacity: 0.6;
+            opacity: 0.5;
             pointer-events: all;
 
             &:hover {
@@ -88,5 +94,14 @@
             pointer-events: none;
             font-size: 2em;
         }
+    }
+
+    .flare-wrapper {
+        width: 90%;
+        height: 90%;    
+        position: absolute;
+        top: 5%;
+        left: 5%;
+        pointer-events: none;
     }
 </style>
