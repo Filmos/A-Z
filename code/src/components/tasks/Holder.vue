@@ -36,7 +36,7 @@
                         return dateDifferenceInDays(t.deadline, new Date())<=t.headsup
                     })
                     .map(([k, t]) => {
-                        let prior = 1 / Math.max(dateDifferenceInDays(t.deadline, new Date()), 1)
+                        let prior = 1 / (Math.max(dateDifferenceInDays(t.deadline, new Date()), -1)+2)
                         return [k, { ...t, priority: prior }]
                     })
                 )
