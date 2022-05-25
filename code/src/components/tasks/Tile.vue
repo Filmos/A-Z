@@ -71,6 +71,7 @@
 
 <style scoped lang="scss">
     .tile {
+        //FIXME: Weird flickering of other tiles when hovering
         pointer-events: none;
         transition: transform 0.5s, opacity 0.2s;
         transform: translate(0%, 50%) scale(0);

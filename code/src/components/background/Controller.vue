@@ -20,6 +20,7 @@
                 flares: []
             }
         },
+        //TODO: unbind flares on destroy
         methods: {
             addFlare(flareTrackerDiv, options) {
                 let flareIndex = this.flares.length;
@@ -39,9 +40,9 @@
                     options: options
                 };
                 this.flares.push(thisFlare);
-                // this.updateFlarePosition(flareIndex);
             },
             updateFlarePosition(index) {
+                //TODO: handle flare being removed
                 let currentPosition = this.flares[index].tracker.div.$el.getBoundingClientRect()
 
                 this.flares[index].tracker.box = {
