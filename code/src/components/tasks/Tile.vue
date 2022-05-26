@@ -62,8 +62,7 @@
                 return `${this.title} [${displayDate(this.full.deadline)}]`
             },
             flareColor() {
-                console.log(hslToHex(this.colorHue, 89, 38), this.colorHue)
-                return hslToHex(this.colorHue, 89, 38)
+                return hslToHex(this.colorHue, 69, 69)
             }
         }
     };
