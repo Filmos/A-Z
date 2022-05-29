@@ -1,14 +1,14 @@
 <template>
     <div class="tile">
+        <div class="flare-wrapper">
+            <BackgroundFlare :color="flareColor"></BackgroundFlare>
+        </div>
         <svg viewBox="0 0 100 100">
             <g @click="clickEvent" transform-origin="50 6" @mouseover="$emit('displaytitle', expandedTitle)" @mouseleave="$emit('hidetitle', expandedTitle)">
                 <path ref="path" d="M 50 0 L 100 50 L 50 100 L 0 50 L 50 0" :style="{fill: `hsl(${colorHue}deg 90% 60% / 60%)`}" />
                 <text x="50" y="50" dominant-baseline="middle" text-anchor="middle">{{ shortTitle }}</text>
             </g>
         </svg>
-        <div class="flare-wrapper">
-            <BackgroundFlare :color="flareColor"></BackgroundFlare>
-        </div>
     </div>
 </template>
 
@@ -69,12 +69,11 @@
 </script>
 
 <style scoped lang="scss">
+    @use 'sass:math';
     .tile {
-        //FIXME: Weird flickering of other tiles when hovering
         pointer-events: none;
         transition: transform 0.5s, opacity 0.2s;
         transform: translate(0%, 50%) scale(0);
-        mix-blend-mode: soft-light;
     }
 
     g {
