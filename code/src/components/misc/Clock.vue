@@ -8,13 +8,14 @@
             </feMerge>
         </filter>
         <text class="clockBackdrop" dominant-baseline="middle" text-anchor="middle" x="50" y="9">888:88:88:88</text>
-        <text class="clockFace" dominant-baseline="middle" text-anchor="middle" x="50" y="9" ref="face">000:00:00:00</text>
+        <text class="clockFace" dominant-baseline="middle" text-anchor="middle" x="50" y="9" ref="face" :fill="color('primary')">000:00:00:00</text>
     </svg>
 </template>
 
 <script lang="js">
     export default {
         name: 'Clock',
+        inject: ['color'],
         props: ['targetTime'],
         data() {
             return {
@@ -55,7 +56,6 @@
 
         text {
             font-family: 'LCD',monospace;
-            fill: #BFD2FF;
             filter: url(#glow);
             user-select: none;
         }
