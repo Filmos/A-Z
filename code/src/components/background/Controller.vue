@@ -30,7 +30,7 @@
         z-index: -9000;
     }
     .backdrop {
-        background-color: #0c0e0c;
+        background-color: #0c1117;
         z-index: -9002;
         width: 100%;
         height: 100%;

@@ -56,8 +56,9 @@
             setTimeout(() => {
                 const initialScale = 1.243
                 const innerSize = 0.88
+                const overlap = 0.22*innerSize
                 let recentScale = initialScale/tiles[0].priority
-                let stack = [{ x: 0, y: 0, maxL: 2, maxR: 2, maxSize: initialScale}]
+                let stack = [{ x: -overlap, y: -overlap, maxL: 2, maxR: 2, maxSize: initialScale}]
 
                 for (let t = 0; t < tiles.length; t++) {
                     let thisStack = stack.pop()
@@ -69,17 +70,18 @@
                         recentScale = thisStack.maxSize / tiles[t].priority
                     }
 
-                    tiles[t].element.style.transform = "translate(" + thisStack.x + "%, " + (thisStack.y+(1-innerSize)/2*100) + "%) scale(" + thisSize/2 * innerSize,+ ")"
+                    tiles[t].element.style.transform = "translate(" + thisStack.x + "%, " + (thisStack.y+(1-innerSize)/2*100) + "%) scale(" + thisSize/2 * innerSize + ")"
+                    tiles[t].element.style.setProperty("--scale", thisSize/2 * innerSize)
                     tiles[t].element.style.transitionDelay = Math.round(Math.random() * 150) / 1000 + "s"
 
                     let nextRL = thisSize
                     let nextRR = thisStack.maxR - thisSize
                     let indexR = sortedIndex(stack, Math.min(nextRL, nextRR), s => s.maxSize)
-                    stack.splice(indexR, 0, { x: thisStack.x + thisSize * 25 * innerSize, y: thisStack.y + thisSize * 25 * innerSize, maxL: nextRL, maxR: nextRR, maxSize: Math.min(nextRL, nextRR) })
+                    stack.splice(indexR, 0, { x: thisStack.x + thisSize * 25 * innerSize - overlap, y: thisStack.y + thisSize * 25 * innerSize - overlap, maxL: nextRL, maxR: nextRR, maxSize: Math.min(nextRL, nextRR)+overlap*2/25/innerSize })
                     let nextLR = thisSize
                     let nextLL = thisStack.maxL - thisSize
                     let indexL = sortedIndex(stack, Math.min(nextLL, nextLR), s => s.maxSize)
-                    stack.splice(indexL, 0, { x: thisStack.x - thisSize * 25 * innerSize, y: thisStack.y + thisSize * 25 * innerSize, maxL: nextLL, maxR: nextLR, maxSize: Math.min(nextLL, nextLR) })
+                    stack.splice(indexL, 0, { x: thisStack.x - thisSize * 25 * innerSize + overlap, y: thisStack.y + thisSize * 25 * innerSize - overlap, maxL: nextLL, maxR: nextLR, maxSize: Math.min(nextLL, nextLR)+overlap*2/25/innerSize })
                 }
             }, 20)
         },
@@ -96,7 +98,7 @@
 </script>
 
 <style scoped lang="scss">
-    $base-color: #000000;
+    $base-color: #1e2a3a;
 
     .inner-holder {
         width: min(80%, 55vh);
@@ -108,7 +110,7 @@
             .border {
                 stroke-width: 4;
                 fill: rgba($base-color, 0.4);
-                stroke: $base-color;
+                stroke: #2af4f8;
                 stroke-linecap: square;
                 stroke-linejoin: miter;
             }
@@ -118,7 +120,7 @@
 
     .task-title {
         font-size: 1.75rem;
-        color: #bfd2ff;
+        color: #2af4f8;
         line-height: 2rem;
         font-weight: 700;
         min-height: 2rem;
