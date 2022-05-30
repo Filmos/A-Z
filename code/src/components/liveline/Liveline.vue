@@ -121,7 +121,6 @@
         border-radius: 4px;
         align-items: flex-start;
 
-
         input {
             flex-grow: 1;
             color: inherit;
