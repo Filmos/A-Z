@@ -1,20 +1,20 @@
 <template>
-    <div class="liveline">
-        <input @input="(e) => update(e.target.value)" @keyup.enter="(e) => execute(e.target)" type="text" name="text" autocomplete="off" :class="isValid?'':'invalid'">
-        <div class="notes">
+    <div class="liveline" :style="{borderColor: color('primary'), color: color('primaryInput'), '--invalidColor': color('invalidInput')}">
+        <input @input="(e) => update(e.target.value)" @keyup.enter="(e) => execute(e.target)" type="text" name="text" autocomplete="off" :class="isValid?'':'invalid'" :style="{background: color('secondaryBackgroundTransparent')}">
+        <div class="notes" :style="{background: color('secondaryBackgroundExtraTransparent')}">
             <span v-for="(arg, argName) in command" :key="argName" :class="properArg(arg)?'':'invalid'"> {{ argName+": "+displayArg(arg) }} </span>
         </div>
     </div>
 </template>
 
 <script lang="js">
-    import Vue from 'vue';
     import db from '@/core/database';
     import { child, push, set } from "firebase/database";
     import { displayDate } from '@/core/helper';
 
-    export default Vue.extend({
+    export default {
         name: 'Liveline',
+        inject: ['color'],
         methods: {
             properArg(arg) {
                 return arg.val !== undefined
@@ -105,7 +105,7 @@
         data() {
             return { command: {} }
         }
-    });
+    };
 </script>
 
 <style scoped lang="scss">
@@ -116,52 +116,10 @@
         flex-direction: column;
         width: calc(100% - 2.8rem);
         margin: 1.3rem auto;
+        border-width: 3px;
+        border-style: solid;
         border-radius: 4px;
-        color: #BFD2FF;
         align-items: flex-start;
-        /* Border */
-        &:after, &:before, div:after, div:before {
-            content: "";
-            position: absolute;
-            z-index: 999;
-            background-position: 0 0;
-            background: linear-gradient(to right, #B294FF, #57E6E6, #FEFFB8, #57E6E6, #B294FF);
-            background-size: 500vw 100vh;
-        }
-
-        &:before, &:after {
-            left: 0;
-            right: 0;
-            height: 3px;
-        }
-
-        &:before {
-            top: 0;
-            border-top-left-radius: 4px;
-            border-top-right-radius: 4px;
-        }
-
-        &:after {
-            bottom: 0;
-            border-bottom-left-radius: 4px;
-            border-bottom-right-radius: 4px;
-        }
-
-        div:before, div:after {
-            top: 3px;
-            bottom: 3px;
-            width: 3px;
-        }
-
-        div:before {
-            left: 0;
-        }
-
-        div:after {
-            right: 0;
-            background-position: calc(2.8rem - 100vw) 0;
-        }
-
 
         input {
             flex-grow: 1;
@@ -174,17 +132,13 @@
             outline: none;
             width: calc(100% - 2.4rem);
             padding: 0.8rem 1.2rem 0.6rem;
-            background: #4e567373;
-
-            &::-webkit-input-placeholder {
-                color: #7881A1;
-            }
         }
 
         .notes {
             padding: 0.75rem 1.2rem;
             white-space: pre-wrap;
             text-align: left;
+            width: calc(100% - 2.4rem);
 
             &:empty {
                 padding: 0 0;
@@ -196,7 +150,7 @@
         }
 
         .invalid {
-            color: #ffadc2;
+            color: var(--invalidColor);
         }
     }
 

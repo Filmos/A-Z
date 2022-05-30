@@ -1,29 +1,35 @@
 <template>
   <div id="app">
-    <Frame>
-        <Clock :targetTime='Date.parse("23 Feb 2023 0:00:00")'/>
-        <Holder/>
-        <Liveline/>
-    </Frame>
+    <VisualController>
+      <Frame>
+          <Clock :targetTime='Date.parse("23 Feb 2023 0:00:00")'/>
+          <Holder/>
+          <Liveline/>
+      </Frame>
+      <Background></Background>
+    </VisualController>
   </div>
 </template>
 
-<script lang="ts">
-    import Vue from 'vue';
-    import Frame from './components/Frame.vue';
-    import Holder from './components/tasks/Holder.vue';
-    import Liveline from './components/liveline/Liveline.vue';
-    import Clock from './components/misc/Clock.vue';
+<script lang="js">
+    import Frame from '@/components/Frame.vue';
+    import Holder from '@/components/tasks/Holder.vue';
+    import Liveline from '@/components/liveline/Liveline.vue';
+    import Clock from '@/components/misc/Clock.vue';
+    import Background from '@/components/visuals/Background.vue';
+    import VisualController from '@/components/visuals/Controller.vue';
 
-    export default Vue.extend({
+    export default {
       name: 'App',
       components: {
         Frame,
         Holder,
         Liveline,
-        Clock
+        Clock,
+        Background,
+        VisualController
       }
-    });
+    };
 </script>
 
 <style>
@@ -39,10 +45,5 @@
       text-align: center;
       color: #2c3e50;
       margin-top: 60px;
-    }
-
-    .temp {
-        height: 2rem;
-        background-color: dodgerblue;
     }
 </style>

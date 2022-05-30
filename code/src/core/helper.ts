@@ -34,9 +34,6 @@ export function hashString(input: string): number {
     }
     return hash
 }
-export function randomColorFromString(input: string): string {
-    return "#" + (Math.abs(hashString(input)) % (256 ** 3)).toString(16)
-}
 
 export function dateDifferenceInDays(a: Date | number, b: Date | number): number {
     if (typeof a === 'number') a = new Date(a)

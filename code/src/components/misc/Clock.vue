@@ -8,15 +8,14 @@
             </feMerge>
         </filter>
         <text class="clockBackdrop" dominant-baseline="middle" text-anchor="middle" x="50" y="9">888:88:88:88</text>
-        <text class="clockFace" dominant-baseline="middle" text-anchor="middle" x="50" y="9" ref="face">000:00:00:00</text>
+        <text class="clockFace" dominant-baseline="middle" text-anchor="middle" x="50" y="9" ref="face" :fill="color('primary')">000:00:00:00</text>
     </svg>
 </template>
 
 <script lang="js">
-    import Vue from 'vue';
-
-    export default Vue.extend({
+    export default {
         name: 'Clock',
+        inject: ['color'],
         props: ['targetTime'],
         data() {
             return {
@@ -43,7 +42,7 @@
                 this.$refs.face.innerHTML = ("00" + day).slice(-3) + ":" + ("0" + hour).slice(-2) + ":" + ("0" + min).slice(-2) + ":" + ("0" + sec).slice(-2)
             }
         }
-    });
+    };
 </script>
 
 <style scoped lang="scss">
@@ -57,7 +56,6 @@
 
         text {
             font-family: 'LCD',monospace;
-            fill: #BFD2FF;
             filter: url(#glow);
             user-select: none;
         }

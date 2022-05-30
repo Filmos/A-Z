@@ -1,5 +1,5 @@
 <template>
-    <div class="frame">
+    <div class="frame" ref="frame">
         <svg class="top-shrinker">
             <polygon v-for="i in 100" :key="i" :points="`${i*30-7},0 ${i*30},12 ${i*30+7},0`" v-on:click="setWidth(i)"></polygon>
         </svg>
@@ -7,16 +7,13 @@
     </div>
 </template>
 
-<script lang="ts">
-    import Vue from 'vue';
-
-
-    export default Vue.extend({
+<script lang="js">
+    export default {
         name: 'Frame',
         methods: {
-            setWidth: function(i: number) {(this.$el as HTMLElement).style.maxWidth = (i*30-24)+"px"}
+            setWidth: function(i) {this.$refs.frame.style.maxWidth = (i*30-24)+"px"}
         }
-    });
+    };
 </script>
 
 <style scoped lang="scss">
