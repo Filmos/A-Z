@@ -1,21 +1,23 @@
 <template>
   <div id="app">
-    <Frame>
-        <Clock :targetTime='Date.parse("23 Feb 2023 0:00:00")'/>
-        <Holder/>
-        <Liveline/>
-    </Frame>
-    <BackgroundController ref="background"></BackgroundController>
+    <VisualController>
+      <Frame>
+          <Clock :targetTime='Date.parse("23 Feb 2023 0:00:00")'/>
+          <Holder/>
+          <Liveline/>
+      </Frame>
+      <Background></Background>
+    </VisualController>
   </div>
 </template>
 
 <script lang="js">
-    import { computed } from 'vue';
     import Frame from '@/components/Frame.vue';
     import Holder from '@/components/tasks/Holder.vue';
     import Liveline from '@/components/liveline/Liveline.vue';
     import Clock from '@/components/misc/Clock.vue';
-    import BackgroundController from '@/components/background/Controller.vue';
+    import Background from '@/components/visuals/Background.vue';
+    import VisualController from '@/components/visuals/Controller.vue';
 
     export default {
       name: 'App',
@@ -24,12 +26,8 @@
         Holder,
         Liveline,
         Clock,
-        BackgroundController
-      },
-      provide() {
-        return {
-          BackgroundController: computed(() => this.$refs['background'])
-        }
+        Background,
+        VisualController
       }
     };
 </script>
@@ -47,10 +45,5 @@
       text-align: center;
       color: #2c3e50;
       margin-top: 60px;
-    }
-
-    .temp {
-        height: 2rem;
-        background-color: dodgerblue;
     }
 </style>
