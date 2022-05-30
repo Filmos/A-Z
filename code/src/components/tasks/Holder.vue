@@ -55,10 +55,10 @@
 
             setTimeout(() => {
                 const initialScale = 1.243
-                const innerSize = 0.88
-                const overlap = 0.22*innerSize
+                const overlap = 0.25*0.88
+                const innerSize = 0.88+overlap/18
                 let recentScale = initialScale/tiles[0].priority
-                let stack = [{ x: -overlap, y: -overlap, maxL: 2, maxR: 2, maxSize: initialScale}]
+                let stack = [{ x: 0, y: overlap*1.3, maxL: 2, maxR: 2, maxSize: initialScale}]
 
                 for (let t = 0; t < tiles.length; t++) {
                     let thisStack = stack.pop()
@@ -77,11 +77,11 @@
                     let nextRL = thisSize
                     let nextRR = thisStack.maxR - thisSize
                     let indexR = sortedIndex(stack, Math.min(nextRL, nextRR), s => s.maxSize)
-                    stack.splice(indexR, 0, { x: thisStack.x + thisSize * 25 * innerSize - overlap, y: thisStack.y + thisSize * 25 * innerSize - overlap, maxL: nextRL, maxR: nextRR, maxSize: Math.min(nextRL, nextRR)+overlap*2/25/innerSize })
+                    stack.splice(indexR, 0, { x: thisStack.x + thisSize * 25 * innerSize - overlap, y: thisStack.y + thisSize * 25 * innerSize - overlap, maxL: nextRL, maxR: nextRR, maxSize: Math.min(nextRL, nextRR) })
                     let nextLR = thisSize
                     let nextLL = thisStack.maxL - thisSize
                     let indexL = sortedIndex(stack, Math.min(nextLL, nextLR), s => s.maxSize)
-                    stack.splice(indexL, 0, { x: thisStack.x - thisSize * 25 * innerSize + overlap, y: thisStack.y + thisSize * 25 * innerSize - overlap, maxL: nextLL, maxR: nextLR, maxSize: Math.min(nextLL, nextLR)+overlap*2/25/innerSize })
+                    stack.splice(indexL, 0, { x: thisStack.x - thisSize * 25 * innerSize + overlap, y: thisStack.y + thisSize * 25 * innerSize - overlap, maxL: nextLL, maxR: nextLR, maxSize: Math.min(nextLL, nextLR) })
                 }
             }, 20)
         },
