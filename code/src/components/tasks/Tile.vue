@@ -25,8 +25,8 @@
 
 <script lang="js">
 import { child, remove, push, set } from "firebase/database";
-import db from '@/core/database';
-import { multiClick, displayDate } from '@/core/helper';
+import db from '@/core/utils/database';
+import { multiClick, displayDate } from '@/core/utils/helper';
 
 export default {
     name: 'Tile',

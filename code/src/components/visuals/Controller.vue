@@ -5,7 +5,7 @@
 </template>
 
 <script lang="js">
-import Color from '@/core/color';
+import Color from '@/core/utils/color';
 import userConfig from '@/secrets/user';
 const colorDefinitions = {
     primary: () => new Color("#2af4f8"),

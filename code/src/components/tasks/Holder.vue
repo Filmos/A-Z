@@ -16,8 +16,8 @@
 <script lang="js">
 import { child, onValue } from "firebase/database";
 import Tile from './Tile.vue';
-import db from '@/core/database';
-import { sortedIndex, dateDifferenceInDays } from '@/core/helper'
+import db from '@/core/utils/database';
+import { sortedIndex, dateDifferenceInDays } from '@/core/utils/helper'
 
 export default {
     name: 'Frame',

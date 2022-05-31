@@ -8,9 +8,9 @@
 </template>
 
 <script lang="js">
-    import db from '@/core/database';
+    import db from '@/core/utils/database';
     import { child, push, set } from "firebase/database";
-    import { displayDate } from '@/core/helper';
+    import { displayDate } from '@/core/utils/helper';
 
     export default {
         name: 'Liveline',
