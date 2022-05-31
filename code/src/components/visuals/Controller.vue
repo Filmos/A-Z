@@ -6,6 +6,7 @@
 
 <script lang="js">
 import Color from '@/core/color';
+import userConfig from '@/secrets/user';
 const colorDefinitions = {
     primary: () => new Color("#2af4f8"),
     primaryBackgroundDark: c => c('primary').setLightness(8).saturate(0.5),
@@ -29,7 +30,7 @@ export default {
         };
     },
     created() {
-        this.generateColorScheme();
+        this.generateColorScheme(userConfig.colorScheme);
     },
     methods: {
         generateColorScheme(overwrite = {}) {
