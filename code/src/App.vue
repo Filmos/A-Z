@@ -12,6 +12,7 @@
 </template>
 
 <script lang="js">
+    import '@/core/graph/base/loader';
     import Frame from '@/components/Frame.vue';
     import Holder from '@/components/tasks/Holder.vue';
     import Liveline from '@/components/liveline/Liveline.vue';
