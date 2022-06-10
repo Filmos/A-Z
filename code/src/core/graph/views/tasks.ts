@@ -11,3 +11,10 @@ AddView(
         .with(LooseSorting("deadline"))
         .with(VisualComparison("deadline"))
 )
+
+// TODO: clean up the code below
+// let schema = {
+//     "tasksView": {
+//         'listDisplay': {'with': ['looseSorting', 'visualComparison', 'removeElement']},
+//     }
+// }

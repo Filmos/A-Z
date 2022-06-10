@@ -12,7 +12,7 @@
 </template>
 
 <script lang="js">
-    import '@/core/graph/base/loader';
+    import graphBuilder from '@/core/graph/base/loader';
     import Frame from '@/components/Frame.vue';
     import Holder from '@/components/tasks/Holder.vue';
     import Liveline from '@/components/liveline/Liveline.vue';
@@ -20,6 +20,7 @@
     import Background from '@/components/visuals/Background.vue';
     import VisualController from '@/components/visuals/Controller.vue';
 
+    graphBuilder()
     export default {
       name: 'App',
       components: {

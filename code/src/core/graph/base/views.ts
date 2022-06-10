@@ -1,6 +1,10 @@
-import {Specific} from './specifics';
+import {Specific, ScopeSpecific} from './specifics';
 
-const views: Specific[] = [];
-export function AddView(view: Specific) {
-    views.push(view);
+export const definedViews: Specific[] = [];
+export function AddView(...view: Specific[]): void {
+    const scope = ScopeSpecific();
+    for (const specific of view) {
+        scope.with(specific);
+    }
+    definedViews.push(scope);
 }

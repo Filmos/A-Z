@@ -1,7 +1,7 @@
-import {Specific, AsProxy} from '../base/specifics';
+import {Specific, AsProxy, ParameterLike} from '../base/specifics';
 
 class VisualComparison extends Specific {
-    constructor(comparisonTarget: string) {
+    constructor(comparisonTarget: ParameterLike) {
         super();
     }
 }
