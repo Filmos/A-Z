@@ -65,7 +65,7 @@
     "parserOptions": {
       "parser": "@typescript-eslint/parser"
     },
-    "rules": {}
+    "rules": {"vue/valid-template-root": "off"}
   },
   "browserslist": [
     "> 1%",
