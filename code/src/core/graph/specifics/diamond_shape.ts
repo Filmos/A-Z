@@ -1,8 +1,4 @@
 import {Specific, AsProxy, ParameterLike} from '../base/specifics';
 
-class DiamondShape extends Specific {
-    constructor() {
-        super();
-    }
-}
+class DiamondShape extends Specific {}
 export default AsProxy(DiamondShape);

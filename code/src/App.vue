@@ -2,7 +2,7 @@
   <div id="app">
     <VisualController>
       <Frame>
-          <Clock :targetTime='Date.parse("23 Feb 2023 0:00:00")'/>
+          <Clock :targetTime='Date.parse("1 Jan 2023 0:00:00")'/>
           <Holder/>
           <Liveline/>
       </Frame>

@@ -1,8 +1,4 @@
 import {Specific, AsProxy, ParameterLike} from '../base/specifics';
 
-class ListDisplay extends Specific {
-    constructor(dataTarget: ParameterLike) {
-        super();
-    }
-}
+class ListDisplay extends Specific {}
 export default AsProxy(ListDisplay);
