@@ -59,6 +59,7 @@ export default {
             const initialScale = 1.243
             const overlap = 0.25 * 0.88
             const innerSize = 0.88 + overlap / 18
+            let minStackSize = 0.11
             let recentScale = initialScale / tiles[0].priority
             let stack = [{ x: 0, y: overlap * 1.3, maxL: 2, maxR: 2, maxSize: initialScale }]
 
@@ -70,6 +71,9 @@ export default {
                 if (thisSize > thisStack.maxSize) {
                     thisSize = thisStack.maxSize
                     recentScale = thisStack.maxSize / tiles[t].priority
+                } else if (thisSize < minStackSize) {
+                    thisSize = Math.min(minStackSize, thisStack.maxSize)
+                    recentScale = thisSize / tiles[t].priority
                 }
 
                 tiles[t].element.style.transform = "translate(" + thisStack.x + "%, " + (thisStack.y + (1 - innerSize) / 2 * 100) + "%) scale(" + thisSize / 2 * innerSize + ")"
