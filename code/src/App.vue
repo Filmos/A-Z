@@ -6,13 +6,11 @@
           <Holder/>
           <Liveline/>
       </Frame>
-      <Binder :bind="new DataBind('tasks')">
-        <Tile>
-            <List>
-              <Tile></Tile>
-            </List>
-        </Tile>
-      </Binder>
+      <Tile bindTo="tasks">
+          <List>
+            <Tile></Tile>
+          </List>
+      </Tile>
       <Background></Background>
     </VisualController>
   </div>
@@ -27,8 +25,6 @@
     import VisualController from '@/components/visuals/Controller.vue';
     import Tile from '@/components/Tile.vue';
     import List from '@/components/List.vue';
-    import Binder from './core/binder.vue';
-    import DataBind from './core/databind';
 
     export default {
       name: 'App',
@@ -40,13 +36,7 @@
           Background,
           VisualController,
           Tile,
-          List,
-          Binder
-      },
-      data() {
-        return {
-          DataBind: DataBind
-        }
+          List
       }
     };
 </script>
