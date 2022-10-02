@@ -1,10 +1,14 @@
 <template>
     <div class="list">
         <Binder v-for="tile in positionedTiles" :key="tile.bind.getPath()" :bind="tile.bind">
-            <div class="tile" :style="{transform: tile.transform}">
+            <div class="tile" :style="{transform: `translate(${tile.posX}%, ${tile.posY}%) scale(${tile.scale})`, '--scale': tile.scale}">
                 <slot/>
             </div>
         </Binder>
+        <svg class="borders" viewBox="0 0 100 100">
+            <path v-for="tile in positionedTiles" :key="tile.bind.getPath()" class="border" :stroke="color('primary')" fill="none"
+                :d="`M ${tile.posX+50-tile.scale*50} ${tile.posY+tile.scale*50} L ${tile.posX+50} ${tile.posY+tile.scale*100} L ${tile.posX+50+tile.scale*50} ${tile.posY+tile.scale*50}`" />
+        </svg>
     </div>
 </template>
 
@@ -26,8 +30,8 @@
                 if(tiles.length == 0) return []
 
                 const initialScale = 1.243
-                const overlap = 0.25 * 0.88
-                const innerSize = 0.88 + overlap / 18
+                const overlap = 0 * 0.88
+                const innerSize = 0.89 + overlap / 18
                 const minStackSize = 0.11
                 let recentScale = initialScale / tiles[0].priority
                 let stack = [{ x: 0, y: overlap * 1.3, maxL: 2, maxR: 2, maxSize: initialScale }]
@@ -45,7 +49,9 @@
                         recentScale = thisSize / tiles[t].priority
                     }
 
-                    tiles[t].transform = "translate(" + thisStack.x + "%, " + (thisStack.y + (1 - innerSize) / 2 * 100) + "%) scale(" + thisSize / 2 * innerSize + ")"
+                    tiles[t].posX = thisStack.x
+                    tiles[t].posY = (thisStack.y + (1 - innerSize) / 2 * 100 + 0.2)
+                    tiles[t].scale = thisSize / 2 * innerSize
 
                     let nextRL = thisSize
                     let nextRR = thisStack.maxR - thisSize
@@ -58,9 +64,6 @@
                 }
                 return tiles
             }
-        },
-        mounted() {
-            console.log("List mounted!");
         }
     });
 </script>
@@ -74,6 +77,15 @@
         .tile {
             transform-origin: top;
             grid-area: 1 / 1;
+            pointer-events: none;
+            z-index: 10;
+        }
+
+        .borders {
+            z-index: 11;
+            grid-area: 1 / 1;
+            pointer-events: none;
+            stroke-width: 0.7;
         }
     }
 </style>

@@ -11,7 +11,7 @@
 <script lang="js">
     import AZComponent from '@/core/azcomponent.js';
     export default AZComponent({
-        name: 'Frame'
+        name: 'BorderedSquare'
     });
     </script>
 

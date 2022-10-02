@@ -1,9 +1,6 @@
 <template>
     <svg viewBox="0 0 100 100">
         <defs>
-            <clipPath id="clip">
-                <path d="M 50 0 L 100 50 L 50 100 L 0 50 L 50 0" />
-            </clipPath>
             <radialGradient id="fill">
                 <stop offset="0%" :style="{ stopColor: color('secondaryBackground'), stopOpacity: 1 }" />
                 <stop offset="100%" :style="{ stopColor: color('secondaryBackgroundDark'), stopOpacity: 1 }" />
@@ -12,8 +9,7 @@
 
         <g @click="clickEvent" transform-origin="50 6" clip-path="url(#clip)"
             @mouseover="$emit('displaytitle', expandedTitle)" @mouseleave="$emit('hidetitle', expandedTitle)">
-            <path ref="path" d="M 50 0 L 100 50 L 50 100 L 0 50 L 50 0" fill="url(#fill)"
-                :stroke="color('primary')" />
+            <path ref="path" d="M 50 0 L 100 50 L 50 100 L 0 50 L 50 0" fill="url(#fill)"/>
             <text x="50" y="50" dominant-baseline="middle" text-anchor="middle" :fill="color('primary')">{{
                     shortTitle
             }}</text>
@@ -44,40 +40,33 @@
 
                 return phrase[0].toUpperCase() + phrase[1].toLowerCase()
             }
-        },
-        mounted() {
-            console.log("Tile mounted!", this.bind);
         }
     });
 </script>
 
 <style scoped lang="scss">
 @use 'sass:math';
+svg {
+    width: 100%;
+    height: 100%;
+    
+    g {
+        path {
+            transition: transform 0.5s, fill-opacity 0.2s;
+            fill-opacity: 0.3;
+            pointer-events: all;
 
-.tile {
-    pointer-events: none;
-    transition: transform 0.5s, --scale 0.5s, opacity 0.2s;
-    transform: translate(0%, 50%) scale(0);
-    --scale: 0;
-}
-
-g {
-    path {
-        transition: transform 0.5s, fill-opacity 0.2s;
-        fill-opacity: 0.3;
-        pointer-events: all;
-        stroke-width: calc(0.4% / var(--scale));
-
-        &:hover {
-            fill-opacity: 0.6;
+            &:hover {
+                fill-opacity: 0.6;
+            }
         }
-    }
 
-    text {
-        cursor: default;
-        user-select: none;
-        pointer-events: none;
-        font-size: 2em;
+        text {
+            cursor: default;
+            user-select: none;
+            pointer-events: none;
+            font-size: 2em;
+        }
     }
 }
 </style>
