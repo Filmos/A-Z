@@ -2,7 +2,7 @@ import { defineComponent } from 'vue';
 import DataBind from './databind';
 export default function AZComponent(component) {
     let overload = {
-        inject: ["bind"],
+        inject: ["bind", "color"],
         props: ["bindTo"],
         provide() {
             if(this.bindTo !== undefined) 

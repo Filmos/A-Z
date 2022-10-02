@@ -1,5 +1,5 @@
 import { initializeApp } from 'firebase/app';
-import { getDatabase, ref } from 'firebase/database';
+import { DatabaseReference, getDatabase, ref } from 'firebase/database';
 import firebaseConfig from '@/secrets/database';
 import userConfig from '@/secrets/user';
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
@@ -19,4 +19,4 @@ const authPromise = new Promise((resolve, reject) => {
 
 
 
-export default authPromise;
+export default authPromise as Promise<DatabaseReference>;
